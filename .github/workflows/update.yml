@@ -53,5 +53,7 @@ jobs:
             echo "資料沒有變化，不提交"
           else
             git commit -m "資料更新 $(TZ=Asia/Taipei date +'%Y-%m-%d %H:%M')"
+            # 執行期間若有人推了新程式，先接上再推，避免推送失敗
+            git pull --rebase -X theirs origin main || git pull --rebase origin main
             git push
           fi
