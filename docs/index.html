@@ -424,56 +424,102 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 .diag .rx{font-family:var(--art);font-weight:700;font-size:16px;line-height:1.6}
 .diag .hd .stage{transform:rotate(-4deg);box-shadow:0 0 0 2px var(--wall),0 0 0 3.5px currentColor;letter-spacing:.12em}
 .cbtns .cbtn{display:inline-flex;align-items:center}
-/* 開場：今日院況 */
-.lobby{position:fixed;inset:0;z-index:100;background:radial-gradient(120% 90% at 30% 20%,var(--sheet),var(--wall));display:grid;place-items:center;padding:24px;transition:opacity .7s ease,transform .7s ease;overflow:auto}
-.lobby.leave{opacity:0;transform:scale(1.35);pointer-events:none}
-.intro-in{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:36px;align-items:center;max-width:1040px;width:100%}
-.facade{width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.18))}
-.fx .sky0{stop-color:color-mix(in srgb,var(--sheet) 70%,var(--a))}.fx .sky1{stop-color:var(--sheet)}
-.fx .hill2{fill:color-mix(in srgb,var(--grid) 80%,var(--a) 20%)}.fx .hill1{fill:color-mix(in srgb,var(--grid) 85%,var(--ink) 12%)}
-.fx .rain{fill:url(#fxRain);animation:fxRain .9s linear infinite}
-.fx .drop{stroke:color-mix(in srgb,var(--ink) 22%,transparent);stroke-width:.9;stroke-linecap:round;fill:none}
-@keyframes fxRain{to{transform:translate(-8px,32px)}}
-.fx .ground{fill:color-mix(in srgb,var(--grid) 70%,var(--sheet))}
-.fx .soft-line{stroke:color-mix(in srgb,var(--ink) 18%,transparent);stroke-width:1;fill:none;stroke-linecap:round}
-.fx .line{stroke:var(--ink);stroke-width:1.2;fill:none;stroke-linecap:round}
-.fx .wall{fill:var(--sheet);stroke:var(--ink);stroke-width:1.2}
-.fx .side{fill:color-mix(in srgb,var(--sheet) 82%,var(--ink));stroke:var(--ink);stroke-width:1.2}
-.fx .trim{fill:color-mix(in srgb,var(--ink) 55%,var(--sheet));stroke:var(--ink);stroke-width:.8}
-.fx .brand{fill:var(--brand,#16212b)}
-:root[data-theme="night"] .fx .brand{fill:color-mix(in srgb,var(--a) 40%,#0b1117)}
-.fx .sign{fill:#fff;font-family:var(--art);font-size:14px;font-weight:700;letter-spacing:.16em;text-anchor:middle}
-.fx .helipad-mark{fill:none;stroke:#e8b62c;stroke-width:3}
-.fx .helipad-h{fill:#e8b62c;font:800 26px var(--num);text-anchor:middle}
-.fx .beacon-light{fill:#e23b3b;animation:beacon 1.6s steps(2) infinite}
-@keyframes beacon{50%{opacity:.15}}
-.fx .cross-panel{fill:#fff;stroke:var(--ink);stroke-width:.8}.fx .cross{fill:#d6452f}
-.fx .glass{fill:color-mix(in srgb,var(--a) 28%,var(--sheet));stroke:var(--ink);stroke-width:.8}
-.fx .glass-line{stroke:color-mix(in srgb,var(--ink) 40%,transparent);stroke-width:.8;fill:none}
-.fx .hill-line{stroke:#fff;stroke-opacity:.55;stroke-width:1.2;fill:none;stroke-linecap:round}
-.fx .win{fill:color-mix(in srgb,var(--ink) 16%,var(--sheet));stroke:color-mix(in srgb,var(--ink) 30%,transparent);stroke-width:.5}
-.fx .win.lit{fill:#ffd98a;stroke:#e0b45a;animation:lit 3.2s ease-in-out infinite}
-.fx .win:nth-child(3n+1){animation-delay:.5s}.fx .win:nth-child(3n+2){animation-delay:1.3s}.fx .row-2 .win,.fx .row-5 .win{animation-delay:2.1s}
-.fx .er{fill:var(--ink);font:700 8px var(--sans);letter-spacing:.12em;text-anchor:middle}
-.fx .paving{fill:color-mix(in srgb,var(--ink) 12%,var(--sheet));stroke:var(--ink);stroke-width:.8}
-.fx .sea{fill:color-mix(in srgb,var(--a) 24%,var(--wall))}
-.fx .wave{stroke:color-mix(in srgb,var(--a) 50%,var(--sheet));stroke-width:1.3;fill:none;stroke-linecap:round}
-.fx .reflection{stroke:#ffd98a;stroke-opacity:.4;stroke-width:2;fill:none;stroke-linecap:round}
-.fx .boat{animation:ship 9s ease-in-out infinite alternate}.fx .boat-shadow{fill:rgba(0,0,0,.18)}
-@keyframes ship{to{transform:translateX(-26px)}}
-@keyframes lit{50%{opacity:.6}}
-.ib .ik{margin:0;color:var(--mute);font-size:13px;letter-spacing:.12em}
-.ib .ih{margin:4px 0 16px;font-family:var(--art);font-size:40px;letter-spacing:.1em}
-.ig{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--sheet)}
-.ig>div{padding:10px 12px;border-top:1px solid var(--line);display:grid}
-.ig>div:nth-child(-n+3){border-top:0}
-.ig>div:not(:nth-child(3n+1)){border-left:1px solid var(--line)}
-.ig small{font-size:11px;color:var(--mute)} .ig b{font-size:24px;line-height:1.2} .ig em{font-style:normal;font-size:11.5px;color:var(--mute)}
-.ig em.up{color:var(--up)} .ig em.down{color:var(--down)}
-.it{color:var(--mute);margin:14px 0 18px}
-#enterBtn{padding:12px 34px;font-size:16px}
-@media (max-width:760px){.intro-in{grid-template-columns:minmax(0,1fr);gap:16px}.ib .ih{font-size:30px}.ig{grid-template-columns:repeat(2,minmax(0,1fr))}.ig>div{border-left:0!important;border-top:1px solid var(--line)!important}.ig>div:nth-child(-n+2){border-top:0!important}.ig>div:nth-child(2n){border-left:1px solid var(--line)!important}}
-@media (prefers-reduced-motion:reduce){.lobby{transition:none}.fx .win.lit,.fx .rain,.fx .boat,.fx .beacon-light{animation:none}}
+/* 開場：院長桌上的立面圖與檢傷單（寫實紙張） */
+.lobby{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:28px;overflow:auto;transition:opacity .7s ease,transform .7s ease;
+  --paper:#f8f9f7;--pen:var(--brand,#16212b);--blue:#22468f;--stamp:#c0362c;
+  --desk:color-mix(in srgb,var(--wall) 86%,var(--ink) 14%);
+  background:radial-gradient(90% 70% at 40% 35%,color-mix(in srgb,var(--desk) 88%,#fff),var(--desk) 60%,color-mix(in srgb,var(--desk) 80%,#000));}
+:root[data-theme="night"] .lobby{--desk:var(--wall);--pen:#1d2733}
+.lobby::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.lobby.leave{opacity:0;transform:scale(1.25);pointer-events:none}
+.lb-desk{position:relative;margin-bottom:110px;display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.9fr);gap:44px;align-items:start;max-width:1120px;width:100%;color:var(--pen)}
+/* 紙張共用：細紙紋＋兩層陰影 */
+.lb-sheet,.lb-form{background-color:var(--paper);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .3 0 0 0 0 .3 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+  box-shadow:0 1px 1px rgba(0,0,0,.18),0 3px 6px rgba(0,0,0,.12),0 22px 44px -12px rgba(0,0,0,.45)}
+/* 立面圖 */
+.lb-sheet{position:relative;margin:18px 0 0;padding:22px 22px 0;transform:rotate(-.8deg);border-radius:1px}
+.lb-sheet::before{content:"";position:absolute;inset:10px;border:1.4px solid color-mix(in srgb,var(--pen) 75%,transparent);pointer-events:none}
+.lb-sheet::after{content:"";position:absolute;inset:14px;border:.6px solid color-mix(in srgb,var(--pen) 40%,transparent);pointer-events:none}
+.lb-drawing{position:relative;padding:6px 6px 0;background-image:linear-gradient(color-mix(in srgb,var(--a) 9%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--a) 9%,transparent) 1px,transparent 1px);background-size:14px 14px}
+.elev{display:block;width:100%;height:auto}
+.elev *{vector-effect:non-scaling-stroke}
+.elev .wall{fill:var(--paper);stroke:var(--pen);stroke-width:1.1}
+.elev .side{fill:color-mix(in srgb,var(--pen) 7%,var(--paper));stroke:var(--pen);stroke-width:1.1}
+.elev .trim{fill:color-mix(in srgb,var(--pen) 16%,var(--paper));stroke:var(--pen);stroke-width:.8}
+.elev .brand{fill:var(--pen)}
+.elev .sign{fill:var(--paper);font-family:var(--art);font-size:14px;font-weight:700;letter-spacing:.18em;text-anchor:middle}
+.elev .helipad-mark{fill:none;stroke:var(--pen);stroke-width:1}.elev .helipad-h{fill:var(--pen);font:700 26px var(--num);text-anchor:middle}
+.elev .beacon-light,.elev .cross{fill:var(--stamp)}.elev .cross-panel{fill:var(--paper);stroke:var(--pen);stroke-width:.8}
+.elev .glass{fill:color-mix(in srgb,var(--a) 20%,var(--paper));stroke:var(--pen);stroke-width:.8}
+.elev .glass-line,.elev .line{stroke:var(--pen);stroke-width:.8;fill:none}
+.elev .soft-line{stroke:color-mix(in srgb,var(--pen) 35%,transparent);stroke-width:.6;fill:none}
+.elev .hill-line{stroke:var(--paper);stroke-width:1;fill:none}
+.elev .win{fill:var(--paper);stroke:var(--pen);stroke-width:.6}
+.elev .win.lit{fill:color-mix(in srgb,#f2c14e 45%,var(--paper))}
+.elev .er{fill:var(--pen);font:700 7.5px var(--sans);letter-spacing:.12em;text-anchor:middle}
+.elev .ground{fill:none}.elev .paving{fill:color-mix(in srgb,var(--pen) 8%,var(--paper));stroke:var(--pen);stroke-width:.7}
+.elev .gl{stroke:var(--pen);stroke-width:2.4}
+.elev .hatch{stroke:color-mix(in srgb,var(--pen) 55%,transparent);stroke-width:.7}
+.elev .axis{stroke:color-mix(in srgb,var(--stamp) 70%,transparent);stroke-width:.5;stroke-dasharray:10 3 2 3}
+.elev .bub{fill:var(--paper);stroke:var(--pen);stroke-width:.8}.elev .bubt{fill:var(--pen);font:600 9px var(--num);text-anchor:middle}
+.elev .dim{stroke:var(--pen);stroke-width:.6;fill:none}.elev .lvm{fill:var(--pen)}
+.elev .dimt{fill:var(--pen);font:500 8px var(--num);text-anchor:middle;letter-spacing:.04em}
+.elev .dimL{text-anchor:start}
+.elev .note{fill:color-mix(in srgb,var(--pen) 70%,transparent);font:400 7.5px var(--art)}
+/* 圖簽 */
+.lb-tblock{display:grid;grid-template-columns:1.4fr repeat(4,auto);margin:6px 0 22px auto;width:min(100%,520px);border:1px solid var(--pen);font-family:var(--art);background:var(--paper)}
+.lb-tblock>*{padding:5px 10px;border-left:1px solid var(--pen);white-space:nowrap;font-size:13px;display:flex;flex-direction:column;justify-content:center}
+.lb-tblock>*:first-child{border-left:0}
+.lb-tblock small{font-size:10px;color:color-mix(in srgb,var(--pen) 60%,transparent);line-height:1.2}
+.lb-tb-name{font-size:17px;letter-spacing:.06em}
+/* 識別證 */
+.lb-idcard{position:absolute;left:-18px;bottom:-128px;width:290px;background:#fff;border-radius:10px;transform:rotate(-5deg);overflow:hidden;
+  box-shadow:0 1px 1px rgba(0,0,0,.2),0 14px 28px -8px rgba(0,0,0,.5);color:var(--pen)}
+.lb-idcard .lb-slot{display:block;width:44px;height:7px;border-radius:4px;margin:8px auto 0;background:color-mix(in srgb,var(--desk) 70%,#000);box-shadow:inset 0 1px 2px rgba(0,0,0,.5)}
+.lb-id-hd{margin-top:7px;background:var(--a);color:#fff;font-size:11px;font-weight:700;letter-spacing:.14em;padding:4px 12px}
+.lb-id-bd{display:flex;gap:12px;align-items:center;padding:10px 12px 12px}
+.lb-id-bd img{width:58px;height:58px;border-radius:6px;object-fit:cover;background:var(--grid);border:1px solid #d5dbe0}
+.lb-id-bd small{display:block;font-size:10.5px;color:#6b7783}
+.lb-id-bd b{display:block;font-family:var(--art);font-size:22px;line-height:1.15;letter-spacing:.06em}
+.lb-id-bd span{display:block;font-size:11px;color:#6b7783;margin-top:2px}
+/* 檢傷單與板夾 */
+.lb-board{position:relative;padding:30px 16px 18px;border-radius:12px;transform:rotate(1.2deg);
+  background:linear-gradient(160deg,#9a7856,#7a5b3f 55%,#6c5037);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 2px 3px rgba(0,0,0,.3),0 26px 50px -14px rgba(0,0,0,.6)}
+.lb-board::before{content:"";position:absolute;inset:0;border-radius:12px;opacity:.35;mix-blend-mode:multiply;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .4' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .22 0 0 0 0 .12 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E")}
+.lb-clip{position:absolute;left:50%;top:-14px;width:150px;transform:translateX(-50%);z-index:2;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35))}
+.lb-form{position:relative;padding:26px 22px 20px;border-radius:2px;
+  background-image:repeating-linear-gradient(transparent 0 33px,color-mix(in srgb,var(--a) 22%,transparent) 33px 34px)}
+.lb-fhd{display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--pen);padding-bottom:6px;margin-bottom:6px}
+.lb-fhd h2{margin:0;font-family:var(--art);font-size:26px;letter-spacing:.14em;font-weight:700}
+.lb-fhd span{font-family:var(--num);font-size:15px;color:color-mix(in srgb,var(--pen) 70%,transparent)}
+.lb-frows{margin:0}
+.lb-frows>div{display:flex;align-items:baseline;gap:8px;min-height:34px;padding-top:4px}
+.lb-frows dt{flex:none;font-size:12.5px;color:color-mix(in srgb,var(--pen) 72%,transparent)}
+.lb-frows dd{margin:0;flex:1;text-align:right;font-family:var(--art);font-size:20px;color:var(--blue);line-height:1.25;border-bottom:1px dotted color-mix(in srgb,var(--pen) 30%,transparent)}
+.lb-frows dd small{font-size:12px;color:color-mix(in srgb,var(--blue) 75%,transparent)}
+.lb-frows dd em{font-style:normal;font-size:15px;margin-left:4px}
+.lb-frows .up{color:var(--up)}.lb-frows .down{color:var(--down)}
+.lb-frows>div:last-child dd{font-size:16px}
+.lb-strow{min-height:96px!important}.lb-strow dd{border-bottom:0!important}
+.lb-stamp{position:absolute;right:30px;bottom:118px;width:132px;transform:rotate(-11deg);mix-blend-mode:multiply;opacity:.95;animation:stampIn .45s cubic-bezier(.3,1.5,.5,1) .8s both;pointer-events:none}
+.lb-stamp .st-o{fill:none;stroke:var(--stamp);stroke-width:4}.lb-stamp .st-i{fill:none;stroke:var(--stamp);stroke-width:1.3}
+.lb-stamp text{fill:var(--stamp);text-anchor:middle;font-family:var(--art);font-weight:700}
+.lb-stamp .st-s{font-size:13px;letter-spacing:.3em}.lb-stamp .st-b{font-size:30px;letter-spacing:.12em}
+@keyframes stampIn{from{opacity:0;transform:rotate(-11deg) scale(1.9)}to{opacity:.95;transform:rotate(-11deg) scale(1)}}
+.lb-frows>div:nth-child(-n+3) dd{padding-right:0}
+.lb-fsig{display:flex;justify-content:space-between;gap:10px;margin:14px 0 16px;font-size:11.5px;color:color-mix(in srgb,var(--pen) 65%,transparent)}
+.lb-fsig u{font-family:var(--art);font-size:15px;color:var(--blue);text-decoration:none;border-bottom:1px solid currentColor}
+.lb-enter{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 16px;border-radius:5px;background:var(--pen);color:var(--paper);font-size:16px;font-weight:700;letter-spacing:.2em;
+  box-shadow:0 2px 0 color-mix(in srgb,var(--pen) 60%,#000),0 6px 14px -4px rgba(0,0,0,.4);transition:transform .12s ease,box-shadow .12s ease}
+.lb-enter svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lb-enter:hover{transform:translateY(-1px)}.lb-enter:active{transform:translateY(1px);box-shadow:0 1px 0 color-mix(in srgb,var(--pen) 60%,#000)}
+.lb-enter:focus-visible{outline:3px solid var(--a);outline-offset:3px}
+@media (max-width:860px){.lobby{place-items:start center;padding:20px 14px 40px}.lb-desk{grid-template-columns:minmax(0,1fr);gap:34px}.lb-board{order:-1;transform:none}.lb-sheet{transform:none;padding:14px 14px 0}
+  .lb-tblock{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:96px}.lb-tblock>*{border-top:1px solid var(--pen)}.lb-tblock>*:nth-child(-n+1){border-top:0;grid-column:1/-1}.lb-tblock>*:nth-child(2n+1){border-left:1px solid var(--pen)}.lb-tblock>*:nth-child(2n){border-left:0}
+  .lb-idcard{left:10px;bottom:-24px;width:230px}.lb-stamp{width:112px;bottom:112px}}
+@media (prefers-reduced-motion:reduce){.lobby{transition:none}.lb-stamp{animation:none}}
 /* 病史（紙本） */
 .film.paper{background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--line),0 30px 80px rgba(0,0,0,.25)}
 .film.paper::before{background:none}
@@ -532,6 +578,26 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
   .card{width:auto}
 }
 @media (prefers-reduced-motion:reduce){.card{transition:none}}
+/* ---------- 上方控制列對齊：左右都是兩排、每排 46px ---------- */
+.dbtn{height:46px}
+.mright{display:grid;grid-template-columns:repeat(3,118px);gap:8px;align-items:stretch}
+.mright .corner{display:contents}
+.mright{position:relative}
+.triage{grid-column:1/-1;height:46px;padding:0 14px;gap:12px;justify-content:space-between}
+.triage .lv{flex-direction:row;align-items:center;gap:12px}
+.triage .lv small{display:none}
+.triage .lv b::before{content:"會診檢傷　";font-size:11px;font-weight:400;color:var(--mute)}
+.tbar{margin-top:0}
+.triage .score{font-size:30px;line-height:1}
+.triage .score small{font-size:12px}
+@media (min-width:1361px){
+  .mast{align-items:center}
+  .mast .depts{display:grid;grid-template-columns:auto auto auto minmax(0,1fr);grid-template-rows:46px 46px;gap:8px 10px;justify-content:start;align-items:center}
+  .mast .depts .amp{text-align:center}
+  .mast .tools{grid-column:1/-1;margin-left:0;height:46px;align-items:center}
+}
+.tools .reg input{height:40px}
+@media (max-width:640px){.mright{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}}
 .legend[hidden],.card[hidden],#tip[hidden],.toast[hidden]{display:none}
 </style>
 
@@ -1777,47 +1843,29 @@ function angioHTML(){
         ${L.ss.map(s=>`<button class="pc ${s.exposed?"exp":s.lag?"lag":""}" data-film-go="${s.c}" style="background:${filmCol(s.p||0)}" title="${s.exposed?`潛在接觸者：上游「${esc(s.exposed)}」生病`:s.lag?`等待好轉：上游「${esc(s.lag)}」轉好`:""}">${esc(UNI[s.c]?.[1]||s.c)} <em>${s.p!=null?(s.p>0?"+":"")+s.p.toFixed(1)+"%":"—"}</em>${s.k?`<u style="background:${s.net>0?"#d0473b":s.net<0?"#1f7a53":"#677583"}">${s.k}</u>`:""}</button>`).join("")}</div>`).join("")}</div></div>`;}).join("")}</div>`;}
 
 // ---------- 開場：醫院外觀＋今日院況 ----------
-// 醫院外觀：Codex 依三總基隆分院設計的港邊醫院（主體），外加天空、山坡、雨絲圖樣
-function facadeSVG(){
-  return `<svg class="facade fx" viewBox="0 0 460 330" aria-hidden="true">
-<defs><linearGradient id="fxSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sky0"/><stop offset="1" class="sky1"/></linearGradient>
-<pattern id="fxRain" width="24" height="32" patternUnits="userSpaceOnUse"><path class="drop" d="M14 2l-3 9 M4 18l-3 9 M21 20l-3 8"/></pattern>
-<clipPath id="fxClip"><rect width="460" height="330" rx="10"/></clipPath></defs>
-<g clip-path="url(#fxClip)">
-<rect width="460" height="330" fill="url(#fxSky)"/>
-<path class="hill2" d="M0 150 Q60 105 120 128 T240 104 T360 120 T460 96 V250 H0Z"/>
-<path class="hill1" d="M0 190 Q70 150 150 172 T300 158 T460 168 V250 H0Z"/>
-<rect class="rain" x="-64" y="-96" width="588" height="426"/>
-<!-- 建築前廣場 -->
-<path class="ground" d="M0 246H460V282H0Z"/>
+// 大廳：院長桌上的一份立面圖、一張檢傷單、一張識別證。建築本體取自 Codex 依三總基隆分院繪製的線稿
+const ELEV_BODY=`<path class="ground" d="M0 246H460V282H0Z"/>
 <path class="soft-line" d="M24 258h99 M340 258h96 M10 270h43 M400 268h45"/>
-<!-- 醫院主體，寬度 322 -->
 <rect class="side" x="69" y="127" width="322" height="122" rx="2"/>
 <rect class="wall" x="76" y="116" width="308" height="133"/>
 <rect class="side" x="185" y="99" width="90" height="17"/>
 <rect class="trim" x="181" y="96" width="98" height="5" rx="1"/>
-<!-- 屋頂停機坪：圓圈與 H -->
 <rect class="trim" x="187" y="79" width="86" height="19" rx="4"/>
 <g transform="translate(230 88.5) scale(1 .38)">
   <circle class="helipad-mark" r="33"/>
   <text class="helipad-h" x="0" y="9">H</text>
 </g>
-<!-- 屋頂警示燈 -->
 <path class="line" d="M290 114V88"/>
 <rect class="trim" x="284" y="110" width="12" height="6" rx="1"/>
 <path class="beacon-light" d="M286 89v-5a4 4 0 0 1 8 0v5Z"/>
 <path class="line" d="M285 90h10"/>
-<!-- 橫向招牌 -->
 <rect class="brand" x="100" y="120" width="260" height="23" rx="2"/>
 <text class="sign" x="230" y="137">812 拉基醫院</text>
-<!-- 白底紅十字 -->
 <rect class="cross-panel" x="364" y="121" width="16" height="20" rx="2"/>
 <path class="cross" d="M370 125h4v4h4v4h-4v4h-4v-4h-4v-4h4Z"/>
-<!-- 中央玻璃帷幕 -->
 <rect class="glass" x="199" y="148" width="62" height="81"/>
 <path class="glass-line" d="M219 148v81 M241 148v81 M199 168h62 M199 188h62 M199 208h62"/>
 <path class="hill-line" d="m204 166 12-12 M204 180l28-26"/>
-<!-- 六十扇獨立窗戶，其中三十扇亮燈 -->
 <g class="windows row-1">
   <rect class="win lit" x="84" y="151" width="13" height="8" rx="1"/>
   <rect class="win" x="106" y="151" width="13" height="8" rx="1"/>
@@ -1890,7 +1938,6 @@ function facadeSVG(){
   <rect class="win lit" x="341" y="226" width="13" height="8" rx="1"/>
   <rect class="win" x="363" y="226" width="13" height="8" rx="1"/>
 </g>
-<!-- 急診入口與雨庇 -->
 <rect class="brand" x="211" y="229" width="38" height="20"/>
 <path class="glass-line" d="M230 230v19"/>
 <path class="line" d="M225 238v5 M235 238v5"/>
@@ -1900,50 +1947,65 @@ function facadeSVG(){
 <path class="line" d="M194 233v16 M266 233v16"/>
 <path class="paving" d="M204 249h52l12 7h-76Z"/>
 <path class="soft-line" d="M200 253h60"/>
-<path class="line" d="M69 249h322"/>
-<!-- 港岸與碼頭 -->
-<rect class="sea" x="0" y="275" width="460" height="55"/>
-<path class="line" d="M0 275h460"/>
-<path class="paving" d="M28 266h108v13H28Z"/>
-<path class="trim" d="M98 279h38v22H98Z"/>
-<path class="line" d="M103 286h28 M103 292h28"/>
-<path class="line" d="M40 260v6 M37 260h6 M80 260v6 M77 260h6 M121 260v6 M118 260h6"/>
-<path class="soft-line" d="M33 272h97"/>
-<!-- 海面紋理與微弱倒影 -->
-<path class="wave" d="M12 291h29 M54 306h24 M17 320h48 M150 289h24 M180 312h45 M245 296h27 M281 319h39 M405 282h31 M421 312h26"/>
-<path class="reflection" d="M208 282h44 M217 288h28 M205 295h34 M221 302h22"/>
-<!-- 緩慢漂移的小船 -->
-<g class="boat">
-  <ellipse class="boat-shadow" cx="357" cy="313" rx="45" ry="3"/>
-  <path class="line" d="M355 275v17 M355 275h17"/>
-  <path class="brand" d="M372 275v7l-17-3v-4Z"/>
-  <rect class="wall" x="337" y="285" width="35" height="14" rx="2"/>
-  <rect class="glass" x="342" y="288" width="10" height="7" rx="1"/>
-  <rect class="glass" x="357" y="288" width="10" height="7" rx="1"/>
-  <path class="trim" d="M333 284h43v3h-43Z"/>
-  <path class="brand" d="M318 298h82l-12 12h-57Z"/>
-  <path class="line" d="M325 303h68"/>
-  <circle class="cross-panel" cx="378" cy="303" r="3"/>
-  <path class="wave" d="M306 312h16 M394 312h17"/>
-</g>
-</g></svg>`;}
+<path class="line" d="M69 249h322"/>`;
+function elevSVG(){
+  const ax=[[69,"A"],[199,"B"],[261,"C"],[391,"D"]];
+  const lv=[[249,"1F","±0.00"],[116,"RF","+13.30"],[79,"H","+17.00"]];
+  return `<svg class="elev" viewBox="0 18 460 272" role="img" aria-label="812拉基醫院南向立面圖">
+  <defs><pattern id="elHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V6" class="hatch"/></pattern></defs>
+  ${ax.map(([x,t])=>`<path d="M${x} 40V262" class="axis"/><circle cx="${x}" cy="31" r="7.5" class="bub"/><text x="${x}" y="34" class="bubt">${t}</text>`).join("")}
+  <rect x="18" y="249" width="424" height="9" fill="url(#elHatch)"/>
+  ${ELEV_BODY}
+  <path d="M18 249H442" class="gl"/>
+  ${lv.map(([y,a,b])=>`<path d="M404 ${y}H446" class="dim"/><path d="M408 ${y}l4 -6h-8z" class="lvm"/><text x="416" y="${y-3}" class="dimt dimL">${a} ${b}</text>`).join("")}
+  <path d="M69 272H391" class="dim"/>${ax.map(([x])=>`<path d="M${x-3} 275l6 -6M${x} 264v12" class="dim"/>`).join("")}
+  <text x="134" y="269" class="dimt">13,000</text><text x="230" y="269" class="dimt">6,200</text><text x="326" y="269" class="dimt">13,000</text>
+  <text x="230" y="286" class="dimt">32,200</text><path d="M69 282v6M391 282v6M69 285H200M260 285H391" class="dim"/>
+  <text x="22" y="244" class="note" text-anchor="start">基隆港側</text>
+</svg>`;}
 function introHTML(){
   const lv=TTAS.find(([th])=>R.idx>=th),ms=Object.values(MACRO||{}),red=ms.filter(m=>m.light==="red").length,sox=USD["^SOX"];
   const last=NEWS_DATES().at(-1),today=EVENTS.filter(e=>e.o===last).length,TS=themeStats().list.slice(0,3);
   const crit=[...new Set(recentEvents(2).flatMap(e=>e.codes))].map(c=>({c,q:quote(c)})).filter(x=>x.q&&x.q.pct<=-5).length;
-  const L=lvOf(xpGet().xp),wins=Math.min(48,Math.max(8,today));
-  return `<div class="intro-in">${facadeSVG()}
-  <div class="ib"><p class="ik">今日院況　${esc(REPORT?.date||isoOf(last)||"")}</p>
-    <h2 class="ih">${esc(lv[2])}</h2>
-    <div class="ig">
-      <div><small>加權指數</small><b class="num">${TAIEX?TAIEX.close.toLocaleString():"—"}</b><em class="${TAIEX?.chg>0?"up":"down"}">${TAIEX?(TAIEX.pct>0?"+":"")+(+TAIEX.pct).toFixed(2)+"%":""}</em></div>
-      <div><small>今日掛號</small><b class="num">${today}</b><em>則新聞</em></div>
-      <div><small>國際疫情（費半）</small><b class="num ${sox?.pct>0?"up":sox?.pct<0?"down":""}">${sox?(sox.pct>0?"+":"")+sox.pct.toFixed(2)+"%":"—"}</b><em>${sox?esc(sox.date.slice(5).replace("-","/")):""}</em></div>
-      <div><small>疾管署紅燈</small><b class="num">${red}</b><em>項總經指標</em></div>
-      <div><small>病危病人</small><b class="num">${crit}</b><em>跌逾 5%</em></div>
-      <div><small>你的職級</small><b>${L.name}</b><em>經驗值 ${L.xp}</em></div></div>
-    <p class="it">最熱門診：${TS.map(s=>esc(dept(s.t))).join("、")}</p>
-    <button class="cta" id="enterBtn">進入院區</button></div></div>`;}
+  const L=lvOf(xpGet().xp),date=REPORT?.date||isoOf(last)||"",sg=v=>v>0?"up":v<0?"down":"";
+  const pc=v=>v==null?"":(v>0?"+":"")+(+v).toFixed(2)+"%";
+  const [lvA,lvB]=lv[2].split(" ");
+  const rows=[
+    ["加權指數",TAIEX?`${TAIEX.close.toLocaleString()} <em class="${sg(TAIEX.pct)}">${pc(TAIEX.pct)}</em>`:"—"],
+    ["今日掛號",`${today} <small>則新聞</small>`],
+    ["國際疫情（費半）",sox?`<span class="${sg(sox.pct)}">${pc(sox.pct)}</span> <small>${esc(sox.date.slice(5).replace("-","/"))} 美股收盤</small>`:"—"],
+    ["疾管署紅燈",`${red} <small>項總經指標</small>`],
+    ["病危病人",`${crit} <small>檔，近兩天點名且跌逾 5%</small>`],
+    ["最熱門診",TS.map(x=>esc(dept(x.t))).join("、")||"—"]];
+  const nx=L.next?`再 ${L.next-L.xp} 點升為${LEVELS[L.i+1][1]}`:"已是院長";
+  return `<div class="lb-desk">
+  <figure class="lb-sheet">
+    <div class="lb-drawing">${elevSVG()}</div>
+    <figcaption class="lb-tblock">
+      <b class="lb-tb-name">812拉基醫院</b>
+      <span><small>圖名</small>南向立面圖</span><span><small>圖號</small>A-201</span>
+      <span><small>比例</small>1 : 200</span><span><small>日期</small>${esc(date)}</span>
+    </figcaption>
+    <div class="lb-idcard">
+      <i class="lb-slot" aria-hidden="true"></i>
+      <div class="lb-id-hd">812拉基醫院　員工識別證</div>
+      <div class="lb-id-bd"><img src="${AVATAR}" alt=""><div><small>職級</small><b>${L.name}</b><span>經驗值 ${L.xp}，${nx}</span></div></div>
+    </div>
+  </figure>
+  <section class="lb-board" aria-labelledby="formTitle">
+    <svg class="lb-clip" viewBox="0 0 160 46" aria-hidden="true"><defs><linearGradient id="clipM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9edf0"/><stop offset=".45" stop-color="#aab3ba"/><stop offset="1" stop-color="#6d767d"/></linearGradient></defs>
+      <path d="M14 20h132a6 6 0 0 1 6 6v14H8V26a6 6 0 0 1 6-6Z" fill="url(#clipM)" stroke="#5a6268"/><path d="M50 22V10a10 10 0 0 1 10-10h40a10 10 0 0 1 10 10v12" fill="none" stroke="url(#clipM)" stroke-width="7"/><path d="M50 22V10a10 10 0 0 1 10-10h40a10 10 0 0 1 10 10v12" fill="none" stroke="#5a6268" stroke-width="1"/><path d="M14 28H146" stroke="#fff" stroke-opacity=".7"/></svg>
+    <div class="lb-form">
+      <header class="lb-fhd"><h2 id="formTitle">今日檢傷單</h2><span>${esc(date)}</span></header>
+      <dl class="lb-frows">${rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}<div class="lb-strow"><dt>檢傷分級</dt><dd></dd></div></dl>
+      <svg class="lb-stamp" viewBox="0 0 150 96" role="img" aria-label="檢傷分級 ${esc(lv[2])}"><defs><filter id="ink"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.5 1.65"/><feComposite in="SourceGraphic" operator="in"/></filter></defs>
+        <g filter="url(#ink)"><rect x="4" y="4" width="142" height="88" rx="8" class="st-o"/><rect x="10" y="10" width="130" height="76" rx="5" class="st-i"/>
+        <text x="75" y="30" class="st-s">檢傷分級</text><text x="75" y="62" class="st-b">${esc(lvA)}</text><text x="75" y="80" class="st-s">${esc(lvB||"")}</text></g></svg>
+      <p class="lb-fsig"><span>判讀：關鍵字規則</span><span>覆核醫師：<u>${L.name}</u></span></p>
+      <button class="lb-enter" id="enterBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V4a1 1 0 0 1 1-1h9v18M14 21h6M14 3l5 2v16M10 12h.01M9 21H4"/></svg>進入院區</button>
+    </div>
+  </section>
+</div>`;}
 function showIntro(force){let seen=false;try{seen=sessionStorage.getItem("laji_intro")==="1";}catch(e){}
   if(seen&&!force)return;const o=$("intro");o.innerHTML=introHTML();o.hidden=false;o.classList.remove("leave");decorateH2(o);
   const go=()=>{try{sessionStorage.setItem("laji_intro","1");}catch(e){}o.classList.add("leave");setTimeout(()=>{o.hidden=true;},reduce?0:700);};
@@ -1960,7 +2022,7 @@ function openFromHash(){const h=(location.hash||"").replace("#","");if(/^s\d{4}$
 
 // ---------- 配色：莫蘭迪色系 ----------
 const PALETTES=[
- {k:"std",n:"院內標準",ink:"#16212b",a:"#1f6f8b",b:"#a8690f",br:"#71489a",wall:"#eef2f4",sw:["#16212b","#1f6f8b"]},
+ {k:"std",n:"院內標準（白）",ink:"#16212b",a:"#1f6f8b",b:"#a8690f",br:"#71489a",wall:"#eef2f4",sw:["#ffffff","#1f6f8b"]},
  {k:"graphite",n:"石墨灰",ink:"#2b2f33",a:"#4f5b66",b:"#c19a2e",br:"#6f6a7d",wall:"#eef0f1",sw:["#2b2f33","#e2b93b"]},
  {k:"navy",n:"海軍藍",ink:"#1f2a44",a:"#2f4a7a",b:"#c99a2e",br:"#6a5a8c",wall:"#edf0f5",sw:["#1f2a44","#e2b93b"]},
  {k:"haze",n:"霧霾藍",ink:"#2c3a4a",a:"#5f7f99",b:"#a8845a",br:"#7d6f9a",wall:"#edf1f4",sw:["#2c3a4a","#8ea9c1"]},
@@ -1988,7 +2050,7 @@ function applyPalette(k,save){const p=PALETTES.find(x=>x.k===k)||PALETTES[0];PAL
   document.querySelectorAll("[data-pal]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.pal===p.k));
   if(R){render();if(state.sel)openCard(state.sel);}}
 function buildPalPanel(){$("palPanel").innerHTML=`<p>選擇配色</p><div class="palgrid">${PALETTES.map(p=>`<button data-pal="${p.k}" aria-pressed="${p.k===PAL}"><i style="background:linear-gradient(135deg,${p.sw[0]} 50%,${p.sw[1]} 50%)"></i>${esc(p.n)}</button>`).join("")}</div>`;
-  $("palPanel").querySelectorAll("[data-pal]").forEach(b=>b.onclick=()=>{applyPalette(b.dataset.pal,true);});}
+  $("palPanel").querySelectorAll("[data-pal]").forEach(b=>b.onclick=()=>{applyPalette(b.dataset.pal,true);if(b.dataset.pal==="std"&&document.documentElement.dataset.theme==="night")setNight(false,true);});}
 $("palBtn").onclick=e=>{e.stopPropagation();const p=$("palPanel");p.hidden=!p.hidden;$("palBtn").setAttribute("aria-expanded",!p.hidden);};
 document.addEventListener("click",e=>{const p=$("palPanel");if(!p.hidden&&!p.contains(e.target)&&e.target!==$("palBtn"))p.hidden=true;});
 buildPalPanel();
