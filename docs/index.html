@@ -602,10 +602,22 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 /* ---------- 醫技大樓 ---------- */
 .mt-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:-16px -18px -10px;padding:12px 18px 10px;position:sticky;top:-16px;z-index:6;background:var(--sheet);border-bottom:1px solid var(--line)}
 @media (max-width:1060px){.mt-nav{top:0}}
-.mt-nav button{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:7px;align-items:center;text-align:left;padding:8px 8px;min-width:0;border:1px solid var(--line);border-radius:6px;background:var(--sheet)}
-.mt-nav .ic{grid-row:1/3;width:20px;height:20px;margin:0;color:var(--mute)}
-.mt-nav b{font-size:14px}.mt-nav small{font-size:11px;color:var(--mute)}
-.mt-nav button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--a)}.mt-nav button[aria-pressed="true"] .ic{color:var(--a)}
+.mt-nav button{position:relative;display:grid;grid-template-columns:1fr;row-gap:1px;justify-items:start;text-align:left;min-width:0;
+  padding:10px 10px 9px 13px;border-radius:7px;background:var(--sheet);border:1px solid var(--line);overflow:hidden;transition:background .2s ease,border-color .2s ease}
+.mt-nav button::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--u)}
+.mt-fl{position:absolute;right:9px;top:8px;font-size:12px;font-weight:700;color:color-mix(in srgb,var(--u) 75%,var(--mute));letter-spacing:.04em}
+.mt-ico{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;margin-bottom:6px;background:color-mix(in srgb,var(--u) 14%,var(--sheet));color:color-mix(in srgb,var(--u) 80%,var(--ink))}
+.mt-ico .ic{width:18px;height:18px;margin:0}
+:root[data-theme="night"] .mt-ico{color:color-mix(in srgb,var(--u) 45%,var(--ink));background:color-mix(in srgb,var(--u) 30%,var(--sheet))}:root[data-theme="night"] .mt-fl{color:color-mix(in srgb,var(--u) 45%,var(--ink))}
+.mt-nav b{font-size:15px;letter-spacing:.06em;white-space:nowrap}.mt-nav small{font-size:11px;color:var(--mute);white-space:nowrap}
+.mt-on{position:absolute;right:9px;bottom:10px;width:6px;height:6px;border-radius:50%;background:var(--line)}
+.mt-nav button:hover{border-color:color-mix(in srgb,var(--u) 55%,var(--line))}
+.mt-nav button[aria-pressed="true"]{background:var(--u);border-color:var(--u);box-shadow:0 6px 14px -8px var(--u)}
+.mt-nav button[aria-pressed="true"] b{color:#fff}.mt-nav button[aria-pressed="true"] small{color:rgba(255,255,255,.78)}
+.mt-nav button[aria-pressed="true"] .mt-fl{color:rgba(255,255,255,.7)}
+.mt-nav button[aria-pressed="true"] .mt-ico{background:rgba(255,255,255,.18);color:#fff}
+.mt-nav button[aria-pressed="true"]::before{background:rgba(255,255,255,.35)}
+.mt-nav button[aria-pressed="true"] .mt-on{background:#7dffb2;box-shadow:0 0 6px #7dffb2}
 .mt-h3{margin:18px 0 8px;font-size:14px;display:flex;align-items:center;gap:6px}.mt-h3 small{font-weight:400;color:var(--mute);font-size:11.5px}
 .mt-h3 .ic{width:16px;height:16px;margin:0}
 .mt-filter{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0 10px}
@@ -695,7 +707,7 @@ tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weigh
 .mt-log{margin:0;background:#11171c;color:#b8d4c4;border-radius:6px;padding:10px 12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.6;white-space:pre-wrap;max-height:180px;overflow:auto}
 .mt-chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:0 4px 4px 0;background:var(--sheet)}
 @media (prefers-reduced-motion:reduce){.mt-unit .act{animation:none}}
-@media (max-width:640px){.mt-nav .ic,.mt-nav small{display:none}.mt-nav button{grid-template-columns:1fr;justify-items:center;padding:9px 4px}.mt-nav b{white-space:nowrap}}
+@media (max-width:640px){.mt-ico,.mt-nav small,.mt-fl{display:none}.mt-nav button{grid-template-columns:1fr;justify-items:center;padding:10px 4px 10px 8px}.mt-nav b{white-space:nowrap}}
 .legend[hidden],.card[hidden],#tip[hidden],.toast[hidden]{display:none}
 </style>
 
@@ -2188,8 +2200,8 @@ const quant=(a,q)=>{const s=a.slice().sort((x,y)=>x-y),i=(s.length-1)*q,lo=Math.
 function barcode(code,w=86,h=22){let x=0,bars="";const seq=(code+"812").split("").map(Number);
   for(let i=0;i<22&&x<w;i++){const d=seq[i%seq.length],bw=1+(d%3),gap=1+((d+i)%2);bars+=`<rect x="${x}" y="0" width="${bw}" height="${h}"/>`;x+=bw+gap;}
   return `<svg class="mt-bc" viewBox="0 0 ${w} ${h}" aria-hidden="true">${bars}</svg>`;}
-function mtNav(){const B=[["rad","film","放射科","產業影像"],["lab","lab","檢驗科","營收體檢"],["mops","stamp","申報組","公司申報"],["it","server","資訊室","資料機房"]];
-  return `<nav class="mt-nav" aria-label="醫技大樓單位">${B.map(([k,i,n,d])=>`<button data-mt="${k}" aria-pressed="${state.mt===k}">${ic(i)}<b>${n}</b><small>${d}</small></button>`).join("")}</nav>`;}
+function mtNav(){const B=[["rad","film","放射科","產業影像","B1","#5d4fa3"],["lab","lab","檢驗科","營收體檢","2F","#1f7f8f"],["mops","stamp","申報組","公司申報","3F","#b36b22"],["it","server","資訊室","資料機房","B2","#46606f"]];
+  return `<nav class="mt-nav" aria-label="醫技大樓單位">${B.map(([k,i,n,d,f,c])=>`<button data-mt="${k}" aria-pressed="${state.mt===k}" style="--u:${c}"><span class="mt-fl num">${f}</span><span class="mt-ico">${ic(i)}</span><b>${n}</b><small>${d}</small><i class="mt-on" aria-hidden="true"></i></button>`).join("")}</nav>`;}
 function labHTML(){return mtNav()+(state.mt==="rad"?radHTML():state.mt==="mops"?mopsHTML():state.mt==="it"?itHTML():labReportHTML());}
 
 // ---------- 檢驗科：月營收檢驗報告單 ----------
