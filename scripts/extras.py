@@ -73,23 +73,79 @@ def get_institutional(asof):
 
 
 # ---------------------------------------------------------------- 檢驗科：月營收
-def get_revenue():
-    """回傳 {代號: [資料年月, 當月營收(億), 年增%, 月增%]}"""
-    res = {}
-    for url, key in [("https://openapi.twse.com.tw/v1/opendata/t187ap05_L", "rev_twse.json"),
-                     ("https://www.tpex.org.tw/openapi/v1/mopsfe_t187ap05_O", "rev_tpex.json")]:
+def _rev_rows_json(rows):
+    out = {}
+    for r in rows:
+        code = str(U.pick(r, "公司代號", "SecuritiesCompanyCode") or "").strip()
+        rev = U.num(U.pick(r, "營業收入-當月營收", "當月營收"))
+        if len(code) != 4 or rev is None:
+            continue
+        out[code] = [str(U.pick(r, "資料年月") or ""), round(rev / 1e5, 2),
+                     U.num(U.pick(r, "營業收入-去年同月增減(%)", "去年同月增減(%)")),
+                     U.num(U.pick(r, "營業收入-上月比較增減(%)", "上月比較增減(%)"))]
+    return out
+
+
+def _rev_rows_mops(raw, ym):
+    """公開資訊觀測站的月營收彙總表（HTML）。欄位：代號、名稱、當月、上月、去年當月、月增%、年增%……，單位千元。"""
+    for enc in ("utf-8", "cp950", "big5"):
         try:
-            for r in json.loads(U.fetch(url, key, tries=1, timeout=20)):
-                code = str(U.pick(r, "公司代號", "SecuritiesCompanyCode") or "").strip()
-                rev = U.num(U.pick(r, "營業收入-當月營收", "當月營收"))
-                if len(code) != 4 or rev is None:
-                    continue
-                res[code] = [str(U.pick(r, "資料年月") or ""), round(rev / 1e5, 2),
-                             U.num(U.pick(r, "營業收入-去年同月增減(%)", "去年同月增減(%)")),
-                             U.num(U.pick(r, "營業收入-上月比較增減(%)", "上月比較增減(%)"))]
+            page = raw.decode(enc)
+            break
+        except UnicodeDecodeError:
+            continue
+    out = {}
+    for tr in re.findall(r"<tr[^>]*>(.*?)</tr>", page, flags=re.S | re.I):
+        cells = [re.sub(r"<[^>]+>|&nbsp;", "", c).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", tr, flags=re.S | re.I)]
+        if len(cells) < 7 or not re.fullmatch(r"\d{4}", cells[0]):
+            continue
+        rev = U.num(cells[2])
+        if rev is None:
+            continue
+        out[cells[0]] = [ym, round(rev / 1e5, 2), U.num(cells[6]), U.num(cells[5])]
+    return out
+
+
+def get_revenue():
+    """回傳 {代號: [資料年月, 當月營收(億), 年增%, 月增%]}。上櫃有三個備用來源，依序嘗試。"""
+    res = {}
+    try:
+        res.update(_rev_rows_json(json.loads(U.fetch("https://openapi.twse.com.tw/v1/opendata/t187ap05_L", "rev_twse.json", tries=1, timeout=20))))
+    except Exception as e:  # noqa: BLE001
+        U.note(f"上市月營收抓取失敗（{e}）")
+    n0 = len(res)
+    got, errs = {}, []
+    for url, key in [("https://www.tpex.org.tw/openapi/v1/mopsfe_t187ap05_O", "rev_tpex.json"),
+                     ("https://www.tpex.org.tw/openapi/v1/t187ap05_O", "rev_tpex2.json")]:
+        try:
+            got = _rev_rows_json(json.loads(U.fetch(url, key, tries=1, timeout=20)))
+            if len(got) > 100:
+                break
         except Exception as e:  # noqa: BLE001
-            U.note(f"月營收抓取失敗：{key}（{e}）")
-    print(f"月營收 {len(res)} 家")
+            errs.append(f"{key}：{str(e)[:60]}")
+    if len(got) <= 100:  # 改抓公開資訊觀測站：最近一個月的營收約在次月 10 日前公布，依序往前找
+        today = U.NOW.date()
+        for back in (1, 2):
+            y, m = today.year, today.month - back
+            while m <= 0:
+                y, m = y - 1, m + 12
+            roc = y - 1911
+            for host in ("https://mopsov.twse.com.tw", "https://mops.twse.com.tw"):
+                key = f"rev_mops_{roc}_{m}.html"
+                try:
+                    got = _rev_rows_mops(U.fetch(f"{host}/nas/t21/otc/t21sc03_{roc}_{m}_0.html", key, binary=True, tries=1, timeout=25), f"{roc}{m:02d}")
+                    if len(got) > 100:
+                        break
+                except Exception as e:  # noqa: BLE001
+                    errs.append(f"{key}：{str(e)[:60]}")
+            if len(got) > 100:
+                break
+    if len(got) > 100:
+        for c, v in got.items():
+            res.setdefault(c, v)
+    else:
+        U.note("上櫃月營收所有來源都失敗（" + "；".join(errs[-4:]) + "）")
+    print(f"月營收：上市 {n0} 家、上櫃 {len(res) - n0} 家")
     return res or None
 
 
