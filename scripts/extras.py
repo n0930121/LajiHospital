@@ -79,7 +79,7 @@ def get_revenue():
     for url, key in [("https://openapi.twse.com.tw/v1/opendata/t187ap05_L", "rev_twse.json"),
                      ("https://www.tpex.org.tw/openapi/v1/mopsfe_t187ap05_O", "rev_tpex.json")]:
         try:
-            for r in json.loads(U.fetch(url, key)):
+            for r in json.loads(U.fetch(url, key, tries=1, timeout=20)):
                 code = str(U.pick(r, "公司代號", "SecuritiesCompanyCode") or "").strip()
                 rev = U.num(U.pick(r, "營業收入-當月營收", "當月營收"))
                 if len(code) != 4 or rev is None:
@@ -95,7 +95,7 @@ def get_revenue():
 
 # ---------------------------------------------------------------- 美股與總經的價格序列
 def yahoo_series(sym, key):
-    js = json.loads(U.fetch(f"https://query1.finance.yahoo.com/v8/finance/chart/{quote(sym)}?range=6mo&interval=1d", key))
+    js = json.loads(U.fetch(f"https://query1.finance.yahoo.com/v8/finance/chart/{quote(sym)}?range=6mo&interval=1d", key, tries=1, timeout=12))
     r = js["chart"]["result"][0]
     ts, cl = r["timestamp"], r["indicators"]["quote"][0]["close"]
     out = {}
@@ -107,7 +107,7 @@ def yahoo_series(sym, key):
 
 def stooq_series(sym, key):
     s = {"^GSPC": "^spx", "^IXIC": "^ndq", "^SOX": "^sox"}.get(sym, sym.lower().replace("^", "") + ".us")
-    text = U.fetch(f"https://stooq.com/q/d/l/?s={quote(s)}&i=d", key)
+    text = U.fetch(f"https://stooq.com/q/d/l/?s={quote(s)}&i=d", key, tries=1, timeout=12)
     out = {}
     for row in list(csv.DictReader(io.StringIO(text)))[-130:]:
         c = U.num(row.get("Close"))
@@ -117,7 +117,7 @@ def stooq_series(sym, key):
 
 
 def fred_series(sid, key):
-    text = U.fetch(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}", key)
+    text = U.fetch(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}", key, tries=1, timeout=15)
     out = {}
     for row in list(csv.reader(io.StringIO(text)))[1:][-400:]:
         if len(row) >= 2:
@@ -127,22 +127,29 @@ def fred_series(sid, key):
     return out
 
 
+def _one_us(t):
+    safe = re.sub(r"\W", "_", t)
+    for fn, key in ((yahoo_series, f"us_{safe}.json"), (stooq_series, f"us_{safe}.csv")):
+        try:
+            s = fn(t, key)
+            if len(s) >= 5:
+                return s
+        except Exception:  # noqa: BLE001
+            continue
+    return None
+
+
 def get_us(lex):
-    """回傳 {代號: {日期: 收盤}}"""
+    """回傳 {代號: {日期: 收盤}}；多檔同時抓，縮短等待時間。"""
+    from concurrent.futures import ThreadPoolExecutor
     out = {}
-    for u in lex.get("us", []):
-        t = u["t"]
-        safe = re.sub(r"\W", "_", t)
-        for fn, key in ((yahoo_series, f"us_{safe}.json"), (stooq_series, f"us_{safe}.csv")):
-            try:
-                s = fn(t, key)
-                if len(s) >= 5:
-                    out[t] = s
-                    break
-            except Exception:  # noqa: BLE001
-                continue
-        if t not in out:
-            U.note(f"美股 {t} 抓取失敗")
+    ts = [u["t"] for u in lex.get("us", [])]
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        for t, s in zip(ts, ex.map(_one_us, ts)):
+            if s:
+                out[t] = s
+            else:
+                U.note(f"美股 {t} 抓取失敗")
     print(f"美股 {len(out)} 檔")
     return out or None
 
@@ -151,6 +158,13 @@ def get_macro(cfg):
     """回傳 {指標: {日期: 數值}}"""
     out = {}
     for m in cfg.get("macro", []):
+        if m.get("diff"):  # 由其他兩個指標相減得出
+            a, b = (out.get(k) for k in m["diff"])
+            if a and b:
+                out[m["k"]] = {d: round(a[d] - b[d], 3) for d in a if d in b}
+            else:
+                U.note(f"總經 {m['name']} 無法計算（缺少來源指標）")
+            continue
         s = None
         if m.get("yahoo"):
             try:

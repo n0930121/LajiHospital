@@ -48,8 +48,8 @@ def note(msg):
 
 
 # ---------------------------------------------------------------- 連線
-def fetch(url, key, binary=False):
-    """抓網址；離線模式改讀 OFFLINE/<key>。"""
+def fetch(url, key, binary=False, tries=2, timeout=20):
+    """抓網址；離線模式改讀 OFFLINE/<key>。沒回應就快速放棄，避免整體更新拖太久。"""
     if OFFLINE:
         path = os.path.join(OFFLINE, key)
         if not os.path.exists(path):
@@ -58,14 +58,15 @@ def fetch(url, key, binary=False):
         return data if binary else data.decode("utf-8")
     import requests
     last = None
-    for i in range(3):
+    for i in range(tries):
         try:
-            r = requests.get(url, timeout=40, headers={"User-Agent": "Mozilla/5.0 (812-laji-hospital updater)"})
+            r = requests.get(url, timeout=timeout, headers={"User-Agent": "Mozilla/5.0 (812-laji-hospital updater)"})
             r.raise_for_status()
             return r.content if binary else r.text
         except Exception as e:  # noqa: BLE001
             last = e
-            time.sleep(3 * (i + 1))
+            if i + 1 < tries:
+                time.sleep(2)
     raise last
 
 
