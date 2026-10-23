@@ -297,8 +297,11 @@ def merge_news(fresh, prev_news):
         if old.get("curated"):
             item["curated"] = True
         out.append(item)
+    # 超過上限時，先淘汰熱度最低的，而不是最舊的，讓時間軸保有足夠天數；人工整理的新聞一律保留
+    out.sort(key=lambda x: (bool(x.get("curated")), x["heat"], x.get("cover", 1), x.get("date") or ""), reverse=True)
+    out = out[: CFG["news"]["max_items"]]
     out.sort(key=lambda x: (x.get("date") or "", x["heat"]), reverse=True)
-    return out[: CFG["news"]["max_items"]]
+    return out
 
 
 # ---------------------------------------------------------------- 歷史行情
