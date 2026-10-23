@@ -420,6 +420,10 @@ def main():
     inst = extras.get_institutional(asof)
     if inst is None and prev.get("inst_date") == asof:
         inst = prev.get("inst")
+    try:
+        extras.update_inst_history(inst, asof)
+    except Exception as e:  # noqa: BLE001
+        note(f"法人歷史更新失敗（{e}）")
     rev = extras.get_revenue() or prev.get("rev")
     us_series = extras.get_us(lex)
     macro_series = extras.get_macro(CFG)
@@ -467,9 +471,28 @@ def main():
     except Exception as e:  # noqa: BLE001
         note(f"交班報告產生失敗（{e}）")
         data["report"] = prev.get("report")
+    try:
+        data["calendar"] = extras.build_calendar(CFG, news, matcher, NOW.date().isoformat())
+    except Exception as e:  # noqa: BLE001
+        note(f"門診預約表產生失敗（{e}）")
+    try:
+        hist = json.load(open(HIST, encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        hist = None
+    try:
+        data["weekly"] = extras.weekly(data, hist, matcher)
+    except Exception as e:  # noqa: BLE001
+        note(f"院長週報產生失敗（{e}）")
     data["notes"] = NOTES
+    site = "https://n0930121.github.io/LajiHospital/"
     if os.environ.get("FORCE_PUSH") == "1" or (not OFFLINE and NOW.hour == CFG.get("push", {}).get("hour", 15)):
-        extras.broadcast(extras.handover_text(data.get("report"), "https://n0930121.github.io/LajiHospital/"))
+        msg = extras.handover_text(data.get("report"), site)
+        wt = extras.watch_text(data, matcher)
+        if wt:
+            msg = msg.replace("\n\n以上為", "\n\n" + wt + "\n\n以上為", 1)
+        extras.broadcast(msg)
+        if NOW.weekday() == 4 or os.environ.get("FORCE_WEEKLY") == "1":
+            extras.broadcast(extras.weekly_text(data.get("weekly"), site))
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     with open(a.out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))

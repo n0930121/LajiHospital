@@ -505,3 +505,204 @@ def broadcast(text):
             U.note(f"Telegram 廣播失敗（{e}）")
     if sent:
         print("院內廣播已送出：" + "、".join(sent))
+
+
+# ================================================================ 第三期：法人歷史、行事曆、Python 版診斷、週報、主治病人
+def t86(ymd):
+    """單日上市三大法人：{代號: 外資+投信 張數}"""
+    js = json.loads(U.fetch(f"https://www.twse.com.tw/rwd/zh/fund/T86?date={ymd}&selectType=ALLBUT0999&response=json", f"t86_{ymd}.json", tries=1, timeout=20))
+    fields = js.get("fields") or (js.get("tables") or [{}])[0].get("fields") or []
+    data = js.get("data") or (js.get("tables") or [{}])[0].get("data") or []
+    if not fields or not data:
+        return {}
+    ci, fi, ti = _find_cols(fields, ("證券代號",), ("外", "買賣超"), ("投信", "買賣超"))
+    out = {}
+    for r in data:
+        code = str(r[ci]).strip()
+        if len(code) == 4:
+            out[code] = round(((U.num(r[fi]) or 0) + (U.num(r[ti]) or 0)) / 1000)
+    return out
+
+
+def update_inst_history(inst, asof, keep=20, target=10):
+    """把每天的外資＋投信買賣超存進 history.json，用來算「家屬連續探病天數」。不足 10 天時往回補上市股。"""
+    import time
+    try:
+        h = json.load(open(U.HIST, encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return
+    rows = {d: {} for d in h.get("inst_dates", [])}
+    for c, arr in (h.get("inst") or {}).items():
+        for d, v in zip(h.get("inst_dates", []), arr):
+            if v is not None:
+                rows[d][c] = v
+    if inst and asof:
+        rows[asof] = {c: v[0] + v[1] for c, v in inst.items()}
+    if asof and len(rows) < target:
+        day, tries = dt.date.fromisoformat(asof), 0
+        while len(rows) < target and tries < 20:
+            day -= dt.timedelta(days=1)
+            tries += 1
+            if day.weekday() >= 5 or day.isoformat() in rows:
+                continue
+            try:
+                got = t86(day.strftime("%Y%m%d"))
+                if got:
+                    rows[day.isoformat()] = got
+                if not U.OFFLINE:
+                    time.sleep(2.5)
+            except Exception:  # noqa: BLE001
+                continue
+    dates = sorted(rows)[-keep:]
+    codes = sorted({c for d in dates for c in rows[d]})
+    h["inst_dates"] = dates
+    h["inst"] = {c: [rows[d].get(c) for d in dates] for c in codes}
+    with open(U.HIST, "w", encoding="utf-8") as f:
+        json.dump(h, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"法人歷史：{len(dates)} 天")
+
+
+def build_calendar(cfg, news, matcher, today):
+    """門診預約表：固定的總經事件，加上從新聞標題擷取的法說會、財報日期。"""
+    ev = [dict(e) for e in cfg.get("calendar", []) if e["date"] >= today]
+    y = int(today[:4])
+    seen = set()
+    for n in news:
+        t = n["t"]
+        if not any(k in t for k in ("法說", "財報", "股東會", "除息", "除權")):
+            continue
+        m = re.search(r"(\d{1,2})[/月](\d{1,2})日?", t)
+        if not m:
+            continue
+        mo, da = int(m.group(1)), int(m.group(2))
+        if not (1 <= mo <= 12 and 1 <= da <= 31):
+            continue
+        yy = y + 1 if mo < int(today[5:7]) - 2 else y
+        try:
+            d = dt.date(yy, mo, da).isoformat()
+        except ValueError:
+            continue
+        if d < today:
+            continue
+        codes, _ = matcher.match(t)
+        kind = "法說會" if "法說" in t else "財報" if "財報" in t else "股東會" if "股東會" in t else "除權息"
+        key = (d, tuple(codes[:2]), kind)
+        if key in seen:
+            continue
+        seen.add(key)
+        ev.append({"date": d, "t": t, "kind": "news", "tag": kind, "codes": codes[:3], "u": n.get("u", "")})
+    ev.sort(key=lambda e: (e["date"], e["kind"] != "macro"))
+    return ev[:40]
+
+
+STAGE_TXT = {
+    "recover": ("康復中", "消息與股價同向，趨勢延續中，持續追蹤即可"),
+    "nopush": ("利多不漲", "好消息但股價不買單，留意利多出盡"),
+    "resist": ("利空不跌", "壞消息股價卻撐住，可能已提前反映"),
+    "critical": ("病危", "利空與賣壓同時出現，先隔離觀察"),
+    "chips": ("籌碼先行", "還沒有明顯消息，但法人已在進場"),
+    "leave": ("家屬撤離", "消息面平靜但法人在賣，暫緩加碼"),
+    "observe": ("觀察中", "訊號還不明確，維持觀察"),
+}
+
+
+def news_index(news, matcher, days=3):
+    """近 N 個新聞日：{代號: [新聞...]}"""
+    ds = sorted({n["date"] for n in news if n.get("date")})[-days:]
+    idx = {}
+    for n in news:
+        if n.get("date") not in ds:
+            continue
+        for c in matcher.match(n["t"])[0]:
+            idx.setdefault(c, []).append(n)
+    return idx
+
+
+def diagnose_py(code, data, idx):
+    """與網頁相同的綜合診斷規則（Telegram 與推播用）。"""
+    q = (data.get("quotes") or {}).get(code)
+    pct = q[1] / (q[0] - q[1]) * 100 if q and q[0] != q[1] else 0
+    ns = idx.get(code, [])
+    net = sum((n.get("impact") or {}).get(code, n["sent"]) * n["heat"] for n in ns)
+    iv = (data.get("inst") or {}).get(code)
+    fam = iv[0] + iv[1] if iv else 0
+    pos, neg, up, dn = net >= 3, net <= -3, pct > .3, pct < -.3
+    st = "observe"
+    if pos and up: st = "recover"
+    elif pos and dn: st = "nopush"
+    elif neg and up: st = "resist"
+    elif neg and dn: st = "critical"
+    elif not pos and not neg and fam >= 300: st = "chips"
+    elif not pos and not neg and fam <= -300: st = "leave"
+    return {"st": st, "label": STAGE_TXT[st][0], "rx": STAGE_TXT[st][1], "pct": pct, "q": q, "net": net, "n": len(ns), "inst": iv, "news": ns}
+
+
+def watch_list():
+    try:
+        return json.load(open(os.path.join(U.ROOT, "docs", "watch.json"), encoding="utf-8")).get("codes", [])
+    except Exception:  # noqa: BLE001
+        return []
+
+
+def watch_text(data, matcher):
+    codes = watch_list()
+    if not codes:
+        return ""
+    uni = {r.split(",")[0]: r.split(",")[1] for r in data["uni_raw"].split(";")}
+    idx = news_index(data["news"], matcher)
+    lines, alarm = [], []
+    for c in codes:
+        d = diagnose_py(c, data, idx)
+        mark = "🚨" if d["st"] in ("critical", "nopush", "leave") else "🟢" if d["st"] in ("recover", "resist", "chips") else "⚪"
+        lines.append(f"{mark} {uni.get(c, c)} {c}　{d['label']}　{d['pct']:+.2f}%")
+        if d["st"] in ("critical", "nopush"):
+            alarm.append(f"{uni.get(c, c)}：{d['rx']}")
+    out = "【我的主治病人】\n" + "\n".join(lines)
+    if alarm:
+        out += "\n需要注意：" + "；".join(alarm)
+    return out
+
+
+def weekly(data, hist, matcher):
+    """院長週報：最近 5 個新聞日的科別聲量、本週病人漲跌、診斷命中率。"""
+    news = data["news"]
+    ds = sorted({n["date"] for n in news if n.get("date")})[-5:]
+    if len(ds) < 3:
+        return None
+    cnt, named = {}, {}
+    for n in news:
+        if n.get("date") not in ds:
+            continue
+        codes, th = matcher.match(n["t"])
+        for t in th:
+            if t not in ("總經風險", "法人籌碼"):
+                cnt[t] = cnt.get(t, 0) + 1
+        for c in codes:
+            named[c] = named.get(c, 0) + 1
+    top = sorted(cnt.items(), key=lambda x: -x[1])[:5]
+    moves = []
+    if hist and hist.get("dates"):
+        hd = hist["dates"]
+        i0 = max(0, len(hd) - 6)
+        for c, k in named.items():
+            arr = hist["close"].get(c)
+            if arr and arr[i0] and arr[-1]:
+                moves.append((c, (arr[-1] / arr[i0] - 1) * 100, k))
+    moves.sort(key=lambda x: -x[1])
+    uni = {r.split(",")[0]: r.split(",")[1] for r in data["uni_raw"].split(";")}
+    return {"from": ds[0], "to": ds[-1], "themes": top,
+            "best": [(uni.get(c, c), c, round(p, 1)) for c, p, _ in moves[:5]],
+            "worst": [(uni.get(c, c), c, round(p, 1)) for c, p, _ in moves[-5:][::-1]],
+            "news": sum(1 for n in news if n.get("date") in ds)}
+
+
+def weekly_text(w, site):
+    if not w:
+        return ""
+    s = [f"🏥 812拉基醫院｜院長週報 {w['from']}～{w['to']}",
+         f"本週掛號 {w['news']} 則新聞。",
+         "【最熱科別】" + "、".join(f"{t}科 {n} 則" for t, n in w["themes"]),
+         "【本週好轉】" + "、".join(f"{n} {p:+.1f}%" for n, _, p in w["best"]),
+         "【本週惡化】" + "、".join(f"{n} {p:+.1f}%" for n, _, p in w["worst"]),
+         "", "以上為新聞與行情的觀察整理，不構成投資建議。", site]
+    return "\n".join(s)

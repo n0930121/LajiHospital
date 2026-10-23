@@ -1,0 +1,44 @@
+name: Telegram 掛號櫃台
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # 每 10 分鐘看一次 Telegram 訊息
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-update        # 和每日更新排隊，避免同時存檔衝突
+  cancel-in-progress: false
+
+jobs:
+  bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安裝套件
+        run: pip install requests==2.32.3
+
+      - name: 回覆訊息
+        run: python scripts/bot.py
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+      - name: 存下主治病人清單
+        run: |
+          git config user.name "812-hospital-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/watch.json
+          if ! git diff --cached --quiet; then
+            git commit -m "更新主治病人清單"
+            git pull --rebase -X theirs origin main || git pull --rebase origin main
+            git push
+          fi
