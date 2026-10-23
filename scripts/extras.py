@@ -254,8 +254,10 @@ def ai_judge(news, uni_names, matcher, cfg):
                   "impact：對每檔點名股票個別的影響（1 利多、0 中性、-1 利空），只列點名的股票代號。\n"
                   "只輸出 JSON 陣列，例如 [{\"i\":0,\"sent\":1,\"heat\":3,\"impact\":{\"2330\":1}}]，不要其他文字。\n\n" + "\n".join(lines))
         try:
-            r = requests.post("https://api.anthropic.com/v1/messages", timeout=90, headers={
-                "x-api-key": key, "anthropic-version": "2026-10-21", "content-type": "application/json"},
+            hdr = {"Authorization": f"Bearer {key}", "anthropic-version": "2026-10-21", "content-type": "application/json"}
+            if os.environ.get("ANTHROPIC_WORKSPACE_ID"):
+                hdr["anthropic-workspace-id"] = os.environ["ANTHROPIC_WORKSPACE_ID"]
+            r = requests.post("https://api.anthropic.com/v1/messages", timeout=90, headers=hdr,
                 json={"model": a.get("model", "claude-haiku-5-5"), "max_tokens": 4000,
                       "messages": [{"role": "user", "content": prompt}]})
             r.raise_for_status()
@@ -271,7 +273,12 @@ def ai_judge(news, uni_names, matcher, cfg):
                 n["ai"] = True
                 done += 1
         except Exception as e:  # noqa: BLE001
-            U.note(f"AI 輔助診斷失敗，改用關鍵字規則（{e}）")
+            detail = ""
+            try:
+                detail = "：" + r.text[:200]
+            except Exception:  # noqa: BLE001
+                pass
+            U.note(f"AI 輔助診斷失敗，改用關鍵字規則（{e}{detail}）")
             break
     print(f"AI 輔助診斷 {done} 則")
     return done
