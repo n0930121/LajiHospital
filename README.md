@@ -77,7 +77,12 @@
 
 ## Telegram 掛號櫃台
 
-設定好 `TELEGRAM_BOT_TOKEN` 與 `TELEGRAM_CHAT_ID` 後，機器人每 10 分鐘看一次訊息（`.github/workflows/bot.yml`）：
+機器人由 **Cloudflare Workers 免費方案**即時回覆（程式在 `cloudflare/worker.js`）：Telegram 一收到訊息就送到 Cloudflare，查 `docs/bot.json` 裡預先算好的診斷，幾秒內回覆。主治病人清單存在 Cloudflare KV，每次自動更新會同步回 `docs/watch.json`。
+
+GitHub 需要的 Secrets：`WORKER_URL`（Worker 網址）、`WORKER_KEY`（和 Worker 的 SETUP_KEY 相同）。
+
+
+可以傳給機器人的指令：
 
 | 傳給機器人 | 回覆 |
 |---|---|

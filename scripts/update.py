@@ -421,6 +421,7 @@ def main():
 
     import extras
     extras.U = sys.modules[__name__]  # 讓擴充模組共用同一份設定（含離線模式）
+    extras.sync_watch_from_worker()
     prev = prev or {}
     inst = extras.get_institutional(asof)
     if inst is None and prev.get("inst_date") == asof:
@@ -513,6 +514,13 @@ def main():
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     with open(a.out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+    try:  # Cloudflare 掛號櫃台用的預先診斷
+        import bot
+        bj = bot.build_bot_json(data, lex, matcher)
+        with open(os.path.join(os.path.dirname(a.out), "bot.json"), "w", encoding="utf-8") as f:
+            json.dump(bj, f, ensure_ascii=False, separators=(",", ":"))
+    except Exception as e:  # noqa: BLE001
+        print("• 掛號櫃台資料產生失敗", e)
     print(f"完成：{len(uni)} 家公司、{len(quotes)} 檔行情、{len(news)} 則新聞，行情日 {asof}")
     return 0
 

@@ -929,3 +929,21 @@ def alerts(data, hist, prev_sent):
         return "", sent
     text = "🏥 812拉基醫院｜主治病人緊急通報\n\n" + "\n".join(msgs) + "\n\n以上只是觀察重點，不構成投資建議。"
     return text, (sent + new)[-300:]
+
+
+# ---------------------------------------------------------------- Cloudflare 掛號櫃台：主治病人清單同步
+def sync_watch_from_worker():
+    """主治病人清單存在 Cloudflare；每次更新先抓回來寫進 docs/watch.json，網站與推播都用這份。"""
+    url, key = os.environ.get("WORKER_URL", "").rstrip("/"), os.environ.get("WORKER_KEY", "")
+    if not url or not key or U.OFFLINE:
+        return
+    try:
+        import requests
+        r = requests.get(f"{url}/watch", params={"key": key}, timeout=15)
+        r.raise_for_status()
+        codes = [str(c) for c in r.json().get("codes", [])]
+        with open(os.path.join(U.ROOT, "docs", "watch.json"), "w", encoding="utf-8") as f:
+            json.dump({"codes": codes}, f, ensure_ascii=False)
+        print(f"主治病人清單：從掛號櫃台同步 {len(codes)} 檔")
+    except Exception as e:  # noqa: BLE001
+        U.note(f"主治病人清單同步失敗（{str(e)[:60]}）")

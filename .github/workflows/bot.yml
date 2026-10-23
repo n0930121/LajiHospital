@@ -1,8 +1,8 @@
 name: Telegram 掛號櫃台
 
+# 已改由 Cloudflare Workers 即時回覆（cloudflare/worker.js），這裡只留手動備用。
+# 注意：Cloudflare 接手後 Telegram 不允許再用這種輪詢方式讀訊息，手動執行會失敗是正常的。
 on:
-  schedule:
-    - cron: "3,13,23,33,43,53 * * * *"   # 每 10 分鐘看一次 Telegram 訊息（避開整點，GitHub 整點最塞）
   workflow_dispatch:
 
 permissions:

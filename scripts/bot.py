@@ -60,9 +60,9 @@ def find_code(q, uni):
     return hits[0] if len(hits) == 1 else (hits[0] if hits else None)
 
 
-def diagnosis_text(code, data, uni, lex, matcher):
-    info = next((u for u in uni if u[0] == code), [code, code, "", ""])
-    d = X.diagnose_py(code, data, X.news_index(data["news"], matcher))
+def diagnosis_text(code, data, uni, lex, matcher, idx=None, info=None, with_d=False):
+    info = info or next((u for u in uni if u[0] == code), [code, code, "", ""])
+    d = X.diagnose_py(code, data, idx if idx is not None else X.news_index(data["news"], matcher))
     q = d["q"]
     lines = [f"🩺 {info[1]}（{code}）診斷", f"病房：{info[2]}　{info[3]}"]
     if q:
@@ -88,7 +88,28 @@ def diagnosis_text(code, data, uni, lex, matcher):
     for m in mo:
         lines.append(f"申報組：{m['d'][5:].replace('-', '/')} {m['t'][:40]}")
     lines += ["", f"看床頭卡：{SITE}#s{code}", "以上只是觀察重點，不構成投資建議。"]
-    return "\n".join(lines)
+    text = "\n".join(lines)
+    return (text, d) if with_d else text
+
+
+def build_bot_json(data, lex, matcher):
+    """給 Cloudflare 掛號櫃台用：預先算好每檔股票的診斷文字，訊息一來就能立刻回覆。"""
+    mks, inds = data["mks"], data["inds"]
+    uni = [[c, n, mks[int(m)], inds[int(i)]] for c, n, m, i in (r.split(",") for r in data["uni_raw"].split(";"))]
+    idx = X.news_index(data["news"], matcher)
+    out = {}
+    for u in uni:
+        c = u[0]
+        if c not in (data.get("quotes") or {}) and c not in idx:
+            continue
+        try:
+            text, d = diagnosis_text(c, data, uni, lex, matcher, idx=idx, info=u, with_d=True)
+            mark = "🚨" if d["st"] in ("critical", "nopush", "leave") else "🟢" if d["st"] in ("recover", "resist", "chips") else "⚪"
+            out[c] = [u[1], text, f"{mark} {u[1]} {c}　{d['label']}　{d['pct']:+.2f}%"]
+        except Exception:  # noqa: BLE001
+            continue
+    return {"asof": data.get("asof"), "updated": data.get("updated"),
+            "report": X.handover_text(data.get("report"), SITE), "s": out}
 
 
 def save_watch(codes):
