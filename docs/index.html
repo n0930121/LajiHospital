@@ -25,6 +25,10 @@
   --num:"Barlow Condensed","Arial Narrow",sans-serif;
   --art:"LXGW WenKai TC","Kaiti TC","DFKai-SB","BiauKai",serif;   /* 圖簽用的手寫楷體 */
 }
+/* 夜班：收盤後自動切換，也可手動 */
+:root[data-theme="night"]{color-scheme:dark;
+  --wall:#0e1419;--sheet:#151d25;--ink:#e3e9ee;--mute:#8d9ba7;--line:#2a3742;--grid:#1c2630;
+  --a:#4fb3d6;--b:#e0a540;--br:#a982d4;--up:#ff6b6b;--down:#3fd18c}
 *{box-sizing:border-box}
 html,body{height:100%}
 body{margin:0;background:var(--wall);color:var(--ink);font-family:var(--sans);font-size:13.5px;line-height:1.6}
@@ -54,7 +58,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
   .mast .tools{margin-left:0;width:100%;justify-content:space-between}
 }
 .sign{display:flex;align-items:center;gap:14px}
-.cross{width:40px;height:40px;background:var(--ink);display:grid;place-items:center;border-radius:4px}
+.cross{width:40px;height:40px;background:#16212b;box-shadow:0 0 0 1px var(--line);display:grid;place-items:center;border-radius:4px}
 .cross i{position:relative;width:20px;height:20px}
 .cross i::before,.cross i::after{content:"";position:absolute;background:#fff;border-radius:1px}
 .cross i::before{left:7px;top:0;width:6px;height:20px} .cross i::after{top:7px;left:0;width:20px;height:6px}
@@ -103,15 +107,15 @@ canvas{display:block;width:100%;height:100%;touch-action:manipulation}
 .legend span{display:flex;align-items:center;gap:8px;color:var(--mute)}
 .legend i{flex:none;width:12px;height:12px;border-radius:50%;border:2px solid}
 .legend i.bed{border-radius:2px;width:16px;height:9px}
-.course{position:absolute;left:30px;bottom:20px;width:min(560px,calc(100% - 300px));display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;background:rgba(255,255,255,.92);padding:6px 12px 4px 6px;border:1px solid var(--line);border-radius:5px}
-.play{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:10px}
+.course{position:absolute;left:30px;bottom:20px;width:min(560px,calc(100% - 300px));display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;background:color-mix(in srgb,var(--sheet) 92%,transparent);padding:6px 12px 4px 6px;border:1px solid var(--line);border-radius:5px}
+.play{width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--sheet);display:grid;place-items:center;font-size:10px}
 .course input{width:100%;margin:0;accent-color:var(--ink)}
 .ticks{display:flex;justify-content:space-between;font-family:var(--num);font-size:13px;color:var(--mute);margin-top:-2px}
 .ticks span.on{color:var(--ink);font-weight:600}
-#tip{position:absolute;pointer-events:none;width:max-content;max-width:280px;background:var(--ink);color:#fff;border-radius:5px;padding:8px 11px;font-size:12px;box-shadow:0 10px 24px rgba(22,33,43,.25)}
+#tip{position:absolute;pointer-events:none;width:max-content;max-width:280px;background:#16212b;color:#fff;border-radius:5px;padding:8px 11px;font-size:12px;box-shadow:0 10px 24px rgba(22,33,43,.25)}
 #tip .k{color:#aab7c2;font-size:11px} #tip b{display:block;font-size:13px;line-height:1.45;margin-top:1px}
 #tip .up{color:#ff8a8a} #tip .down{color:#6fe0a8}
-.toast{position:absolute;top:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:999px;padding:6px 16px;font-size:12px}
+.toast{position:absolute;top:22px;left:50%;transform:translateX(-50%);background:#16212b;color:#fff;border-radius:999px;padding:6px 16px;font-size:12px}
 
 /* 識別證／床頭卡 */
 .card{position:absolute;width:292px;background:var(--sheet);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 22px 50px rgba(22,33,43,.2),0 2px 6px rgba(22,33,43,.08);opacity:0;transform:translateY(6px) scale(.98);transition:opacity .22s ease,transform .22s ease}
@@ -145,7 +149,7 @@ canvas{display:block;width:100%;height:100%;touch-action:manipulation}
 
 /* ---------- 病歷夾 ---------- */
 .chart{min-height:0;display:flex;flex-direction:column;background:var(--sheet);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);background:var(--wall);padding:4px;gap:4px;border-bottom:1px solid var(--line)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);background:var(--wall);padding:4px;gap:4px;border-bottom:1px solid var(--line)}
 .tabs button{padding:7px 0;border-radius:4px;color:var(--mute);font-weight:500}
 .tabs button[aria-selected="true"]{background:var(--sheet);color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(22,33,43,.1)}
 .pane{flex:1;min-height:0;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:24px}
@@ -208,7 +212,7 @@ td.v{font-family:var(--num);font-size:16px;font-weight:600;text-align:right;whit
 .reveal{padding:12px 14px 14px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
 .reveal .num{font-size:34px;font-weight:600;margin-right:6px}
 .reveal p{margin:4px 0 12px;color:var(--ink)}
-.cta{background:var(--ink);color:#fff;border-radius:6px;padding:9px 20px;font-weight:700;letter-spacing:.08em}
+.cta{background:var(--ink);color:var(--sheet);border-radius:6px;padding:9px 20px;font-weight:700;letter-spacing:.08em}
 .cta:hover{background:#2b3a48}
 .intro p{margin:0 0 10px;font-size:13.5px;line-height:1.8;max-width:36em}
 
@@ -267,13 +271,116 @@ textarea{width:100%;height:200px;border:1px solid var(--line);border-radius:6px;
 .mv .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mv .num{font-size:14px;font-weight:600}
 .spark{display:block;width:100%;height:auto}
-.card .ecg{border:1px solid var(--line);border-radius:6px;padding:6px 8px 4px;background:#fbfcfc}
+.card .ecg{border:1px solid var(--line);border-radius:6px;padding:6px 8px 4px;background:var(--wall)}
 .card .ecg .hd{display:flex;justify-content:space-between;font-size:10.5px;color:var(--mute)}
+/* 放射科看片燈箱：永遠是 X 光片的深色 */
+.film{position:absolute;inset:12px;z-index:25;background:#0a1016;border-radius:8px;box-shadow:0 0 0 1px #1e2a35,0 30px 80px rgba(0,0,0,.45);color:#d6e4ee;padding:12px 12px 12px;overflow:hidden}
+.film::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%,rgba(120,190,230,.10),transparent 70%);pointer-events:none}
+.fhd{position:relative;display:flex;align-items:baseline;gap:14px;padding:0 4px 10px;border-bottom:1px solid #1e2a35;margin-bottom:10px}
+.fhd b{font-family:var(--art);font-size:22px;color:#e9f4fb;letter-spacing:.1em}
+.fhd span{font-size:12px;color:#8ba2b3;flex:1}
+.fhd button{color:#8ba2b3;font-size:22px;line-height:1}
+.fbody{position:relative}
+.fg{position:absolute;border:1px solid #05080b;overflow:hidden}
+.fgh{position:absolute;left:0;right:0;top:0;height:18px;padding:0 6px;font-size:11px;color:#cfe0ea;background:rgba(5,8,11,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fu{color:#ff8a8a} .fd{color:#5fe3a1}
+.fc{position:absolute;border:1px solid rgba(5,8,11,.85);color:#f2f8fb;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;text-align:center;line-height:1.15;padding:2px}
+.fc span{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.fc em{font-style:normal;font-family:var(--num);font-size:12px;opacity:.9}
+.fc.news{box-shadow:inset 0 0 0 2px rgba(255,255,255,.85)}
+button.fc:hover{filter:brightness(1.35);z-index:2}
+.ct .slice{display:grid;grid-template-columns:190px minmax(0,1fr);gap:12px;align-items:start;padding:10px 4px;border-bottom:1px dashed #1e2a35}
+.sl{display:flex;align-items:center;gap:10px;font-size:12px;color:#8ba2b3}
+.sl i{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid #3b5566;background:radial-gradient(circle at 60% 40%,rgba(140,200,235,.5),transparent 60%),repeating-radial-gradient(circle,#0a1016 0 3px,#1b2a36 3px 5px)}
+.sl b{display:block;color:#e9f4fb;font-size:13px}
+.sp{display:flex;flex-wrap:wrap;gap:6px}
+.pc{border-radius:4px;padding:4px 9px;font-size:12.5px;color:#f2f8fb;border:1px solid rgba(255,255,255,.12)}
+.pc em{font-style:normal;font-family:var(--num);font-size:13px;margin-left:4px}
+.pc u{text-decoration:none;font-size:10px;background:#a982d4;color:#fff;border-radius:2px;padding:0 3px;margin-left:4px}
+.pc:hover{filter:brightness(1.3)}
+/* 掛號櫃台（搜尋） */
+.reg{position:relative}
+.reg input{width:190px;height:32px;border:1px solid var(--line);border-radius:4px;background:var(--sheet);padding:0 10px 0 30px;font-size:13px}
+.reg::before{content:"掛";position:absolute;left:8px;top:6px;width:18px;height:18px;border-radius:3px;background:var(--ink);color:var(--sheet);font-size:11px;font-weight:700;display:grid;place-items:center}
+.reg-list{position:absolute;top:calc(100% + 4px);left:0;z-index:40;width:290px;background:var(--sheet);border:1px solid var(--line);border-radius:6px;box-shadow:0 16px 36px rgba(0,0,0,.18);padding:4px 0}
+.reg-list button{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:8px;width:100%;text-align:left;padding:6px 12px;font-size:13px;align-items:baseline}
+.reg-list button:hover,.reg-list button.on{background:var(--wall)}
+.reg-list .num{color:var(--mute);font-size:14px}
+.reg-list small{color:var(--mute);font-size:11px;white-space:nowrap}
+.tool.on{background:var(--ink);color:var(--sheet)}
+
+/* 綜合診斷與檢驗 */
+.stage{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:12.5px;color:#fff;border-radius:3px;padding:1px 8px;line-height:20px}
+.diag{border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.diag .hd{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--wall)}
+.diag .hd small{color:var(--mute);font-size:11px}
+.diag .rx{padding:8px 10px;font-family:var(--serif);font-weight:600;font-size:13.5px;line-height:1.55;border-bottom:1px solid var(--line)}
+.diag ul{margin:0;padding:6px 10px 8px 26px;font-size:12px;color:var(--mute);line-height:1.6}
+.labs{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.labs div{padding:6px 8px}
+.labs div+div{border-left:1px solid var(--line)}
+.labs small{display:block;font-size:10.5px;color:var(--mute)}
+.labs .num{font-size:16px;font-weight:600}
+.labs em{font-style:normal;font-size:10.5px;color:var(--mute);display:block}
+.uslink{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:baseline;font-size:12.5px;padding:3px 0;border-top:1px solid var(--grid);width:100%;text-align:left}
+.uslink:first-child{border-top:0}
+.uslink .num{font-size:14px}
+.cbtns{display:flex;gap:6px;flex-wrap:wrap}
+.cbtn{border:1px solid var(--line);border-radius:4px;padding:3px 10px;font-size:12px;color:var(--mute)}
+.cbtn:hover{color:var(--ink);border-color:var(--ink)}
+.star{font-size:18px;line-height:1;color:#fff;opacity:.85}
+.star.on{color:#ffd166;opacity:1}
+.card{max-height:calc(100% - 150px);overflow:auto}
+.disc{font-size:10.5px;color:var(--mute);line-height:1.5}
+
+/* 院務總覽：交班報告、疾管署、國際醫療、分診區、家屬動線 */
+.handover{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sheet)}
+.handover .clip{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--ink);color:var(--sheet)}
+.handover .clip b{font-family:var(--art);font-size:17px;letter-spacing:.08em}
+.handover .clip span{font-family:var(--num);font-size:14px;opacity:.8}
+.handover ol{list-style:none;margin:0;padding:4px 12px 8px}
+.handover li{display:grid;grid-template-columns:4.8em minmax(0,1fr);gap:8px;padding:7px 0;border-top:1px dashed var(--line);font-size:13px;line-height:1.6}
+.handover li:first-child{border-top:0}
+.handover li b{font-size:12px;color:var(--mute);padding-top:1px}
+.handover .ft{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--line);background:var(--wall)}
+.cdc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.organ{border:1px solid var(--line);border-radius:6px;padding:8px 10px;display:grid;gap:2px;position:relative}
+.organ .o{display:flex;align-items:center;justify-content:space-between;font-size:11.5px;color:var(--mute)}
+.organ .o b{font-size:13px;color:var(--ink)}
+.organ .lt{width:9px;height:9px;border-radius:50%}
+.organ .v{display:flex;align-items:baseline;gap:6px}
+.organ .v .num{font-size:20px;font-weight:600}
+.organ .v small{font-family:var(--num);font-size:13px}
+.organ .nm{font-size:11px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.usrow{display:grid;grid-template-columns:minmax(0,1fr) 62px 54px 64px;gap:8px;align-items:center;width:100%;text-align:left;padding:6px 0;border-top:1px solid var(--grid);font-size:12.5px}
+.usrow:first-of-type{border-top:0}
+.usrow:hover .n{text-decoration:underline}
+.usrow .n b{font-family:var(--num);font-size:13px;color:var(--mute);margin-left:4px;font-weight:600}
+.usrow .num{font-size:14px;font-weight:600;text-align:right}
+.usrow .ci{font-size:11px;color:var(--mute);text-align:right}
+.quad{position:relative}
+.quad svg{display:block;width:100%;height:auto}
+.flow{display:grid;grid-template-columns:minmax(0,1fr) 7.5em minmax(0,1fr);gap:4px 8px;align-items:center;font-size:12px}
+.flow .l{display:flex;justify-content:flex-end;align-items:center;gap:4px} .flow .r{display:flex;align-items:center;gap:4px}
+.flow i{display:block;height:9px;border-radius:2px}
+.flow .nm{text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.flow .num{font-size:12.5px;color:var(--mute)}
+.burst{display:inline-block;font-size:10px;font-weight:700;color:#fff;background:#d6452f;border-radius:3px;padding:0 5px;margin-left:6px;line-height:16px;vertical-align:2px}
+.watchrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;width:100%;text-align:left;padding:7px 0;border-top:1px solid var(--grid);font-size:13px}
+.watchrow:first-of-type{border-top:0}
+.rounds{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rounds button{border:1px solid var(--line);border-radius:8px;padding:12px;text-align:left;display:grid;gap:2px}
+.rounds button:hover{border-color:var(--ink)}
+.rounds b{font-size:14px} .rounds small{font-size:11.5px;color:var(--mute)}
 @media (max-width:1060px){
   .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 72vh auto;height:auto}
   .pane{overflow:visible}
 }
 @media (max-width:640px){
+  .reg input{width:100%}
+  .mast .tools{flex-wrap:wrap;gap:4px}
+  .tool{white-space:nowrap}
+  .reg{flex:1 1 100%}
   .app{grid-template-rows:auto auto 165vh auto}
   .course{left:12px;right:12px;width:auto;top:54px;bottom:auto}
   .ctrl{top:12px;right:12px}
@@ -298,9 +405,11 @@ textarea{width:100%;height:200px;border:1px solid var(--line);border-radius:6px;
       <span class="amp">×</span>
       <div class="dept B" id="selB"><button class="dbtn" aria-haspopup="listbox" aria-expanded="false"><span class="tag">B</span><span class="body"><small>B 棟</small><b class="v"></b></span><span class="car">▾</span></button></div>
       <div class="tools">
+        <div class="reg"><input id="regIn" placeholder="掛號：代號或名稱" autocomplete="off" aria-label="搜尋股票"><div class="reg-list" id="regList" hidden></div></div>
         <button class="tool" id="swap">對調兩棟</button>
         <button class="tool" id="dice">隨機會診</button>
         <button class="tool" id="impBtn">新增新聞</button>
+        <button class="tool" id="nightBtn" aria-pressed="false">夜班</button>
       </div>
     </div>
     <div class="triage" title="依台灣急診五級檢傷（TTAS）呈現兩科會診強度：級數越小越緊密">
@@ -335,6 +444,7 @@ textarea{width:100%;height:200px;border:1px solid var(--line);border-radius:6px;
       <div><input type="range" id="range" min="0" max="0" value="0" aria-label="病程截至日期"><div class="ticks" id="ticks"></div></div>
     </div>
     <div class="card" id="card" hidden></div>
+    <div class="film" id="film" hidden></div>
     <div id="tip" hidden></div>
     <div class="toast" id="toast" hidden></div>
   </main>
@@ -344,7 +454,8 @@ textarea{width:100%;height:200px;border:1px solid var(--line);border-radius:6px;
       <button role="tab" aria-selected="true" data-tab="ovw">院務總覽</button>
       <button role="tab" aria-selected="false" data-tab="obs">會診紀錄</button>
       <button role="tab" aria-selected="false" data-tab="chain">轉診路徑</button>
-      <button role="tab" aria-selected="false" data-tab="quiz">預後挑戰</button>
+      <button role="tab" aria-selected="false" data-tab="rad">放射科</button>
+      <button role="tab" aria-selected="false" data-tab="quiz">查房</button>
     </div>
     <div class="pane" id="leaf"></div>
   </aside>
@@ -372,6 +483,7 @@ textarea{width:100%;height:200px;border:1px solid var(--line);border-radius:6px;
                                      fetch("lexicon.json?v="+Date.now()).then(r=>r.json())]);
     window.HIST=await fetch("history.json?v="+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null);
     setLexicon(lex);
+    Object.assign(window,{INST:d.inst||{},INST_DATE:d.inst_date,REV:d.rev||{},USD:d.us||{},MACRO:d.macro||{},REPORT:d.report||null,US_LIST:lex.us||[]});
     Object.assign(window,{DATA_ASOF:d.asof,DATA_UPDATED:d.updated,DATA_NOTES:d.notes||[],TAIEX:d.taiex,INDS:d.inds,MKS:d.mks,UNI_RAW:d.uni_raw,QUOTES:d.quotes,NEWS:d.news});
     const s=document.createElement("script");s.textContent=document.getElementById("app").textContent;document.body.appendChild(s);
   }catch(e){plate.innerHTML='<p style="padding:40px;color:#677583">資料載入失敗：'+e.message+'。請確認 docs/data.json 存在，或稍後重新整理。</p>';}
@@ -384,8 +496,8 @@ const MATCH=buildMatcher(Object.values(UNI));
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const CSS=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const COL={a:CSS("--a"),b:CSS("--b"),br:CSS("--br"),up:CSS("--up"),down:CSS("--down"),mute:CSS("--mute"),ink:CSS("--ink"),line:CSS("--line"),grid:CSS("--grid"),wall:CSS("--wall"),sheet:CSS("--sheet")};
-const TT=[CSS("--t1"),CSS("--t2"),CSS("--t3"),CSS("--t4"),CSS("--t5")];
+let COL={a:CSS("--a"),b:CSS("--b"),br:CSS("--br"),up:CSS("--up"),down:CSS("--down"),mute:CSS("--mute"),ink:CSS("--ink"),line:CSS("--line"),grid:CSS("--grid"),wall:CSS("--wall"),sheet:CSS("--sheet")};
+let TT=[CSS("--t1"),CSS("--t2"),CSS("--t3"),CSS("--t4"),CSS("--t5")];
 const FONT={serif:CSS("--serif"),sans:CSS("--sans"),num:CSS("--num"),art:CSS("--art")};
 try{document.fonts.load('700 16px "LXGW WenKai TC"');document.fonts.load('400 12px "LXGW WenKai TC"');}catch(e){}
 const dateOrd=d=>{const m=/(\d{1,2})\/(\d{1,2})/.exec(d||"");return m?(+m[1])*100+(+m[2]):1000;};
@@ -420,7 +532,7 @@ function analyse(A=state.A,B=state.B){
   const st={};
   vis.forEach(e=>{if(e.g==="o")return;e.codes.forEach(c=>{
     const s=st[c]||(st[c]={code:c,name:UNI[c]?.[1]||c,mk:UNI[c]?.[2]||"",ind:UNI[c]?.[3]||"",a:0,b:0,ab:0,net:0,heat:0,evs:[]});
-    if(e.g!=="b")s.a++;if(e.g!=="a")s.b++;if(e.g==="ab")s.ab++;s.net+=e.sent*e.heat;s.heat+=e.heat;s.evs.push(e);});});
+    if(e.g!=="b")s.a++;if(e.g!=="a")s.b++;if(e.g==="ab")s.ab++;s.net+=sentFor(e,c)*e.heat;s.heat+=e.heat;s.evs.push(e);});});
   const stocks=Object.values(st).map(s=>{
     s.side=s.a&&s.b?"both":s.a?"a":"b";
     s.score=Math.sqrt(s.a*s.b)*2+s.ab*1.5+(s.a+s.b)*.3+s.heat*.08;
@@ -458,6 +570,7 @@ function analyse(A=state.A,B=state.B){
   return {vis,inA,inB,inAB,stocks,links,J,Js,Ji,linkD,idx,chains:chains.slice(0,8),wards:Object.values(wards).sort((p,q)=>(q.a+q.b)-(p.a+p.b))};
 }
 let R=null;
+const sentFor=(e,c)=>e.impact&&e.impact[c]!=null?e.impact[c]:e.sent;   // AI 對個股的個別判讀優先
 const TTAS=[[80,1,"第一級 復甦急救"],[60,2,"第二級 危急"],[40,3,"第三級 緊急"],[20,4,"第四級 次緊急"],[0,5,"第五級 非緊急"]];
 
 /* ================= 平面圖繪製 ================= */
@@ -477,6 +590,7 @@ const toScreen=(wx,wy)=>[(wx-cam.x)*cam.k+W/2,(wy-cam.y)*cam.k+H/2];
 function flyTo(x,y,k){camT.x=x;camT.y=y;camT.k=Math.max(.6,Math.min(3,k));}
 function resetView(){const rs=["a","b","ab"].map(roomOf).filter(Boolean);if(!rs.length){flyTo(W/2,H/2,1);return;}
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;rs.forEach(r=>{x0=Math.min(x0,r.x0);y0=Math.min(y0,r.y0-20);x1=Math.max(x1,r.x1);y1=Math.max(y1,r.y1);});
+  layoutPads();if(PADS.length){y0=Math.min(y0,PADS[0].y-36);PADS.forEach(q=>{x0=Math.min(x0,q.x-60);x1=Math.max(x1,q.x+60);});}
   // 安全區：避開右上控制列、左下病程列與右下圖簽
   const top=vert()?118:78,bot=vert()?H-24:H-122,left=vert()?16:PAD.l+6,right=vert()?W-16:W-PAD.r-6;
   const k=Math.min(1.9,(right-left)/(x1-x0),(bot-top)/(y1-y0)),scx=(left+right)/2,scy=(top+bot)/2;
@@ -485,7 +599,7 @@ function flyToNodes(ns){ns=ns.filter(Boolean);if(!ns.length)return;
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;ns.forEach(n=>{x0=Math.min(x0,n.x);y0=Math.min(y0,n.y);x1=Math.max(x1,n.x);y1=Math.max(y1,n.y);});
   flyTo((x0+x1)/2,(y0+y1)/2,Math.min(2,W/(x1-x0+300),H/(y1-y0+260)));}
 const vert=()=>W<640;
-const inner=()=>vert()?({x0:PAD.l+10,x1:W-PAD.r-10,y0:PAD.t+130,y1:H-PAD.b-30}):({x0:PAD.l+40,x1:W-PAD.r-40,y0:PAD.t+70,y1:H-PAD.b-150});
+const inner=()=>vert()?({x0:PAD.l+10,x1:W-PAD.r-10,y0:PAD.t+210,y1:H-PAD.b-30}):({x0:PAD.l+40,x1:W-PAD.r-40,y0:PAD.t+150,y1:H-PAD.b-150});
 let BANDS={};
 const GAP=118;
 function makeBands(cnt){const b=inner(),lo=vert()?b.y0:b.x0,hi=vert()?b.y1:b.x1,order=["a","ab","b"].filter(g=>cnt[g]>0);
@@ -512,7 +626,7 @@ function build(){
     const n={id,type:"st",s,r:11,x:k?k.x:ax+gauss()*90,y:k?k.y:ay+gauss()*90,vx:0,vy:0};nodes.push(n);nodeMap[id]=n;});
   show.forEach(e=>e.codes.forEach(c=>nodeMap["s"+c]&&edges.push({s:nodeMap[e.id],t:nodeMap["s"+c],o:Math.random()})));
   xlinks=R.links.map(l=>({s:nodeMap[l.x.id],t:nodeMap[l.y.id],w:l.w,l,o:Math.random()})).filter(l=>l.s&&l.t);
-  alpha=1;for(let i=0;i<320;i++)tick();alpha=.02;
+  alpha=1;for(let i=0;i<320;i++)tick();alpha=.02;BUILT=performance.now();
 }
 function tick(){
   if(alpha<.004)return;
@@ -564,6 +678,7 @@ function drawDoctor(o,col,u,isSel){
   ctx.save();ctx.beginPath();ctx.arc(x,y,r-1.2*u,0,7);ctx.clip();
   ctx.fillStyle=rgba(col,.12);ctx.fillRect(x-r,y-r,r*2,r*2);
   if(e.heat===4&&AV_IMG.complete&&AV_IMG.naturalWidth){ctx.drawImage(AV_IMG,x-r,y-r,r*2,r*2);}else{
+  const L=look(e.src);
   // 白袍肩線與領口
   ctx.fillStyle="#ffffff";ctx.strokeStyle=rgba(COL.ink,.55);ctx.lineWidth=.8*u;
   ctx.beginPath();ctx.moveTo(x-r*1.05,y+r);ctx.quadraticCurveTo(x-r*.95,y+r*.18,x,y+r*.12);ctx.quadraticCurveTo(x+r*.95,y+r*.18,x+r*1.05,y+r);ctx.closePath();ctx.fill();ctx.stroke();
@@ -572,8 +687,15 @@ function drawDoctor(o,col,u,isSel){
   ctx.strokeStyle=rgba(COL.ink,.7);ctx.lineWidth=.9*u;ctx.beginPath();ctx.moveTo(x-r*.34,y+r*.2);ctx.quadraticCurveTo(x-r*.42,y+r*.72,x-r*.05,y+r*.78);ctx.stroke();
   ctx.fillStyle=rgba(COL.ink,.75);ctx.beginPath();ctx.arc(x-r*.02,y+r*.8,r*.08,0,7);ctx.fill();
   // 頭部
-  ctx.fillStyle="#e8d9cb";ctx.strokeStyle=rgba(COL.ink,.45);ctx.beginPath();ctx.arc(x,y-r*.22,r*.3,0,7);ctx.fill();ctx.stroke();
-  ctx.fillStyle=rgba(COL.ink,.78);ctx.beginPath();ctx.arc(x,y-r*.3,r*.31,Math.PI*1.02,Math.PI*1.98);ctx.fill();
+  ctx.fillStyle=L.skin;ctx.strokeStyle="rgba(22,33,43,.45)";ctx.beginPath();ctx.arc(x,y-r*.22,r*.3,0,7);ctx.fill();ctx.stroke();
+  ctx.fillStyle=L.hair;ctx.beginPath();
+  if(L.style===0)ctx.arc(x,y-r*.3,r*.31,Math.PI*1.02,Math.PI*1.98);                        // 短髮
+  else if(L.style===1){ctx.arc(x,y-r*.28,r*.34,Math.PI*.9,Math.PI*2.1);ctx.rect(x-r*.34,y-r*.3,r*.1,r*.36);ctx.rect(x+r*.24,y-r*.3,r*.1,r*.36);} // 長髮
+  else if(L.style===2){ctx.arc(x,y-r*.42,r*.2,Math.PI,0);ctx.rect(x-r*.3,y-r*.44,r*.6,r*.1);}  // 手術帽
+  else ctx.arc(x,y-r*.34,r*.29,Math.PI*1.1,Math.PI*1.9);                                      // 平頭
+  ctx.fill();
+  if(L.cap){ctx.fillStyle=L.capc;ctx.beginPath();ctx.arc(x,y-r*.36,r*.31,Math.PI,0);ctx.fill();}
+  if(L.glasses){ctx.strokeStyle="rgba(22,33,43,.8)";ctx.lineWidth=Math.max(.6,r*.05);ctx.beginPath();ctx.arc(x-r*.12,y-r*.2,r*.085,0,7);ctx.moveTo(x+r*.205,y-r*.2);ctx.arc(x+r*.12,y-r*.2,r*.085,0,7);ctx.stroke();}
   }
   ctx.restore();
   ctx.strokeStyle=col;ctx.lineWidth=(e.heat>=5?2.6:e.heat>=4?2:1.4)*u;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.stroke();
@@ -597,9 +719,20 @@ function drawBed(o,u,t,focus){
     i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.stroke();
   // 床
   ctx.fillStyle=COL.sheet;ctx.strokeStyle=rgba(COL.ink,.7);ctx.lineWidth=1*u;rr(x-w/2,y-h/2,w,h,3*u);ctx.fill();ctx.stroke();
-  ctx.fillStyle=v==="up"?"#f6dada":v==="down"?"#d7eee2":"#e6ebef";rr(x-w/2+8*u,y-h/2+1.5*u,w-9.5*u,h-3*u,2*u);ctx.fill();
-  ctx.fillStyle="#fff";ctx.strokeStyle=rgba(COL.ink,.4);ctx.lineWidth=.7*u;rr(x-w/2+1.8*u,y-h/2+2.5*u,5*u,h-5*u,1.5*u);ctx.fill();ctx.stroke();
+  ctx.fillStyle=v==="up"?rgba(COL.up,.2):v==="down"?rgba(COL.down,.2):rgba(COL.mute,.18);rr(x-w/2+8*u,y-h/2+1.5*u,w-9.5*u,h-3*u,2*u);ctx.fill();
+  ctx.fillStyle=COL.sheet;ctx.strokeStyle=rgba(COL.ink,.4);ctx.lineWidth=.7*u;rr(x-w/2+1.8*u,y-h/2+2.5*u,5*u,h-5*u,1.5*u);ctx.fill();ctx.stroke();
   if(s.side==="both"){ctx.fillStyle=COL.br;rr(x+w/2-6*u,y-h/2-1*u,4*u,h+2*u,1*u);ctx.fill();}
+  // 家屬探病：外資、投信買超為紅、賣超為綠
+  const iv=INST[s.code];
+  if(iv&&!hidePx(s))[[iv[0],"外"],[iv[1],"投"]].forEach(([n,lab],k)=>{if(Math.abs(n)<50)return;const vx=x-w/2-7*u,vy=y-h/2+3*u+k*9*u;
+    ctx.fillStyle=n>0?COL.up:COL.down;ctx.beginPath();ctx.arc(vx,vy,3.8*u,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.font=`700 ${5.4*u}px ${FONT.sans}`;ctx.textAlign="center";ctx.fillText(lab,vx,vy+1.9*u);});
+  // 我的主治病人：金色星號
+  if(WATCH.has(s.code)){ctx.fillStyle="#e8b62c";ctx.font=`${12*u}px ${FONT.sans}`;ctx.textAlign="center";ctx.fillText("★",x+w/2+7*u,y-h/2+3*u);}
+  // 漲跌停：救護車送急診，鳴笛燈閃爍
+  if(s.q&&!hidePx(s)&&Math.abs(s.q.pct)>=9.5){const on=reduce||Math.floor(t*3)%2===0;
+    ctx.fillStyle=on?"#e23b3b":"#2b6fe0";ctx.beginPath();ctx.arc(x,my-4*u,3*u,0,7);ctx.fill();
+    ctx.fillStyle=on?"rgba(226,59,59,.25)":"rgba(43,111,224,.25)";ctx.beginPath();ctx.arc(x,my-4*u,7*u,0,7);ctx.fill();
+    const age=(performance.now()-BUILT)/1000;if(age<3.2&&!reduce)drawAmbulance(x-w/2-140*u*(1-ease(Math.min(1,age/2.2))),y,u,Math.min(1,(3.2-age)/0.6));}
   // 床頭牌
   ctx.textAlign="center";ctx.font=`700 ${11*u}px ${FONT.sans}`;ctx.fillStyle=rgba(COL.ink,.95);ctx.fillText(s.name,x,y+h/2+13*u);
   ctx.font=`600 ${11*u}px ${FONT.num}`;ctx.fillStyle=v==="na"?COL.mute:c;
@@ -616,7 +749,7 @@ function drawCorridor(r1,r2,cw,st,t,u,a,dir){
   const h=cw/2;
   ctx.save();ctx.globalAlpha=a;
   // 地面：延伸進兩房 9px，蓋掉開口處的房牆
-  ctx.fillStyle="#f8f6fb";ctx.beginPath();rect(s0-9,s1+9,-h+1.1*u,h-1.1*u);ctx.fill();
+  ctx.fillStyle=rgba(COL.br,.06);ctx.beginPath();rect(s0-9,s1+9,-h+1.1*u,h-1.1*u);ctx.fill();
   // 地面方格
   ctx.save();ctx.beginPath();rect(s0,s1,-h,h);ctx.clip();ctx.strokeStyle=rgba(COL.br,.07);ctx.lineWidth=u;ctx.beginPath();
   for(let s=s0+6;s<s1;s+=12){const [x0,y0]=P(s,-h),[x1,y1]=P(s,h);ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);}ctx.stroke();ctx.restore();
@@ -650,6 +783,7 @@ function along(path,u){let L=0;const seg=[];for(let i=1;i<path.length;i++){const
 function ecgGlyph(x,y,a,s,col,al){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.strokeStyle=rgba(col,al);ctx.lineWidth=1.4*s/10;ctx.lineJoin="round";ctx.beginPath();
   const P=[[-12,0],[-6,0],[-4,-2],[-2,0],[0,0],[1.5,6],[3.5,-12],[5.5,4],[7,0],[10,0],[12,-2.5],[14,0],[18,0]];P.forEach(([px,py],i)=>{i?ctx.lineTo(px*s/10,py*s/10):ctx.moveTo(px*s/10,py*s/10);});ctx.stroke();ctx.restore();}
 function focusSet(){
+  if(state.dock&&state.dock.type==="us"&&!state.hover){const u=US_LIST.find(x=>x.t===state.dock.t);return new Set((u?.tw||[]).map(c=>"s"+c));}
   const ch=state.tab==="chain"&&R.chains[state.chain];if(ch&&!state.hover)return new Set(ch.nodes);
   const f=state.hover||state.sel;if(!f)return null;const s=new Set([f.id]);
   edges.forEach(e=>{if(e.s===f)s.add(e.t.id);if(e.t===f)s.add(e.s.id);});
@@ -703,6 +837,7 @@ function draw(ts){
   for(let i=1;i<order.length;i++)drawCorridor(order[i-1],order[i],cw,st,t,u,roomA*intro,i===1&&order.length===3?1:-1);
   RM.forEach(([r,c,l,s])=>drawRoom(r,c,l,s,[],u,roomA,true));
   ctx.globalAlpha=1;
+  drawPads(u,t,F,intro);
   // 轉介虛線（跨棟關聯）
   xlinks.forEach(l=>{const on=F&&F.has(l.s.id)&&F.has(l.t.id)&&(l.s===state.sel||l.t===state.sel||l.s===state.hover||l.t===state.hover);if(!on&&F)return;
     ctx.strokeStyle=rgba(COL.br,on?.75:Math.min(.22,.06+l.w*.05));ctx.lineWidth=(on?1.4:.9)*u;ctx.setLineDash([4*u,4*u]);
@@ -730,7 +865,7 @@ function draw(ts){
     [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([sx,sy])=>{ctx.beginPath();ctx.moveTo(sel.x+sx*b,sel.y+sy*(b-L));ctx.lineTo(sel.x+sx*b,sel.y+sy*b);ctx.lineTo(sel.x+sx*(b-L),sel.y+sy*b);ctx.stroke();});}
   // 聚焦時顯示醫師診斷摘要
   if(state.sel)nodes.forEach(o=>{if(o.type!=="ev"||o===state.sel||!(F&&F.has(o.id)))return;const tt=o.e.t.length>16?o.e.t.slice(0,16)+"…":o.e.t;
-    ctx.font=`600 ${11*u}px ${FONT.serif}`;const w=ctx.measureText(tt).width+12*u;ctx.fillStyle="rgba(255,255,255,.94)";ctx.strokeStyle=rgba(gc(o.g),.6);ctx.lineWidth=.8*u;
+    ctx.font=`600 ${11*u}px ${FONT.serif}`;const w=ctx.measureText(tt).width+12*u;ctx.fillStyle=rgba(COL.sheet,.95);ctx.strokeStyle=rgba(gc(o.g),.6);ctx.lineWidth=.8*u;
     rr(o.x+o.r+4*u,o.y-o.r-16*u,w,18*u,3*u);ctx.fill();ctx.stroke();ctx.fillStyle=COL.ink;ctx.textAlign="left";ctx.fillText(tt,o.x+o.r+10*u,o.y-o.r-3*u);});
   ctx.restore();
   titleBlock();
@@ -745,30 +880,48 @@ function draw(ts){
 /* ================= 識別證與床頭卡 ================= */
 const gName={a:"A 棟",b:"B 棟",ab:"聯合會診",o:"其他"};
 const sentTxt=s=>s>0?'<span class="up">利多</span>':s<0?'<span class="down">利空</span>':"中性";
-const avatarSVG=col=>`<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="15" r="7" fill="#e8d9cb" stroke="#16212b" stroke-opacity=".4"/><path d="M13 14a7 7 0 0 1 14 0c-2-3-12-3-14 0z" fill="#16212b" fill-opacity=".8"/><path d="M5 40c1-11 7-15 15-15s14 4 15 15z" fill="#fff" stroke="#16212b" stroke-opacity=".5"/><path d="M17 25l3 9 3-9z" fill="${col}"/></svg>`;
+// 依新聞來源決定醫師長相：同一家媒體永遠是同一位醫師
+function look(src){let h=0;for(const ch of String(src||""))h=(h*31+ch.charCodeAt(0))>>>0;
+  const skins=["#f1d6c2","#e8c7a8","#d9b090","#f5dccb"],hairs=["#2b2420","#5a3b26","#1d1d1f","#8a6a4a","#b9b2a8"],caps=["#2f7fb8","#3e9b73","#7a5aa8","#c8573f"];
+  return {skin:skins[h%4],hair:hairs[(h>>3)%5],style:(h>>6)%4,glasses:((h>>9)%3)===0,cap:((h>>11)%5)===0,capc:caps[(h>>13)%4]};}
+const avatarSVG=(col,src)=>{const L=look(src);return `<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="15" r="7" fill="${L.skin}" stroke="#16212b" stroke-opacity=".4"/><path d="${L.style===1?"M12 16a8 8 0 0 1 16 0v4h-2v-5h-12v5h-2z":L.style===2?"M14 12a6 5 0 0 1 12 0z":"M13 14a7 7 0 0 1 14 0c-2-3-12-3-14 0z"}" fill="${L.style===2?"#3e9b73":L.hair}"/>${L.glasses?'<g fill="none" stroke="#16212b" stroke-width="1"><circle cx="17" cy="15.5" r="2"/><circle cx="23" cy="15.5" r="2"/><path d="M19 15.5h2"/></g>':""}<path d="M5 40c1-11 7-15 15-15s14 4 15 15z" fill="#fff" stroke="#16212b" stroke-opacity=".5"/><path d="M17 25l3 9 3-9z" fill="${col}"/></svg>`;};
+const avatarOld=col=>`<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="15" r="7" fill="#e8d9cb" stroke="#16212b" stroke-opacity=".4"/><path d="M13 14a7 7 0 0 1 14 0c-2-3-12-3-14 0z" fill="#16212b" fill-opacity=".8"/><path d="M5 40c1-11 7-15 15-15s14 4 15 15z" fill="#fff" stroke="#16212b" stroke-opacity=".5"/><path d="M17 25l3 9 3-9z" fill="${col}"/></svg>`;
 function dxTag(s){if(hidePx(s))return "";return s.react==="ok"?`<span class="dxm ok ${s.net>0?"pos":""}">診斷相符</span>`:s.react==="div"?'<span class="dxm bad">診斷不符</span>':`<span class="dxm na">${s.q?"無方向":"未量測"}</span>`;}
 function cardHTML(n){
   if(n.type==="ev"){const e=n.e,col=gc(e.g);
     return `<div class="band" style="background:${col}"><b>${e.g==="ab"?"聯合會診中心":gName[e.g]+"　"+esc(dept(e.g==="a"?state.A:state.B))}</b><button data-x aria-label="關閉">×</button></div>
-      <div class="inner"><div class="idrow"><div class="ph">${e.heat===4?`<img src="${AVATAR}" alt="" style="width:52px;height:52px;border-radius:50%;object-fit:cover">`:avatarSVG(col)}</div><div><div class="role">${e.g==="ab"?"會診":""}${RANK[e.heat]}　<span class="num">${e.cat}</span></div><div class="nm">${esc(e.src)}</div></div></div>
+      <div class="inner"><div class="idrow"><div class="ph">${e.heat===4?`<img src="${AVATAR}" alt="" style="width:52px;height:52px;border-radius:50%;object-fit:cover">`:avatarSVG(col,e.src)}</div><div><div class="role">${e.g==="ab"?"會診":""}${RANK[e.heat]}　<span class="num">${e.cat}</span></div><div class="nm">${esc(e.src)}</div></div></div>
       <div class="dx">${esc(e.t)}</div>
       <div class="meta">${esc(e.d)}　診斷：${sentTxt(e.sent)}　主訴：${e.themes.map(esc).join("、")}</div>
       ${e.codes.length?`<div class="meta">收治病人</div><div class="pts">${e.codes.map(c=>{const s=R.stocks.find(x=>x.code===c),q=quote(c),v=s?vital(s):"na";
         return `<button class="pt" data-go="s${c}"><span>${esc(UNI[c]?.[1]||c)}</span><span class="num ${v}">${v==="na"?"—":pct(q)}</span></button>`;}).join("")}</div>`:'<div class="meta">這位醫師沒有收治上市櫃病人</div>'}
       ${e.u?`<div class="meta"><a href="${esc(e.u)}" target="_blank" rel="noopener" style="color:inherit">閱讀原始新聞</a></div>`:""}</div>`;}
   const s=n.s,v=vital(s),col=s.side==="both"?COL.br:gc(s.side);
-  return `<div class="band" style="background:${col}"><b>${s.side==="both"?"共同照護病人":gName[s.side]+"　"+esc(dept(s.side==="a"?state.A:state.B))}</b><button data-x aria-label="關閉">×</button></div>
+  return `<div class="band" style="background:${col}"><b>${s.side==="both"?"共同照護病人":gName[s.side]+"　"+esc(dept(s.side==="a"?state.A:state.B))}</b><span><button class="star ${WATCH.has(s.code)?"on":""}" data-watch="${s.code}" aria-label="加入我的主治病人" title="加入我的主治病人">★</button>　<button data-x aria-label="關閉">×</button></span></div>
     <div class="inner"><div class="bed"><span class="no">${s.code}</span><span><div class="role">${esc(s.mk)}　${esc(s.ind)}病房</div><div class="nm">${esc(s.name)}</div></span></div>
     <div class="vit"><div><small>${ASOF_MD} 收盤</small><span class="num">${s.q&&v!=="na"?s.q.close.toLocaleString():"—"}</span></div><div><small>生命徵象</small><span class="num ${v}">${v==="na"?(s.q?"待揭曉":"未量測"):pct(s.q)}</span></div></div>
-    ${vitalCurve(s.code)}
+    ${diagBlock(s)}
+    ${vitalCurve(s.code,s.evs)}
+    ${labsBlock(s.code)}
+    ${usBlock(s.code)}
     <div class="meta">A 棟醫師 ${s.a} 位，B 棟醫師 ${s.b} 位，醫囑傾向 ${s.net>0?"+":""}${s.net}　${dxTag(s)}</div>
-    <div class="meta">主治團隊</div><div class="docs">${s.evs.slice(0,4).map(e=>`<button data-go="${e.id}"><span class="chip" style="background:${gc(e.g)}">${RANKS[e.heat]}</span><span>${esc(e.t)}</span></button>`).join("")}</div></div>`;
+    <div class="meta">主治團隊</div><div class="docs">${s.evs.slice(0,4).map(e=>`<button data-go="${e.id}"><span class="chip" style="background:${gc(e.g)}">${RANKS[e.heat]}</span><span>${esc(e.t)}</span></button>`).join("")}</div>
+    <div class="cbtns"><button class="cbtn" data-cert="${s.code}">開立診斷證明書</button></div>
+    <div class="disc">診斷與醫囑由新聞、股價、法人與營收自動歸納，只是觀察重點，不構成投資建議。</div></div>`;
 }
 function openCard(n){const c=$("card");if(!n){c.hidden=true;c.classList.remove("in");return;}
   c.innerHTML=cardHTML(n);c.hidden=false;c.classList.remove("in");void c.offsetWidth;c.classList.add("in");
-  c.querySelector("[data-x]").onclick=()=>select(null);
-  c.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>select(nodeMap[b.dataset.go]));}
-function placeCard(){const c=$("card");if(c.hidden||!state.sel)return;
+  wireCard(c);}
+function wireCard(c){
+  c.querySelector("[data-x]")&&(c.querySelector("[data-x]").onclick=()=>{state.dock=null;select(null);});
+  c.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const n=nodeMap[b.dataset.go];if(n){state.dock=null;select(n);}else jumpTo(b.dataset.go);});
+  c.querySelectorAll("[data-watch]").forEach(b=>b.onclick=()=>{toggleWatch(b.dataset.watch);b.classList.toggle("on",WATCH.has(b.dataset.watch));});
+  c.querySelectorAll("[data-cert]").forEach(b=>b.onclick=()=>certificate(b.dataset.cert));
+  c.querySelectorAll("[data-us]").forEach(b=>b.onclick=()=>openUS(b.dataset.us));
+  c.querySelectorAll("[data-out]").forEach(b=>b.onclick=()=>openOutpatient(b.dataset.out));}
+function placeCard(){const c=$("card");if(c.hidden)return;
+  if(state.dock&&!state.sel){if(vert()){c.style.left="12px";c.style.right="12px";c.style.top="64px";c.style.bottom="auto";}else{c.style.left=(W-PAD.r-c.offsetWidth-12)+"px";c.style.top=(PAD.t+50)+"px";c.style.right="auto";c.style.bottom="auto";}return;}
+  if(!state.sel)return;
   if(vert()){const [,sy]=toScreen(state.sel.x,state.sel.y);c.style.left="12px";c.style.right="12px";c.style.bottom="auto";
     c.style.top=Math.max(110,Math.min(H-c.offsetHeight-12,sy+46))+"px";return;}
   const [sx,sy]=toScreen(state.sel.x,state.sel.y),cw=c.offsetWidth,chh=c.offsetHeight;
@@ -791,7 +944,7 @@ function focusNode(n){
   const sxTarget=state.cardSide==="right"?PAD.l+15+availW/2:W-PAD.r-15-availW/2;
   flyTo((x0+x1)/2-(sxTarget-W/2)/kk,(y0+y1)/2+10/kk,kk);}
 function select(n){
-  state.sel=n||null;$("tip").hidden=true;
+  state.dock=null;state.sel=n||null;$("tip").hidden=true;
   if(n)focusNode(n);else resetView();
   openCard(n);
   if(n&&state.tab==="chain")setTab("obs");else render();
@@ -803,12 +956,16 @@ cv.addEventListener("pointermove",e=>{
   if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>4)drag.moved=true;
     if(drag.moved){camT.x=cam.x=drag.cx-dx/cam.k;camT.y=cam.y=drag.cy-dy/cam.k;cv.style.cursor="grabbing";$("tip").hidden=true;return;}}
   if(e.pointerType==="touch")return;const [x,y]=pos(e),h=hit(x,y);state.hover=h;cv.style.cursor=h?"pointer":"grab";
-  const tip=$("tip");if(!h||h===state.sel){tip.hidden=true;return;}tip.hidden=false;
+  const tip=$("tip");
+  if(!h){const pd=hitPad(x,y);state.hoverPad=pd;if(pd){cv.style.cursor="pointer";tip.hidden=false;
+    tip.innerHTML=`<div class="k">國際醫療中心　${esc(pd.t.replace("^",""))}</div><b>${esc(pd.n)}${pd.snap?`　<span class="${pd.snap.pct>0?"up":"down"}">${pd.snap.pct>0?"+":""}${pd.snap.pct.toFixed(2)}%</span>`:""}</b><div class="k">轉診病人：${pd.linked.map(c=>esc(UNI[c]?.[1]||c)).join("、")}，點一下看感染係數</div>`;
+    tip.style.left=Math.min(x+16,W-tip.offsetWidth-10)+"px";tip.style.top=Math.min(y+16,H-tip.offsetHeight-10)+"px";return;}}
+  if(!h||h===state.sel){tip.hidden=true;return;}tip.hidden=false;
   if(h.type==="ev")tip.innerHTML=`<div class="k">${h.g==="ab"?"會診":""}${RANK[h.e.heat]}　${esc(h.e.src)}　${esc(h.e.d)}</div><b>${esc(h.e.t)}</b><div class="k">點一下查看識別證</div>`;
   else{const s=h.s,v=vital(s);tip.innerHTML=`<div class="k">${s.code} 床　${esc(s.ind)}病房</div><b>${esc(s.name)}</b><div class="k">${v==="na"?(s.q?"生命徵象待揭曉":"未量測"):`生命徵象 <span class="${v}">${pct(s.q)}</span>`}</div>`;}
   tip.style.left=Math.min(x+16,W-tip.offsetWidth-10)+"px";tip.style.top=Math.min(y+16,H-tip.offsetHeight-10)+"px";});
 cv.addEventListener("pointerleave",()=>{state.hover=null;$("tip").hidden=true;});
-cv.addEventListener("click",e=>{if(suppress){suppress=false;return;}const [x,y]=pos(e);select(hit(x,y));});
+cv.addEventListener("click",e=>{if(suppress){suppress=false;return;}const [x,y]=pos(e);const pd=hitPad(x,y);if(pd){openUS(pd.t);return;}select(hit(x,y));});
 cv.addEventListener("dblclick",()=>select(null));
 cv.addEventListener("wheel",e=>{e.preventDefault();const [sx,sy]=pos(e),[wx,wy]=toWorld(sx,sy);
   const k2=Math.max(.6,Math.min(3,camT.k*Math.exp(-e.deltaY*.0016)));camT.k=k2;camT.x=wx-(sx-W/2)/k2;camT.y=wy-(sy-H/2)/k2;},{passive:false});
@@ -849,15 +1006,16 @@ function chainHTML(){
       <div class="pth">${c.nodes.map(lab).join('<span class="ar">→</span>')}</div><div class="why">${esc(c.why)}</div></span></button>`).join("")+"</div>";}
 function bestScore(){try{return +localStorage.getItem("hospital_best")||0}catch(e){return 0}}
 function saveBest(v){try{localStorage.setItem("hospital_best",v)}catch(e){}}
-function newQuiz(){const pool=R.stocks.filter(s=>s.q&&s.q.chg!==0).slice(0,10);state.quiz={pool,i:0,score:0,streak:0,hits:0,model:0,ans:null,rev:new Set()};
+function newQuiz(){const pool=R.stocks.filter(s=>s.q&&s.q.chg!==0).slice(0,10);state.daily=false;state.quiz={pool,i:0,score:0,streak:0,hits:0,model:0,ans:null,rev:new Set()};
   const n=pool[0]?nodeMap["s"+pool[0].code]:null;state.sel=n;openCard(n);if(n)focusNode(n);render();}
 function quizHTML(){
   const Q=state.quiz,pool=R.stocks.filter(s=>s.q&&s.q.chg!==0);
-  if(!Q)return `<section class="intro"><h2>預後挑戰</h2>
+  if(!Q)return roundsIntro()+`<section class="intro"><h2>自由查房</h2>
     <p>從這兩科挑出最多 10 位病人，只看醫師們的診斷（相關新聞），判斷病人 ${ASOF_MD} 是好轉（收漲）還是惡化（收跌）。答對得 10 分，連續答對每題多 5 分。</p>
     <p>院內的 AI 判讀系統會同時作答，它只把醫師診斷的利多利空加總。股價常常先反映消息，所以「診斷不符」的病人最容易判斷錯，也最能拉開差距。</p>
     <p class="note">這組科別可出 ${pool.length} 題（沒有行情的病人不出題）。你的最高分 <span class="num" style="font-size:16px;color:var(--ink)">${bestScore()}</span></p>
     ${pool.length?'<button class="cta" id="qStart">開始查房</button>':""}</section>`;
+  if(Q.i>=Q.pool.length&&state.daily)return roundsDone(Q);
   if(Q.i>=Q.pool.length){const b=bestScore();if(Q.score>b)saveBest(Q.score);
     return `<section><h2>查房結束</h2><div class="board"><div><span class="num">${Q.score}</span><span>分數</span></div><div><span class="num">${Q.hits}/${Q.pool.length}</span><span>你判斷正確</span></div><div><span class="num">${Q.model}/${Q.pool.length}</span><span>AI 判讀正確</span></div></div>
       <p class="note" style="margin-top:12px">${Q.hits>Q.model?"你贏過 AI 判讀系統，讀出了診斷以外的訊號。":Q.hits===Q.model?"和 AI 判讀系統打平。":"這輪 AI 判讀系統贏了，關鍵在診斷不符的病人。"}${Q.score>b?"這是新的最高分。":""}</p>
@@ -872,7 +1030,7 @@ function quizHTML(){
       <button class="cta" id="qNext">${Q.i+1<Q.pool.length?"下一床":"看查房結果"}</button></div>`:""}</section>`;}
 function bet(v){const Q=state.quiz,s=Q.pool[Q.i],a=Math.sign(s.q.chg);Q.ans=v;Q.rev.add(s.code);
   if(v===a){Q.streak++;Q.hits++;Q.score+=10+(Q.streak-1)*5;}else Q.streak=0;if((Math.sign(s.net)||1)===a)Q.model++;
-  openCard(nodeMap["s"+s.code]);render();}
+  const nn=nodeMap["s"+s.code];if(nn)openCard(nn);else openOutpatient(s.code);render();}
 
 /* ================= 招牌與選單 ================= */
 function header(){
@@ -932,8 +1090,9 @@ function themeStats(){
   const real=DATES.filter(o=>o!==1000).slice(-7),ds=Array(7-real.length).fill(-1).concat(real),m={};
   EVENTS.forEach(e=>e.themes.forEach(t=>{const s=m[t]||(m[t]={t,n:0,pos:0,neg:0,days:ds.map(()=>0)});s.n++;if(e.sent>0)s.pos++;if(e.sent<0)s.neg++;
     const k=ds.indexOf(e.o);if(k>=0)s.days[k]++;}));
+  Object.values(m).forEach(s=>{const k=s.days.length,last=s.days[k-1],prev=s.days.slice(0,k-1).filter((x,i)=>ds[i]!==-1),avg=prev.length?prev.reduce((a,b)=>a+b,0)/prev.length:0;s.burst=last>=4&&last>=2*Math.max(.5,avg);});
   return {ds,list:Object.values(m).sort((a,b)=>b.n-a.n)};}
-function ovwHTML(){
+function ovwHTMLold(){
   const last=DATES.filter(o=>o!==1000).at(-1),recent=DATES.filter(o=>o!==1000).slice(-2);
   const today=EVENTS.filter(e=>e.o===last);
   const named=new Map();EVENTS.filter(e=>recent.includes(e.o)).forEach(e=>e.codes.forEach(c=>{const q=quote(c);if(q){const x=named.get(c)||{c,q,n:0,e};x.n++;named.set(c,x);}}));
@@ -953,7 +1112,7 @@ function ovwHTML(){
       <div><small>AI 判讀命中率</small><span class="num">${ai.n>=8?Math.round(ai.hit/ai.n*100)+"%":"—"}</span><span class="sub">${ai.n>=8?`近 ${ai.n} 筆新聞隔日驗證`:"歷史行情累積中"}</span></div>
     </div></section>
   <section><h2>科別聲量</h2><p class="note">長條是近 7 個新聞日每天的則數；色條是利多、中性、利空的比例。按 A、B 指派到兩棟</p>
-    ${top.map(s=>`<div class="th-row"><span class="nm">${esc(dept(s.t))}<span class="num">${s.n}</span></span>
+    ${top.map(s=>`<div class="th-row"><span class="nm">${esc(dept(s.t))}<span class="num">${s.n}</span>${s.burst?'<span class="burst">爆量</span>':""}</span>
       <span title="近 7 個新聞日的則數">${bars(s.days,mxN,74,22)}</span>
       <span class="bal" title="利多 ${s.pos}、利空 ${s.neg}"><i style="width:${s.pos/s.n*100}%;background:var(--up)"></i><i style="width:${(s.n-s.pos-s.neg)/s.n*100}%;background:var(--line)"></i><i style="width:${s.neg/s.n*100}%;background:var(--down)"></i></span>
       <span class="ab"><button class="a ${state.A===s.t?"on":""}" data-set="A|${esc(s.t)}" aria-label="設為 A 棟">A</button><button class="b ${state.B===s.t?"on":""}" data-set="B|${esc(s.t)}" aria-label="設為 B 棟">B</button></span></div>`).join("")}</section>
@@ -961,13 +1120,13 @@ function ovwHTML(){
     <div class="mx" style="grid-template-columns:6.4em repeat(${M.length},minmax(0,1fr))"><span></span>${M.map((t,i)=>`<span class="h" title="${esc(t)}">${i+1}</span>`).join("")}
     ${M.map((a,i)=>`<span class="rh" title="${esc(a)}"><b class="num" style="color:var(--ink);margin-right:4px">${i+1}</b>${esc(a.length>5?a.slice(0,5):a)}</span>`+M.map((b,j)=>{if(i===j)return '<span class="dg"></span>';const v=idxOf(i,j);
       const cur=(a===state.A&&b===state.B)||(a===state.B&&b===state.A);
-      return `<button class="${cur?"cur":""}" data-pair="${esc(a)}|${esc(b)}" title="${esc(a)} × ${esc(b)}：${v}" style="background:color-mix(in srgb,${COL.br} ${Math.round(v*.9)}%,#f6f3f9);color:${v>55?"#fff":COL.ink}">${v||""}</button>`;}).join("")).join("")}</div>
+      return `<button class="${cur?"cur":""}" data-pair="${esc(a)}|${esc(b)}" title="${esc(a)} × ${esc(b)}：${v}" style="background:color-mix(in srgb,${COL.br} ${Math.round(v*.9)}%,${COL.sheet});color:${v>55?"#fff":COL.ink}">${v||""}</button>`;}).join("")).join("")}</div>
     <div class="mxkey">弱<i></i>強</div></section>
   <section><h2>病危通知與好轉出院</h2><p class="note">近兩天新聞點名的股票中，${ASOF_MD} 跌最多與漲最多的</p>
     <div class="movers"><div class="mv"><h3><i style="background:var(--down)"></i>病危通知</h3>${down.filter(x=>x.q.chg<0).map(mvRow).join("")||'<p class="note">沒有下跌的病人</p>'}</div>
     <div class="mv"><h3><i style="background:var(--up)"></i>好轉出院</h3>${up.map(mvRow).join("")||'<p class="note">沒有上漲的病人</p>'}</div></div></section>`;}
 // 跳到某則新聞或某檔股票：若不在目前兩科，自動換成它所屬的科別
-function jumpTo(id){
+function jumpTo(id,keepQuiz){
   if(state.upto!==DATES.at(-1)){state.upto=DATES.at(-1);$("range").value=DATES.length-1;}
   let n=nodeMap[id];
   if(!n){
@@ -978,7 +1137,7 @@ function jumpTo(id){
     if(!ts.length){toast("這則新聞沒有對應的科別，無法顯示在平面圖");return;}
     if(!ts.includes(state.A)&&!ts.includes(state.B)){state.A=ts[0];
       if(ts[1])state.B=ts[1];else if(state.B===state.A)state.B=Object.keys(themeCounts()).find(t=>t!==state.A)||state.B;}
-    keep={};refresh();n=nodeMap[id];
+    keep={};refresh(keepQuiz);n=nodeMap[id];
   }
   if(n)select(n);else toast("在目前的日期範圍找不到這個項目");
 }
@@ -990,9 +1149,316 @@ function renderTicker(){
   $("tkRun").innerHTML=one+one;$("tkRun").style.setProperty("--dur",Math.max(40,items.length*7)+"s");
   $("tkRun").querySelectorAll("[data-ev]").forEach(b=>b.onclick=()=>jumpTo(b.dataset.ev));
 }
+/* ================= 診間擴充：診斷、國際醫療、疾管署、放射科、查房、證明書 ================= */
+let BUILT=0,PADS=[];
+// ---------- 我的主治病人 ----------
+let WATCH=new Set();try{WATCH=new Set(JSON.parse(localStorage.getItem("laji_watch")||"[]"));}catch(e){}
+function toggleWatch(c){WATCH.has(c)?WATCH.delete(c):WATCH.add(c);try{localStorage.setItem("laji_watch",JSON.stringify([...WATCH]));}catch(e){}
+  toast(WATCH.has(c)?`已把 ${UNI[c]?.[1]||c} 列為你的主治病人`:`已移除 ${UNI[c]?.[1]||c}`);if(state.tab==="ovw")render();}
+
+// ---------- 小工具 ----------
+const NEWS_DATES=()=>DATES.filter(o=>o!==1000);
+const recentEvents=(n=3)=>{const ds=NEWS_DATES().slice(-n);return EVENTS.filter(e=>ds.includes(e.o));};
+function netAll(code,n=3){let v=0,k=0;recentEvents(n).forEach(e=>{if(e.codes.includes(code)){v+=sentFor(e,code)*e.heat;k++;}});return {v,k};}
+const LIGHT={green:"#2f9a5d",amber:"#e0a81c",red:"#d6452f"};
+const fmtK=n=>Math.abs(n)>=1000?(n/1000).toFixed(1)+"k":String(n);
+function drawAmbulance(x,y,u,a){ctx.save();ctx.globalAlpha*=a;ctx.translate(x,y);
+  ctx.fillStyle="#fff";ctx.strokeStyle="rgba(22,33,43,.7)";ctx.lineWidth=u;rr(-16*u,-9*u,32*u,15*u,3*u);ctx.fill();ctx.stroke();
+  ctx.fillStyle="#e23b3b";ctx.fillRect(-4*u,-6.5*u,8*u,2.4*u);ctx.fillRect(-1.2*u,-9*u,2.4*u,7.4*u);
+  ctx.fillStyle="#2b6fe0";ctx.fillRect(6*u,-11*u,4*u,2.4*u);ctx.fillStyle="#16212b";[-9,9].forEach(k=>{ctx.beginPath();ctx.arc(k*u,6.5*u,3*u,0,7);ctx.fill();});ctx.restore();}
+
+// ---------- 國際醫療中心：美股 → 台股轉診與感染係數 ----------
+function corrUS(t,code){
+  if(!window.HIST||!HIST.us||!HIST.us[t]||!HIST.close[code])return null;
+  const ud=HIST.us_dates,ua=HIST.us[t],td=HIST.dates,ta=HIST.close[code],xs=[],ys=[];
+  for(let k=1;k<ud.length;k++){if(ua[k]==null||ua[k-1]==null)continue;const i=td.findIndex(d=>d>ud[k]);
+    if(i<1||ta[i]==null||ta[i-1]==null)continue;xs.push(ua[k]/ua[k-1]-1);ys.push(ta[i]/ta[i-1]-1);}
+  if(xs.length<8)return null;const mx=xs.reduce((a,b)=>a+b)/xs.length,my=ys.reduce((a,b)=>a+b)/ys.length;
+  let sxy=0,sx=0,sy=0;xs.forEach((x,i)=>{sxy+=(x-mx)*(ys[i]-my);sx+=(x-mx)**2;sy+=(ys[i]-my)**2;});
+  return sx&&sy?{r:sxy/Math.sqrt(sx*sy),n:xs.length}:null;}
+const usLinksFor=code=>US_LIST.filter(u=>u.tw.includes(code)).map(u=>({u,snap:USD[u.t],c:corrUS(u.t,code)}));
+function layoutPads(){
+  PADS=[];const rs=["a","ab","b"].map(roomOf).filter(Boolean);if(!rs.length||!US_LIST.length)return;
+  const cand=US_LIST.map(u=>{const linked=u.tw.filter(c=>nodeMap["s"+c]);const hit=u.themes.some(t=>t===state.A||t===state.B);
+    return {u,linked,score:linked.length*2+(hit?1:0)};}).filter(x=>x.linked.length).sort((a,b)=>b.score-a.score).slice(0,vert()?3:6);
+  if(!cand.length)return;
+  const x0=Math.min(...rs.map(r=>r.x0)),x1=Math.max(...rs.map(r=>r.x1)),y=Math.min(...rs.map(r=>r.y0))-78;
+  cand.forEach((c,i)=>PADS.push({t:c.u.t,n:c.u.n,linked:c.linked,x:x0+60+(x1-x0-120)*(cand.length===1?.5:i/(cand.length-1)),y,snap:USD[c.u.t]}));}
+function drawPads(u,t,F,intro){
+  layoutPads();if(!PADS.length)return;
+  const y=PADS[0].y,xa=Math.min(...PADS.map(p=>p.x))-70,xb=Math.max(...PADS.map(p=>p.x))+70;
+  ctx.save();ctx.globalAlpha=intro*(F&&!state.dock?.5:1);
+  // 頂樓平台
+  ctx.fillStyle=rgba(COL.ink,.035);ctx.strokeStyle=rgba(COL.ink,.35);ctx.lineWidth=u;ctx.setLineDash([5*u,4*u]);rr(xa,y-34,xb-xa,68,12);ctx.fill();ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle=COL.ink;rr(xa+10,y-46,150*u,20*u,3*u);ctx.fill();ctx.fillStyle=COL.sheet;ctx.font=`700 ${11*u}px ${FONT.sans}`;ctx.textAlign="left";ctx.fillText("頂樓　國際醫療中心停機坪",xa+18,y-46+14*u);
+  PADS.forEach(p=>{const on=state.hoverPad===p||(state.dock&&state.dock.t===p.t);
+    // 到台灣病人的轉診航線
+    p.linked.forEach(c=>{const b=nodeMap["s"+c];if(!b)return;const show=on||(F&&F.has(b.id));if(!show&&F)return;
+      ctx.strokeStyle=rgba(COL.br,show?.7:.12);ctx.lineWidth=(show?1.3:.8)*u;ctx.setLineDash([2*u,4*u]);ctx.beginPath();ctx.moveTo(p.x,p.y+20);ctx.quadraticCurveTo(p.x,(p.y+b.y)/2,b.x,b.y-20*u);ctx.stroke();ctx.setLineDash([]);
+      if(show&&!reduce){const k=(t*.4+c.charCodeAt(3)*.07)%1,v=1-k,qx=v*v*p.x+2*v*k*p.x+k*k*b.x,qy=v*v*(p.y+20)+2*v*k*(p.y+b.y)/2+k*k*(b.y-20*u);ctx.fillStyle=COL.br;ctx.beginPath();ctx.arc(qx,qy,2.4*u,0,7);ctx.fill();}});
+    // 停機坪
+    ctx.fillStyle=COL.sheet;ctx.strokeStyle=on?COL.br:rgba(COL.ink,.7);ctx.lineWidth=(on?2.4:1.4)*u;ctx.beginPath();ctx.arc(p.x,p.y,20,0,7);ctx.fill();ctx.stroke();
+    ctx.strokeStyle=rgba(COL.ink,.25);ctx.lineWidth=u;ctx.beginPath();ctx.arc(p.x,p.y,15,0,7);ctx.stroke();
+    ctx.fillStyle=COL.ink;ctx.font=`800 ${15}px ${FONT.num}`;ctx.textAlign="center";ctx.fillText("H",p.x,p.y+5.5);
+    const pc=p.snap?.pct;ctx.font=`700 ${11*u}px ${FONT.sans}`;ctx.fillStyle=COL.ink;ctx.fillText(p.n,p.x,p.y+34);
+    if(pc!=null){ctx.font=`600 ${11.5*u}px ${FONT.num}`;ctx.fillStyle=pc>0?COL.up:pc<0?COL.down:COL.mute;ctx.fillText(`${p.t.replace("^","")} ${pc>0?"+":""}${pc.toFixed(2)}%`,p.x,p.y+46);}
+  });ctx.restore();}
+function hitPad(sx,sy){const [x,y]=toWorld(sx,sy);return PADS.find(p=>Math.hypot(p.x-x,p.y-y)<26)||null;}
+function usCardHTML(t){
+  const u=US_LIST.find(x=>x.t===t)||{t,n:t,tw:[],themes:[]},s=USD[t];
+  const arr=window.HIST&&HIST.us&&HIST.us[t]?HIST.us[t].slice(-40):[];
+  const rows=u.tw.map(c=>({c,q:quote(c),k:corrUS(t,c)})).sort((a,b)=>(b.k?.r??-2)-(a.k?.r??-2));
+  return `<div class="band" style="background:${COL.ink}"><b>國際醫療中心　海外轉診</b><button data-x aria-label="關閉">×</button></div>
+  <div class="inner"><div class="bed"><span class="no" style="font-size:30px">${esc(t.replace("^",""))}</span><span><div class="role">美股${u.index?"指數":""}　${u.themes.map(esc).join("、")||"大盤"}</div><div class="nm">${esc(u.n)}</div></span></div>
+  <div class="vit"><div><small>${s?esc(s.date.slice(5).replace("-","/")):"—"} 收盤</small><span class="num">${s?s.v.toLocaleString():"—"}</span></div><div><small>當晚漲跌</small><span class="num ${s?.pct>0?"up":s?.pct<0?"down":"flat"}">${s?(s.pct>0?"+":"")+s.pct.toFixed(2)+"%":"—"}</span></div></div>
+  ${arr.filter(x=>x!=null).length>2?`<div class="ecg"><div class="hd"><span>海外生命徵象　近 ${arr.length} 個交易日</span></div>${sparkSVG(arr,260,50,COL.ink,{grid:true,area:true})}</div>`:""}
+  <div class="meta">轉診到台灣的病人（感染係數：這家美股當晚漲跌與台股隔天漲跌的相關性，越接近 1 越同步）</div>
+  <div>${rows.map(r=>`<button class="uslink" data-go="s${r.c}"><span>${esc(UNI[r.c]?.[1]||r.c)} <span class="num" style="color:var(--mute)">${r.c}</span></span><span class="num ${r.q?.chg>0?"up":r.q?.chg<0?"down":"flat"}">${r.q?pct(r.q):"—"}</span><span class="num" title="樣本 ${r.k?.n||0} 天">${r.k?"感染 "+r.k.r.toFixed(2):"資料累積中"}</span></button>`).join("")}</div>
+  <div class="disc">美股收盤在台灣時間清晨，台股隔天開盤反應，所以用「美股當晚 → 台股隔天」計算，相當於一天的潛伏期。</div></div>`;}
+function openUS(t){state.sel=null;state.dock={type:"us",t};const c=$("card");c.innerHTML=usCardHTML(t);c.hidden=false;c.classList.remove("in");void c.offsetWidth;c.classList.add("in");wireCard(c);
+  const u=US_LIST.find(x=>x.t===t),p=PADS.find(x=>x.t===t),ns=(u?.tw||[]).map(c=>nodeMap["s"+c]).filter(Boolean);
+  if(p)ns.push({x:p.x,y:p.y});if(ns.length&&!vert()){state.cardSide="right";let x0=Math.min(...ns.map(n=>n.x)),x1=Math.max(...ns.map(n=>n.x)),y0=Math.min(...ns.map(n=>n.y)),y1=Math.max(...ns.map(n=>n.y));
+    const availW=W-PAD.l-PAD.r-360,kk=Math.max(.6,Math.min(1.5,availW/(x1-x0+160),(H-220)/(y1-y0+200)));flyTo((x0+x1)/2-((PAD.l+15+availW/2)-W/2)/kk,(y0+y1)/2,kk);}
+  render();}
+
+// ---------- 綜合診斷：主訴＋生命徵象＋家屬＋檢驗＋海外病史 → 病情分級與醫囑 ----------
+const STAGES={
+  recover:{l:"康復中",c:"#d0473b",rx:"消息與股價同向，趨勢延續中，持續追蹤即可；留意漲多後的回檔。"},
+  nopush:{l:"利多不漲",c:"#b7791f",rx:"好消息但股價不買單，留意利多出盡；可降低劑量、等待股價重新確認方向。"},
+  resist:{l:"利空不跌",c:"#71489a",rx:"壞消息股價卻撐住，可能已提前反映，安排複診：觀察是否量縮止穩。"},
+  critical:{l:"病危",c:"#1f7a53",rx:"利空與賣壓同時出現，先隔離觀察，避免逆勢加碼，等待止跌訊號。"},
+  chips:{l:"籌碼先行",c:"#2b5fb4",rx:"還沒有明顯消息，但法人家屬已在進場，列入觀察名單，追蹤消息是否跟上。"},
+  leave:{l:"家屬撤離",c:"#5b6b78",rx:"消息面平靜但法人在賣，留意籌碼鬆動，暫緩加碼。"},
+  observe:{l:"觀察中",c:"#8d9ba7",rx:"訊號還不明確，維持觀察，等新的消息或價量變化。"}};
+function diagnose(code){
+  const q=quote(code),{v:net,k}=netAll(code),iv=INST[code],rv=REV[code],links=usLinksFor(code).filter(x=>x.snap);
+  const pos=net>=3,neg=net<=-3,up=q&&q.pct>.3,dn=q&&q.pct<-.3,fam=iv?iv[0]+iv[1]:0;
+  let st="observe";
+  if(pos&&up)st="recover";else if(pos&&dn)st="nopush";else if(neg&&up)st="resist";else if(neg&&dn)st="critical";
+  else if(!pos&&!neg&&fam>=300)st="chips";else if(!pos&&!neg&&fam<=-300)st="leave";
+  const why=[];
+  why.push(k?`主訴：近 3 天 ${k} 則新聞，情緒淨值 ${net>0?"+":""}${net}（${pos?"偏多":neg?"偏空":"中性"}）`:"主訴：近 3 天沒有新聞");
+  if(q)why.push(`生命徵象：${ASOF_MD} 收盤 ${pct(q)}`);
+  if(iv)why.push(`家屬探病：外資 ${iv[0]>0?"+":""}${fmtK(iv[0])} 張、投信 ${iv[1]>0?"+":""}${fmtK(iv[1])} 張`);
+  if(rv&&rv[2]!=null)why.push(`檢驗報告：${rv[0].slice(0,-2)}/${rv[0].slice(-2)} 月營收年增 ${rv[2]>0?"+":""}${rv[2].toFixed(1)}%${rv[2]>=20?"，體檢良好":rv[2]<=-10?"，體檢紅字":""}`);
+  if(links.length){const b=links.sort((a,b)=>Math.abs(b.snap.pct)-Math.abs(a.snap.pct))[0];why.push(`海外病史：${b.u.n} 當晚 ${b.snap.pct>0?"+":""}${b.snap.pct.toFixed(2)}%${b.c?`（感染係數 ${b.c.r.toFixed(2)}）`:""}`);}
+  return {st,...STAGES[st],why};}
+function diagBlock(s){if(hidePx(s))return `<div class="diag"><div class="hd"><b>綜合診斷</b><small>查房作答後揭曉</small></div></div>`;
+  const d=diagnose(s.code);
+  return `<div class="diag"><div class="hd"><span class="stage" style="background:${d.c}">${d.l}</span><small>綜合診斷</small></div><div class="rx">醫囑：${d.rx}</div><ul>${d.why.map(w=>`<li>${esc(w)}</li>`).join("")}</ul></div>`;}
+function labsBlock(code){const rv=REV[code],iv=INST[code];if(!rv&&!iv)return "";
+  const cell=(t,v,cls,em)=>`<div><small>${t}</small><span class="num ${cls||""}">${v}</span>${em?`<em>${em}</em>`:""}</div>`;
+  return `<div class="labs">${cell("檢驗：營收年增",rv&&rv[2]!=null?(rv[2]>0?"+":"")+rv[2].toFixed(1)+"%":"—",rv&&rv[2]>0?"up":rv&&rv[2]<0?"down":"",rv?`${rv[0].slice(0,-2)}/${rv[0].slice(-2)} 月 ${rv[1]} 億`:"")}
+    ${cell("海外家屬：外資",iv?(iv[0]>0?"+":"")+fmtK(iv[0]):"—",iv&&iv[0]>0?"up":iv&&iv[0]<0?"down":"","張")}
+    ${cell("本地家屬：投信",iv?(iv[1]>0?"+":"")+fmtK(iv[1]):"—",iv&&iv[1]>0?"up":iv&&iv[1]<0?"down":"","張")}</div>`;}
+function usBlock(code){const ls=usLinksFor(code);if(!ls.length)return "";
+  return `<div><div class="meta">海外病史（點選看國際醫療中心）</div>${ls.map(x=>`<button class="uslink" data-us="${esc(x.u.t)}"><span>${esc(x.u.n)} <span class="num" style="color:var(--mute)">${esc(x.u.t.replace("^",""))}</span></span><span class="num ${x.snap?.pct>0?"up":x.snap?.pct<0?"down":"flat"}">${x.snap?(x.snap.pct>0?"+":"")+x.snap.pct.toFixed(2)+"%":"—"}</span><span class="num">${x.c?"感染 "+x.c.r.toFixed(2):"累積中"}</span></button>`).join("")}</div>`;}
+// 生命徵象曲線＋病程紀錄（每則新聞標在曲線上）
+function vitalCurve(code,evs){
+  const hs=R&&R.stocks.find(x=>x.code===code)||{code,q:quote(code)};
+  if(state.tab==="quiz"&&state.quiz&&!state.quiz.rev.has(code))return `<div class="ecg"><div class="hd"><span>生命徵象曲線</span><span>查房作答後揭曉</span></div></div>`;
+  if(!window.HIST||!HIST.close[code])return `<div class="ecg"><div class="hd"><span>生命徵象曲線</span><span>紀錄累積中</span></div></div>`;
+  const arr=HIST.close[code].slice(-30),ds=HIST.dates.slice(-30),v=arr.filter(x=>x!=null);
+  if(v.length<3)return `<div class="ecg"><div class="hd"><span>生命徵象曲線</span><span>紀錄累積中，${v.length} 天</span></div></div>`;
+  const W0=260,H0=62,pad=3,mn=Math.min(...v),mx=Math.max(...v),rg=mx-mn||1,n=arr.length;
+  const X=i=>pad+i*(W0-pad*2)/(n-1),Y=x=>pad+(1-(x-mn)/rg)*(H0-16-pad);
+  const pts=arr.map((x,i)=>x==null?null:[X(i),Y(x)]).filter(Boolean),d=pts.map((q,i)=>(i?"L":"M")+q[0].toFixed(1)+" "+q[1].toFixed(1)).join("");
+  const ch=(v.at(-1)/v[0]-1)*100,col=ch>0?COL.up:ch<0?COL.down:COL.mute;
+  const marks=[];(evs||[]).forEach(e=>{const iso=e.date||isoOf(e.o);if(!iso)return;let i=ds.findIndex(x=>x>=iso);if(i<0)i=n-1;marks.push({i,e});});
+  const byI={};marks.forEach(m=>{(byI[m.i]=byI[m.i]||[]).push(m.e);});
+  return `<div class="ecg"><div class="hd"><span>生命徵象曲線＋病程紀錄　${ds[arr.findIndex(x=>x!=null)].slice(5).replace("-","/")} 起</span><span class="num ${ch>0?"up":ch<0?"down":"flat"}" style="font-size:13px">${ch>0?"+":""}${ch.toFixed(1)}%</span></div>
+  <svg class="spark" viewBox="0 0 ${W0} ${H0}" aria-hidden="true"><path d="${[.25,.5,.75].map(f=>`M0 ${(H0-16)*f}H${W0}`).join("")}" stroke="${COL.grid}"/>
+  <path d="${d}L${pts.at(-1)[0]} ${H0-14}L${pts[0][0]} ${H0-14}Z" fill="${col}" opacity=".1"/><path d="${d}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linejoin="round"/>
+  ${Object.entries(byI).map(([i,es])=>{const s=es.reduce((a,e)=>a+sentFor(e,code),0),c=s>0?COL.up:s<0?COL.down:COL.mute;
+    return `<g><title>${es.map(e=>esc(e.t)).join("\n")}</title><path d="M${X(+i)} ${H0-14}V${pad}" stroke="${c}" stroke-dasharray="2 2" opacity=".5"/><circle cx="${X(+i)}" cy="${H0-7}" r="${Math.min(6,3+es.length)}" fill="${c}"/></g>`;}).join("")}</svg>
+  <div class="hd"><span>圓點是新聞發布日：紅色利多、綠色利空，滑鼠移上去看標題</span></div></div>`;}
+
+// ---------- 門診（沒住院的股票也能掛號） ----------
+function outCardHTML(code){
+  const u=UNI[code]||[code,code,"",""],q=quote(code),evs=EVENTS.filter(e=>e.codes.includes(code));
+  const s={code,name:u[1],mk:u[2],ind:u[3],q,evs,a:0,b:0,net:netAll(code).v,side:"out",react:"na"};
+  return `<div class="band" style="background:${COL.mute}"><b>門診　${evs.length?`${evs.length} 則病歷`:"近期沒有新聞"}</b><span><button class="star ${WATCH.has(code)?"on":""}" data-watch="${code}" aria-label="加入我的主治病人">★</button>　<button data-x aria-label="關閉">×</button></span></div>
+  <div class="inner"><div class="bed"><span class="no">${code}</span><span><div class="role">${esc(s.mk)}　${esc(s.ind)}</div><div class="nm">${esc(s.name)}</div></span></div>
+  <div class="vit"><div><small>${ASOF_MD} 收盤</small><span class="num">${q&&!hidePx(s)?q.close.toLocaleString():"—"}</span></div><div><small>生命徵象</small><span class="num ${vital(s)}">${vital(s)==="na"?(q?"待揭曉":"未量測"):pct(q)}</span></div></div>
+  ${diagBlock(s)}${vitalCurve(code,evs)}${labsBlock(code)}${usBlock(code)}
+  ${evs.length?`<div class="meta">病歷</div><div class="docs">${evs.slice(0,5).map(e=>`<button data-go="${e.id}"><span class="chip" style="background:${COL.mute}">${RANKS[e.heat]}</span><span>${esc(e.t)}</span></button>`).join("")}</div>`:""}
+  <div class="cbtns"><button class="cbtn" data-cert="${code}">開立診斷證明書</button></div>
+  <div class="disc">診斷與醫囑由新聞、股價、法人與營收自動歸納，只是觀察重點，不構成投資建議。</div></div>`;}
+function openOutpatient(code){state.sel=null;state.dock={type:"out",code};const c=$("card");c.innerHTML=outCardHTML(code);c.hidden=false;c.classList.remove("in");void c.offsetWidth;c.classList.add("in");wireCard(c);render();}
+
+// ---------- 掛號櫃台 ----------
+const EV_COUNT={};function countEvents(){for(const k in EV_COUNT)delete EV_COUNT[k];EVENTS.forEach(e=>e.codes.forEach(c=>EV_COUNT[c]=(EV_COUNT[c]||0)+1));}
+let regSel=0;
+function regSearch(qs){qs=qs.trim();if(!qs)return [];const out=[];
+  for(const c in UNI){const n=UNI[c][1];if(c.startsWith(qs)||n.includes(qs))out.push(c);if(out.length>60)break;}
+  return out.sort((a,b)=>(EV_COUNT[b]||0)-(EV_COUNT[a]||0)||(a.startsWith(qs)?-1:1)).slice(0,8);}
+function regRender(){const l=$("regList"),r=regSearch($("regIn").value);if(!r.length){l.hidden=true;return;}countEvents();
+  l.innerHTML=r.map((c,i)=>`<button class="${i===regSel?"on":""}" data-reg="${c}"><span class="num">${c}</span><span>${esc(UNI[c][1])}</span><small>${EV_COUNT[c]?`${EV_COUNT[c]} 則病歷`:"門診"}</small></button>`).join("");l.hidden=false;
+  l.querySelectorAll("[data-reg]").forEach(b=>b.onmousedown=e=>{e.preventDefault();regGo(b.dataset.reg);});}
+function regGo(c){$("regList").hidden=true;$("regIn").value="";$("regIn").blur();countEvents();
+  if(EV_COUNT[c]){jumpTo("s"+c);if(!nodeMap["s"+c])openOutpatient(c);}else openOutpatient(c);}
+$("regIn").addEventListener("input",()=>{regSel=0;regRender();});
+$("regIn").addEventListener("keydown",e=>{const r=regSearch($("regIn").value);
+  if(e.key==="ArrowDown"){regSel=Math.min(r.length-1,regSel+1);regRender();e.preventDefault();}
+  else if(e.key==="ArrowUp"){regSel=Math.max(0,regSel-1);regRender();e.preventDefault();}
+  else if(e.key==="Enter"&&r[regSel])regGo(r[regSel]);else if(e.key==="Escape")$("regList").hidden=true;});
+$("regIn").addEventListener("blur",()=>setTimeout(()=>$("regList").hidden=true,150));
+
+// ---------- 夜班 ----------
+function refreshColors(){COL={a:CSS("--a"),b:CSS("--b"),br:CSS("--br"),up:CSS("--up"),down:CSS("--down"),mute:CSS("--mute"),ink:CSS("--ink"),line:CSS("--line"),grid:CSS("--grid"),wall:CSS("--wall"),sheet:CSS("--sheet")};}
+function setNight(on,save){document.documentElement.dataset.theme=on?"night":"";$("nightBtn").classList.toggle("on",on);$("nightBtn").setAttribute("aria-pressed",on);
+  $("nightBtn").textContent=on?"夜班中":"夜班";refreshColors();if(save)try{localStorage.setItem("laji_night",on?"on":"off");}catch(e){}
+  if(R){render();if(state.sel)openCard(state.sel);}}
+function initNight(){let pref=null;try{pref=localStorage.getItem("laji_night");}catch(e){}
+  const h=new Date().getHours();setNight(pref?pref==="on":(h>=18||h<7),false);
+  $("nightBtn").onclick=()=>setNight(document.documentElement.dataset.theme!=="night",true);}
+
+// ---------- 院務總覽（新版） ----------
+function handoverHTML(){if(!REPORT||!REPORT.items||!REPORT.items.length)return "";
+  return `<section><div class="handover"><div class="clip"><b>早晨交班報告</b><span>${esc(REPORT.date)}</span></div>
+  <ol>${REPORT.items.map(x=>`<li><b>${esc(x.k)}</b><span>${esc(x.t)}${x.pair?` <button class="cbtn" data-pair="${esc(x.pair[0])}|${esc(x.pair[1])}">開啟會診</button>`:""}</span></li>`).join("")}</ol>
+  <div class="ft"><span class="disc">由新聞與行情自動整理的觀察，不構成投資建議</span><button class="cbtn" id="repCard">下載交班圖卡</button></div></div></section>`;}
+function watchHTML(){if(!WATCH.size)return `<section><h2>我的主治病人</h2><p class="note">在任何床頭卡按右上角的 ★，就能把那檔股票列為你的主治病人，每天在這裡看診斷。</p></section>`;
+  return `<section><h2>我的主治病人</h2><p class="note">每天的綜合診斷，點一下看床頭卡</p>${[...WATCH].map(c=>{const q=quote(c),d=diagnose(c);
+    return `<button class="watchrow" data-jump="s${c}"><span><b>${esc(UNI[c]?.[1]||c)}</b> <span class="num" style="color:var(--mute)">${c}</span></span><span class="stage" style="background:${d.c}">${d.l}</span><span class="num ${q?.chg>0?"up":q?.chg<0?"down":"flat"}" style="font-size:15px;font-weight:600">${q?pct(q):"—"}</span></button>`;}).join("")}</section>`;}
+function cdcHTML(){const ms=Object.values(MACRO||{});if(!ms.length)return "";
+  return `<section><h2>疾管署監測站</h2><p class="note">總體經濟就像醫院外的公共衛生環境；燈號依各指標過去一年的位置判斷</p>
+  <div class="cdc">${ms.map(m=>`<div class="organ" title="${esc(m.note)}"><div class="o"><b>${esc(m.organ)}</b><i class="lt" style="background:${LIGHT[m.light]}"></i></div>
+    <div class="v"><span class="num">${m.v.toLocaleString(undefined,{maximumFractionDigits:2})}${esc(m.unit==="%"?"%":"")}</span><small class="${m.chg>0?"up":m.chg<0?"down":"flat"}">${m.chg>0?"+":""}${(+m.chg).toFixed(2)}</small></div>
+    <div class="nm">${esc(m.name)}</div>${sparkSVG(m.spark,140,22,COL.mute,{sw:1.2,dot:2})}</div>`).join("")}</div></section>`;}
+function intlHTML(){const list=US_LIST.filter(u=>USD[u.t]);if(!list.length)return "";
+  const rows=list.map(u=>{const cs=u.tw.map(c=>corrUS(u.t,c)).filter(Boolean),avg=cs.length?cs.reduce((a,b)=>a+b.r,0)/cs.length:null;return {u,s:USD[u.t],avg};})
+    .sort((a,b)=>(b.u.index?1:0)-(a.u.index?1:0)||Math.abs(b.s.pct)-Math.abs(a.s.pct));
+  return `<section><h2>國際醫療中心</h2><p class="note">前一晚美股與它們在台灣的轉診病人；感染係數是美股當晚漲跌與台股隔天漲跌的平均相關性</p>
+  <div class="usrow" style="font-size:11px;color:var(--mute);cursor:default"><span>海外醫院</span><span style="text-align:right">當晚</span><span style="text-align:right">轉診</span><span style="text-align:right">感染係數</span></div>
+  ${rows.map(r=>`<button class="usrow" data-us="${esc(r.u.t)}"><span class="n">${esc(r.u.n)}<b>${esc(r.u.t.replace("^",""))}</b></span><span class="num ${r.s.pct>0?"up":r.s.pct<0?"down":"flat"}">${r.s.pct>0?"+":""}${r.s.pct.toFixed(2)}%</span><span class="ci">${r.u.tw.length} 位</span><span class="ci">${r.avg!=null?r.avg.toFixed(2):"累積中"}</span></button>`).join("")}</section>`;}
+function quadHTML(){
+  const evs=recentEvents(2),m={};
+  evs.forEach(e=>e.themes.forEach(t=>{if(t==="總經風險"||t==="法人籌碼")return;const x=m[t]||(m[t]={t,n:0,s:0,cs:new Set()});x.n++;x.s+=e.sent;e.codes.forEach(c=>x.cs.add(c));}));
+  const pts=Object.values(m).map(x=>{const ps=[...x.cs].map(quote).filter(Boolean).map(q=>q.pct);return {...x,sx:x.s/x.n,py:ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:null,k:ps.length};})
+    .filter(p=>p.n>=3&&p.k>=2&&p.py!=null);
+  if(pts.length<2)return "";
+  const W0=360,H0=250,mxY=Math.max(2,...pts.map(p=>Math.abs(p.py)))*1.15,X=v=>W0/2+v*(W0/2-34),Y=v=>H0/2-v/mxY*(H0/2-22);
+  const q=(x,y,a,t,c)=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="11" font-weight="700" fill="${c}">${t}</text>`;
+  return `<section><h2>分診區</h2><p class="note">近兩天各產業的新聞情緒（左右）對上病人平均漲跌（上下），點圓點把該科派到 A 棟</p>
+  <div class="quad"><svg viewBox="0 0 ${W0} ${H0}" role="img" aria-label="產業新聞情緒與股價反應四象限">
+    <rect x="${W0/2}" y="0" width="${W0/2}" height="${H0/2}" fill="${COL.up}" opacity=".05"/><rect x="0" y="${H0/2}" width="${W0/2}" height="${H0/2}" fill="${COL.down}" opacity=".05"/>
+    <path d="M${W0/2} 0V${H0}M0 ${H0/2}H${W0}" stroke="${COL.line}"/>
+    ${q(W0-6,14,"end","康復中：利多＋上漲",COL.up)}${q(W0-6,H0-6,"end","利多不漲：留意出盡","#b7791f")}${q(6,14,"start","利空不跌：底部訊號","#71489a")}${q(6,H0-6,"start","病情惡化：利空＋下跌",COL.down)}
+    <text x="${W0/2+4}" y="${H0/2-4}" font-size="9" fill="${COL.mute}">0%</text>
+    ${pts.map(p=>{const r=Math.min(18,5+Math.sqrt(p.n)*2.2),x=X(Math.max(-1,Math.min(1,p.sx))),y=Y(p.py),c=p.py>=0?COL.up:COL.down;
+      return `<g data-theme-a="${esc(p.t)}" style="cursor:pointer"><title>${esc(p.t)}：${p.n} 則，情緒 ${p.sx.toFixed(2)}，平均 ${p.py.toFixed(2)}%</title><circle cx="${x}" cy="${y}" r="${r}" fill="${c}" opacity=".18" stroke="${c}"/><text x="${x}" y="${y-r-3}" text-anchor="middle" font-size="10.5" fill="${COL.ink}">${esc(p.t)}</text></g>`;}).join("")}
+  </svg></div></section>`;}
+function flowHTML(){const keys=Object.keys(INST||{});if(!keys.length)return "";
+  const by={};keys.forEach(c=>{const u=UNI[c];if(!u)return;const v=INST[c][0]+INST[c][1];by[u[3]]=(by[u[3]]||0)+v;});
+  const s=Object.entries(by).sort((a,b)=>b[1]-a[1]),buy=s.slice(0,5),sell=s.slice(-5).reverse(),mx=Math.max(1,...s.map(x=>Math.abs(x[1])));
+  const row=([n,v])=>`<span class="l">${v<0?`<span class="num">${fmtK(v)}</span><i style="width:${Math.abs(v)/mx*100}%;background:${COL.down}"></i>`:""}</span><span class="nm">${esc(n.replace(/業$/,""))}</span><span class="r">${v>0?`<i style="width:${v/mx*100}%;background:${COL.up}"></i><span class="num">+${fmtK(v)}</span>`:""}</span>`;
+  return `<section><h2>家屬探病動線</h2><p class="note">${INST_DATE?esc(INST_DATE.slice(5).replace("-","/"))+" ":""}外資加投信在各產業病房的買賣超（張），看資金往哪幾棟走</p>
+  <div class="flow">${buy.map(row).join("")}<span></span><span class="nm" style="color:var(--mute)">⋯</span><span></span>${sell.map(row).join("")}</div></section>`;}
+function ovwHTML(){return handoverHTML()+watchHTML()+ovwHTMLold()+cdcHTML()+intlHTML()+quadHTML()+flowHTML();}
+
+// ---------- 放射科 ----------
+function radHTML(){
+  const ind={};Object.entries(QUOTES).forEach(([c,q])=>{const u=UNI[c];if(!u||c.startsWith("0"))return;const x=ind[u[3]]||(ind[u[3]]={n:u[3],v:0,w:0});const p=q[0]-q[1]?q[1]/(q[0]-q[1])*100:0;x.v+=q[2];x.w+=q[2]*p;});
+  const top=Object.values(ind).filter(x=>x.v>0).sort((a,b)=>b.v-a.v).slice(0,8);
+  return `<section class="intro"><h2>放射科</h2><p>用影像看產業。X 光看全市場哪裡發熱，斷層掃描把目前兩科的病人一層一層切開，看產業鏈每一層的狀況。</p>
+  <div class="rounds"><button data-film="xray"><b>全身 X 光</b><small>全市場熱影像：面積是成交值，顏色是漲跌</small></button>
+  <button data-film="ct"><b>斷層掃描</b><small>${esc(dept(state.A))} × ${esc(dept(state.B))}，依產業分層</small></button></div></section>
+  <section><h2>今日影像摘要</h2><p class="note">成交值最大的產業與平均漲跌（成交值加權）</p>
+  ${top.map(x=>{const a=x.w/x.v;return `<div class="th-row" style="grid-template-columns:minmax(0,1fr) 70px 60px"><span class="nm">${esc(x.n)}</span><span class="num" style="text-align:right;color:var(--mute)">${Math.round(x.v).toLocaleString()} 億</span><span class="num ${a>0?"up":a<0?"down":"flat"}" style="text-align:right">${a>0?"+":""}${a.toFixed(2)}%</span></div>`;}).join("")}</section>`;}
+function squarify(items,x,y,w,h){ // items: [{v,...}] → 加上 x,y,w,h
+  const out=[],tot=items.reduce((a,b)=>a+b.v,0);if(!tot)return out;const sc=w*h/tot;let rest=items.map(i=>({...i,a:i.v*sc}));
+  while(rest.length){const short=Math.min(w,h);let row=[],best=Infinity;
+    for(const it of rest){const r=[...row,it],s=r.reduce((a,b)=>a+b.a,0),mx=Math.max(...r.map(z=>z.a)),mn=Math.min(...r.map(z=>z.a)),worst=Math.max(short*short*mx/(s*s),s*s/(short*short*mn));
+      if(worst<=best){best=worst;row=r;}else break;}
+    const s=row.reduce((a,b)=>a+b.a,0),th=s/short;let o=0;
+    row.forEach(it=>{const len=it.a/th;if(w>=h)out.push({...it,x,y:y+o,w:th,h:len});else out.push({...it,x:x+o,y,w:len,h:th});o+=len;});
+    if(w>=h){x+=th;w-=th;}else{y+=th;h-=th;}rest=rest.slice(row.length);}
+  return out;}
+const filmCol=p=>{const a=Math.min(1,Math.abs(p)/6);return p>0?`rgba(255,92,92,${.15+a*.7})`:p<0?`rgba(63,209,140,${.15+a*.7})`:"rgba(160,180,195,.15)";};
+function openFilm(mode){
+  const f=$("film"),box=$("plate").getBoundingClientRect(),FW=box.width-48,FH=box.height-110;countEvents();
+  let html="";
+  if(mode==="xray"){
+    const ind={};Object.entries(QUOTES).forEach(([c,q])=>{const u=UNI[c];if(!u||c.startsWith("0")||!q[2])return;const p=q[0]-q[1]?q[1]/(q[0]-q[1])*100:0;(ind[u[3]]=ind[u[3]]||{n:u[3],v:0,s:[]}).v+=q[2];ind[u[3]].s.push({c,v:q[2],p});});
+    const L=squarify(Object.values(ind).sort((a,b)=>b.v-a.v),0,0,FW,FH);
+    html=L.map(g=>{const ss=g.s.sort((a,b)=>b.v-a.v),tops=ss.slice(0,14),other=ss.slice(14),avg=ss.reduce((a,b)=>a+b.v*b.p,0)/g.v;
+      const items=[...tops,...(other.length?[{c:"",v:other.reduce((a,b)=>a+b.v,0),p:0,other:other.length}]:[])];
+      const cells=squarify(items,0,18,g.w,Math.max(1,g.h-18));
+      return `<div class="fg" style="left:${g.x}px;top:${g.y}px;width:${g.w}px;height:${g.h}px"><div class="fgh">${esc(g.n.replace(/業$/,""))} <span class="${avg>0?"fu":avg<0?"fd":""}">${avg>0?"+":""}${avg.toFixed(1)}%</span></div>
+        ${cells.map(c=>c.other?`<div class="fc" style="left:${c.x}px;top:${c.y}px;width:${c.w}px;height:${c.h}px;background:rgba(160,180,195,.08)">${c.w>40&&c.h>18?`<span>其他 ${c.other}</span>`:""}</div>`:
+        `<button class="fc ${EV_COUNT[c.c]?"news":""}" data-film-go="${c.c}" title="${esc(UNI[c.c]?.[1]||c.c)} ${c.c}：${c.p>0?"+":""}${c.p.toFixed(2)}%，成交值 ${c.v.toFixed(1)} 億${EV_COUNT[c.c]?`，${EV_COUNT[c.c]} 則新聞`:""}" style="left:${c.x}px;top:${c.y}px;width:${c.w}px;height:${c.h}px;background:${filmCol(c.p)}">${c.w>44&&c.h>26?`<span>${esc(UNI[c.c]?.[1]||c.c)}</span><em>${c.p>0?"+":""}${c.p.toFixed(1)}%</em>`:""}</button>`).join("")}</div>`;}).join("");
+    html=`<div class="fhd"><b>全身 X 光</b><span>${ASOF_MD} 全市場熱影像　面積＝成交值　顏色＝漲跌　白框＝有新聞的病人</span><button data-film-x aria-label="關閉">×</button></div><div class="fbody" style="height:${FH}px">${html}</div>`;
+  }else{
+    const groups={};R.stocks.forEach(s=>{(groups[s.ind]=groups[s.ind]||[]).push(s);});
+    const sl=Object.entries(groups).sort((a,b)=>b[1].length-a[1].length);
+    const pads=PADS.length?PADS:[];
+    html=`<div class="fhd"><b>斷層掃描</b><span>${esc(dept(state.A))} × ${esc(dept(state.B))}　依產業切片，由上到下為切面順序</span><button data-film-x aria-label="關閉">×</button></div>
+    <div class="fbody ct" style="height:${FH}px;overflow:auto">
+    ${pads.length?`<div class="slice"><div class="sl"><i></i><b>海外影像</b><span>美股</span></div><div class="sp">${pads.map(p=>`<button class="pc" data-film-us="${esc(p.t)}" style="background:${filmCol(p.snap?.pct||0)}">${esc(p.n)} <em>${p.snap?(p.snap.pct>0?"+":"")+p.snap.pct.toFixed(1)+"%":"—"}</em></button>`).join("")}</div></div>`:""}
+    ${sl.map(([ind,ss],i)=>{const qs=ss.filter(s=>s.q),avg=qs.length?qs.reduce((a,s)=>a+s.q.pct,0)/qs.length:0;
+      return `<div class="slice"><div class="sl"><i style="transform:rotate(${i*23}deg)"></i><b>第 ${i+1} 層　${esc(ind.replace(/業$/,""))}</b><span class="${avg>0?"fu":avg<0?"fd":""}">${qs.length?(avg>0?"+":"")+avg.toFixed(2)+"%":"未量測"}</span></div>
+      <div class="sp">${ss.map(s=>`<button class="pc" data-film-go="${s.code}" style="background:${filmCol(s.q?s.q.pct:0)}">${esc(s.name)} <em>${s.q?pct(s.q):"—"}</em>${s.side==="both"?"<u>共</u>":""}</button>`).join("")}</div></div>`;}).join("")}</div>`;
+  }
+  f.innerHTML=html;f.hidden=false;
+  f.querySelector("[data-film-x]").onclick=()=>f.hidden=true;
+  f.querySelectorAll("[data-film-go]").forEach(b=>b.onclick=()=>{f.hidden=true;const c=b.dataset.filmGo;countEvents();if(nodeMap["s"+c])select(nodeMap["s"+c]);else if(EV_COUNT[c]){jumpTo("s"+c);if(!nodeMap["s"+c])openOutpatient(c);}else openOutpatient(c);});
+  f.querySelectorAll("[data-film-us]").forEach(b=>b.onclick=()=>{f.hidden=true;openUS(b.dataset.filmUs);});}
+
+// ---------- 晨間查房（每天 5 床，記錄連續天數） ----------
+function roundsRec(){try{return JSON.parse(localStorage.getItem("laji_rounds")||"{}");}catch(e){return {};}}
+function roundsIntro(){const r=roundsRec(),today=isoOf(NEWS_DATES().at(-1));
+  return `<section class="intro"><h2>晨間查房</h2><p>每天固定 5 床，大家同一題。只看醫師診斷（新聞），判斷病人 ${ASOF_MD} 是好轉還是惡化。</p>
+  <div class="rounds"><button id="rStart"><b>${r.date===today?"今天已查房，再看一次":"開始今天的查房"}</b><small>${today||""}</small></button>
+  <div style="border:1px solid var(--line);border-radius:8px;padding:12px"><b class="num" style="font-size:26px">${r.streak||0}</b> <small style="color:var(--mute)">天連續查房</small><br><small style="color:var(--mute)">最佳 ${r.best||0} 天，今日 ${r.date===today?r.score+" 分":"未完成"}</small></div></div></section>`;}
+function seeded(str){let h=1779033703^str.length;for(const ch of str){h=Math.imul(h^ch.charCodeAt(0),3432918353);h=h<<13|h>>>19;}return ()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return ((h^=h>>>16)>>>0)/4294967296;};}
+function startRounds(){const today=isoOf(NEWS_DATES().at(-1))||"x",rnd=seeded(today);
+  const cand=[...new Set(recentEvents(2).flatMap(e=>e.codes))].filter(c=>{const q=quote(c);return q&&q.chg!==0;}).sort();
+  for(let i=cand.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[cand[i],cand[j]]=[cand[j],cand[i]];}
+  const pool=cand.slice(0,5).map(c=>{const evs=EVENTS.filter(e=>e.codes.includes(c));return {code:c,name:UNI[c]?.[1]||c,ind:UNI[c]?.[3]||"",q:quote(c),evs,net:netAll(c).v};});
+  if(!pool.length){toast("今天沒有可以查房的病人");return;}
+  state.daily=true;state.quiz={pool,i:0,score:0,streak:0,hits:0,model:0,ans:null,rev:new Set()};showRoundPatient(pool[0]);}
+function showRoundPatient(s){const Q=state.quiz;countEvents();jumpTo("s"+s.code,true);state.quiz=Q;state.daily=true;state.tab="quiz";
+  document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab==="quiz"));
+  if(!nodeMap["s"+s.code])openOutpatient(s.code);render();}
+function roundsDone(Q){const r=roundsRec(),today=isoOf(NEWS_DATES().at(-1));
+  if(r.date!==today){const gap=r.date?(new Date(today)-new Date(r.date))/864e5:99;r.streak=gap<=4?(r.streak||0)+1:1;r.best=Math.max(r.best||0,r.streak);r.date=today;r.score=Q.score;
+    try{localStorage.setItem("laji_rounds",JSON.stringify(r));}catch(e){}}
+  return `<section><h2>今日查房完成</h2><div class="board"><div><span class="num">${Q.score}</span><span>分數</span></div><div><span class="num">${Q.hits}/${Q.pool.length}</span><span>你判斷正確</span></div><div><span class="num">${Q.model}/${Q.pool.length}</span><span>AI 判讀正確</span></div></div>
+  <p class="note" style="margin-top:12px">連續查房 <b>${r.streak}</b> 天，最佳紀錄 ${r.best} 天。明天收盤後會有新的 5 床。</p><button class="cta" id="rStart">再看一次今天的病人</button></section>`;}
+
+// ---------- 診斷證明書與交班圖卡（下載 PNG） ----------
+function wrapText(c,text,maxW){const out=[];let line="";for(const ch of text){if(c.measureText(line+ch).width>maxW){out.push(line);line=ch;}else line+=ch;}if(line)out.push(line);return out;}
+function savePNG(cv2,name){cv2.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);toast("已下載 "+name);});}
+function paper(title,sub){const c=document.createElement("canvas");c.width=1080;c.height=1350;const x=c.getContext("2d");
+  x.fillStyle="#fbfaf6";x.fillRect(0,0,1080,1350);x.strokeStyle="#16212b";x.lineWidth=4;x.strokeRect(40,40,1000,1270);x.lineWidth=1.5;x.strokeRect(54,54,972,1242);
+  x.fillStyle="#16212b";x.fillRect(80,92,64,64);x.fillStyle="#fff";x.fillRect(104,100,16,48);x.fillRect(88,116,48,16);
+  x.fillStyle="#16212b";x.font=`700 34px ${FONT.art}`;x.fillText("812拉基醫院",164,124);x.font=`400 22px ${FONT.art}`;x.fillStyle="#677583";x.fillText(sub,164,154);
+  x.fillStyle="#16212b";x.font=`700 64px ${FONT.art}`;x.textAlign="center";x.fillText(title,540,250);x.textAlign="left";
+  x.strokeStyle="#16212b";x.lineWidth=1;x.beginPath();x.moveTo(80,290);x.lineTo(1000,290);x.stroke();return [c,x];}
+function stamp(x,cx,cy){x.save();x.translate(cx,cy);x.rotate(-.18);x.strokeStyle="rgba(200,40,40,.8)";x.fillStyle="rgba(200,40,40,.85)";x.lineWidth=5;x.beginPath();x.arc(0,0,78,0,7);x.stroke();x.lineWidth=2;x.beginPath();x.arc(0,0,66,0,7);x.stroke();
+  x.font=`700 30px ${FONT.art}`;x.textAlign="center";x.fillText("812拉基",0,-6);x.fillText("醫院印",0,30);x.restore();}
+function certificate(code){
+  const u=UNI[code]||[code,code,"",""],q=quote(code),d=diagnose(code),[c,x]=paper("診 斷 證 明 書",`開立日期 ${new Date().toLocaleDateString("zh-TW")}`);
+  const rows=[["病人姓名",`${u[1]}（${code}）`],["病房",`${u[2]}　${u[3]}`],["生命徵象",q?`${ASOF_MD} 收盤 ${q.close.toLocaleString()}，漲跌 ${pct(q)}`:"未量測"],["診斷",d.l],["醫囑",d.rx]];
+  let y=350;x.font=`400 30px ${FONT.sans}`;
+  rows.forEach(([k,v])=>{x.fillStyle="#677583";x.font=`500 26px ${FONT.sans}`;x.fillText(k,90,y);x.fillStyle=k==="診斷"?d.c:"#16212b";x.font=`${k==="診斷"?"900 40px":"500 29px"} ${k==="診斷"?FONT.art:FONT.sans}`;
+    wrapText(x,v,720).forEach((l,i)=>x.fillText(l,260,y+i*42));y+=Math.max(1,wrapText(x,v,720).length)*42+26;});
+  x.strokeStyle="#d3dbe1";x.beginPath();x.moveTo(80,y-6);x.lineTo(1000,y-6);x.stroke();y+=34;
+  x.fillStyle="#16212b";x.font=`700 28px ${FONT.sans}`;x.fillText("診斷依據",90,y);y+=46;x.font=`400 25px ${FONT.sans}`;
+  d.why.forEach(w=>{wrapText(x,"．"+w,880).forEach(l=>{x.fillText(l,100,y);y+=38;});y+=6;});
+  stamp(x,880,1150);x.fillStyle="#677583";x.font=`400 20px ${FONT.sans}`;
+  x.fillText("本證明由新聞、股價、法人與營收自動歸納，僅供觀察，不構成投資建議。",90,1250);x.fillText("n0930121.github.io/LajiHospital",90,1278);
+  savePNG(c,`診斷證明書_${u[1]}.png`);}
+function reportCard(){if(!REPORT)return;const [c,x]=paper("早 晨 交 班 報 告",`${REPORT.date}　由新聞與行情自動整理`);
+  let y=350;REPORT.items.forEach(it=>{x.fillStyle="#16212b";x.fillRect(90,y-26,8,34);x.font=`700 28px ${FONT.sans}`;x.fillText(it.k,112,y);y+=46;
+    x.font=`400 26px ${FONT.sans}`;x.fillStyle="#2b3a48";wrapText(x,it.t,860).forEach(l=>{if(y<1180){x.fillText(l,112,y);y+=38;}});y+=22;});
+  stamp(x,900,1160);x.fillStyle="#677583";x.font=`400 20px ${FONT.sans}`;x.fillText("以上為觀察整理，不構成投資建議。",90,1250);x.fillText("n0930121.github.io/LajiHospital",90,1278);
+  savePNG(c,`交班報告_${REPORT.date}.png`);}
+
 function render(){
   header();const p=$("leaf");
-  p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():quizHTML();
+  p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():state.tab==="rad"?radHTML():quizHTML();
   p.querySelectorAll("[data-id]").forEach(el=>{
     el.onmouseenter=()=>{state.hover=nodeMap[el.dataset.id]||null;};el.onmouseleave=()=>{state.hover=null;};
     el.onclick=()=>{const n=nodeMap[el.dataset.id];if(n)select(n);};});
@@ -1002,14 +1468,21 @@ function render(){
     if(t===other){[state.A,state.B]=[state.B,state.A];}else state[slot]=t;keep={};refresh();});
   p.querySelectorAll("[data-pair]").forEach(el=>el.onclick=()=>{const [a,b]=el.dataset.pair.split("|");state.A=a;state.B=b;keep={};refresh();toast(`${dept(a)} × ${dept(b)}`);});
   p.querySelectorAll("[data-jump]").forEach(el=>el.onclick=()=>jumpTo(el.dataset.jump));
+  p.querySelectorAll("[data-us]").forEach(el=>el.onclick=()=>openUS(el.dataset.us));
+  p.querySelectorAll("[data-theme-a]").forEach(el=>el.onclick=()=>{const t=el.dataset.themeA;if(t===state.B)[state.A,state.B]=[state.B,state.A];else state.A=t;keep={};refresh();});
+  $("repCard")&&($("repCard").onclick=reportCard);
+  p.querySelectorAll("[data-film]").forEach(el=>el.onclick=()=>openFilm(el.dataset.film));
   $("qStart")&&($("qStart").onclick=newQuiz);
-  $("qNext")&&($("qNext").onclick=()=>{const Q=state.quiz;Q.i++;Q.ans=null;const s=Q.pool[Q.i];const n=s?nodeMap["s"+s.code]:null;state.sel=n;openCard(n);if(n)focusNode(n);else resetView();render();});
+  $("qNext")&&($("qNext").onclick=()=>{const Q=state.quiz;Q.i++;Q.ans=null;const s=Q.pool[Q.i];
+    if(s&&state.daily){showRoundPatient(s);return;}
+    const n=s?nodeMap["s"+s.code]:null;state.sel=n;openCard(n);if(n)focusNode(n);else resetView();render();});
+  $("rStart")&&($("rStart").onclick=startRounds);
 }
 function setTab(t){state.tab=t;document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
   if(t==="chain"&&R.chains[state.chain]){state.sel=null;openCard(null);flyToNodes(R.chains[state.chain].nodes.map(id=>nodeMap[id]));}
   if(t!=="quiz"&&state.quiz){state.quiz=null;}
   render();}
-function refresh(){state.sel=null;state.chain=0;state.quiz=null;openCard(null);build();resetView();render();}
+function refresh(keepQuiz){state.sel=null;state.dock=null;state.chain=0;if(!keepQuiz)state.quiz=null;openCard(null);build();resetView();render();}
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 $("swap").onclick=()=>{[state.A,state.B]=[state.B,state.A];Object.values(keep).forEach(k=>{if(vert())k.y=H-k.y;else k.x=W-k.x;});refresh();};
 $("dice").onclick=()=>{const tc=themeCounts(),ts=Object.keys(tc).filter(t=>tc[t]>=2);let best=null;
@@ -1044,7 +1517,7 @@ function relayout(first){resize();if(W<80||H<80)return;
   if(first||Math.abs(W-lastW)>30||Math.abs(H-lastH)>30){const v0=lastW&&(lastW<640)!==(W<640);lastW=W;lastH=H;keep={};build();resetView();
     if(first){cam.k=camT.k*.92;cam.x=camT.x;cam.y=camT.y;}if(state.sel){const n=nodeMap[state.sel.id];state.sel=n||null;openCard(state.sel);}}}
 const ro=new ResizeObserver(()=>{clearTimeout(rt);rt=setTimeout(()=>relayout(false),100);});ro.observe(cv);
-resize();R=analyse();relayout(true);render();renderTicker();requestAnimationFrame(draw);
+countEvents();initNight();resize();R=analyse();relayout(true);render();renderTicker();requestAnimationFrame(draw);
 </script>
 
 </body>
