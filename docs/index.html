@@ -149,7 +149,7 @@ canvas{display:block;width:100%;height:100%;touch-action:manipulation}
 
 /* ---------- 病歷夾 ---------- */
 .chart{min-height:0;display:flex;flex-direction:column;background:var(--sheet);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.tabs{display:grid;grid-template-columns:repeat(6,1fr);background:var(--wall);padding:4px;gap:4px;border-bottom:1px solid var(--line)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);background:var(--wall);padding:4px;gap:4px;border-bottom:1px solid var(--line)}
 .tabs button{padding:7px 0;border-radius:4px;color:var(--mute);font-weight:500}
 .tabs button[aria-selected="true"]{background:var(--sheet);color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(22,33,43,.1)}
 .pane{flex:1;min-height:0;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:24px}
@@ -599,8 +599,8 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 .tools .reg input{height:40px}
 @media (max-width:640px){.mright{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}}
 /* ---------- 醫技大樓 ---------- */
-.mt-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 14px}
-.mt-nav button{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;text-align:left;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--sheet)}
+.mt-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 14px}
+.mt-nav button{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:7px;align-items:center;text-align:left;padding:8px 8px;min-width:0;border:1px solid var(--line);border-radius:6px;background:var(--sheet)}
 .mt-nav .ic{grid-row:1/3;width:20px;height:20px;margin:0;color:var(--mute)}
 .mt-nav b{font-size:14px}.mt-nav small{font-size:11px;color:var(--mute)}
 .mt-nav button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--a)}.mt-nav button[aria-pressed="true"] .ic{color:var(--a)}
@@ -693,6 +693,7 @@ tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weigh
 .mt-log{margin:0;background:#11171c;color:#b8d4c4;border-radius:6px;padding:10px 12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.6;white-space:pre-wrap;max-height:180px;overflow:auto}
 .mt-chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:0 4px 4px 0;background:var(--sheet)}
 @media (prefers-reduced-motion:reduce){.mt-unit .act{animation:none}}
+@media (max-width:640px){.mt-nav .ic,.mt-nav small{display:none}.mt-nav button{grid-template-columns:1fr;justify-items:center;padding:9px 4px}.mt-nav b{white-space:nowrap}}
 .legend[hidden],.card[hidden],#tip[hidden],.toast[hidden]{display:none}
 </style>
 
@@ -767,7 +768,6 @@ tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weigh
       <button role="tab" aria-selected="true" data-tab="ovw">院務總覽</button>
       <button role="tab" aria-selected="false" data-tab="obs">會診紀錄</button>
       <button role="tab" aria-selected="false" data-tab="chain">轉診路徑</button>
-      <button role="tab" aria-selected="false" data-tab="rad">放射科</button>
       <button role="tab" aria-selected="false" data-tab="lab">醫技大樓</button>
       <button role="tab" aria-selected="false" data-tab="quiz">查房</button>
     </div>
@@ -1824,7 +1824,7 @@ const IC={
 document.body.insertAdjacentHTML("afterbegin",`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${Object.entries(IC).map(([k,v])=>`<symbol id="i-${k}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${v}</symbol>`).join("")}</defs></svg>`);
 const ic=(n,cls="")=>`<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 // 分頁加圖示
-[["ovw","lobby"],["obs","clip"],["chain","chain"],["rad","film"],["lab","lab"],["quiz","bed"]].forEach(([t,n])=>{const b=document.querySelector(`[data-tab="${t}"]`);if(b&&!b.querySelector(".ic"))b.insertAdjacentHTML("afterbegin",ic(n));});
+[["ovw","lobby"],["obs","clip"],["chain","chain"],["lab","lab"],["quiz","bed"]].forEach(([t,n])=>{const b=document.querySelector(`[data-tab="${t}"]`);if(b&&!b.querySelector(".ic"))b.insertAdjacentHTML("afterbegin",ic(n));});
 // 區塊標題自動加圖示
 const H2IC={"月營收申報進度":"cal","新聞與申報對照":"chain","重大訊息收件匣":"stamp","資料庫存":"server","排程表":"cal","系統日誌":"doc","各科體檢中位數":"lab","早晨交班報告":"clip","我的主治病人":"bed","今日院務看板":"pulse","科別聲量":"doc","全院會診矩陣":"chain","病危通知與好轉出院":"amb","疾管署監測站":"shield","國際醫療中心":"globe","分診區":"track","家屬探病動線":"family","出院追蹤門診":"track","接觸者追蹤":"chain","門診預約表":"cal","院長週報":"trophy","連續探病榜":"family","放射科":"film","晨間查房":"bed","今日影像摘要":"film"};
 function decorateH2(root){root.querySelectorAll("h2").forEach(h=>{if(h.querySelector(".ic"))return;const k=Object.keys(H2IC).find(x=>h.textContent.trim().startsWith(x));if(k)h.insertAdjacentHTML("afterbegin",ic(H2IC[k]));});}
@@ -2177,7 +2177,7 @@ buildPalPanel();
 
 
 /* ================= 醫技大樓：檢驗科、申報組、資訊室 ================= */
-state.mt=state.mt||"lab";state.labF=state.labF||"all";state.mopsF=state.mopsF||"all";
+state.mt=state.mt||"rad";state.labF=state.labF||"all";state.mopsF=state.mopsF||"all";
 function goStock(c){if(EV_COUNT[c])jumpTo("s"+c);else openOutpatient(c);}
 const stockName=c=>UNI[c]?.[1]||c;
 const inPair=c=>{const n=nodeMap["s"+c];return !!n;};
@@ -2186,9 +2186,9 @@ const quant=(a,q)=>{const s=a.slice().sort((x,y)=>x-y),i=(s.length-1)*q,lo=Math.
 function barcode(code,w=86,h=22){let x=0,bars="";const seq=(code+"812").split("").map(Number);
   for(let i=0;i<22&&x<w;i++){const d=seq[i%seq.length],bw=1+(d%3),gap=1+((d+i)%2);bars+=`<rect x="${x}" y="0" width="${bw}" height="${h}"/>`;x+=bw+gap;}
   return `<svg class="mt-bc" viewBox="0 0 ${w} ${h}" aria-hidden="true">${bars}</svg>`;}
-function mtNav(){const B=[["lab","lab","檢驗科","營收體檢"],["mops","stamp","申報組","公司申報"],["it","server","資訊室","資料機房"]];
+function mtNav(){const B=[["rad","film","放射科","產業影像"],["lab","lab","檢驗科","營收體檢"],["mops","stamp","申報組","公司申報"],["it","server","資訊室","資料機房"]];
   return `<nav class="mt-nav" aria-label="醫技大樓單位">${B.map(([k,i,n,d])=>`<button data-mt="${k}" aria-pressed="${state.mt===k}">${ic(i)}<b>${n}</b><small>${d}</small></button>`).join("")}</nav>`;}
-function labHTML(){return mtNav()+(state.mt==="mops"?mopsHTML():state.mt==="it"?itHTML():labReportHTML());}
+function labHTML(){return mtNav()+(state.mt==="rad"?radHTML():state.mt==="mops"?mopsHTML():state.mt==="it"?itHTML():labReportHTML());}
 
 // ---------- 檢驗科：月營收檢驗報告單 ----------
 function labStats(){
@@ -2288,7 +2288,7 @@ function itHTML(){
 
 function render(){
   header();const p=$("leaf");
-  p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():state.tab==="rad"?radHTML():state.tab==="lab"?labHTML():quizHTML();
+  p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():state.tab==="lab"?labHTML():quizHTML();
   p.querySelectorAll("[data-id]").forEach(el=>{
     el.onmouseenter=()=>{state.hover=nodeMap[el.dataset.id]||null;};el.onmouseleave=()=>{state.hover=null;};
     el.onclick=()=>{const n=nodeMap[el.dataset.id];if(n)select(n);};});
