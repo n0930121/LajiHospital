@@ -743,15 +743,20 @@ def get_mops(prev, keep_days=5, cap=400):
             continue
         if not isinstance(rows, list):
             continue
+        def col(r, *keys):  # 上市用中文欄位，上櫃可能是英文欄位，兩種都找
+            for k, v in r.items():
+                if any(x in k for x in keys) and v not in (None, ""):
+                    return str(v).strip()
+            return ""
         for r in rows:
-            subj = next((str(v) for k, v in r.items() if "主旨" in k), "").strip()
-            c = str(r.get("公司代號") or r.get("SecuritiesCompanyCode") or "").strip()
-            d = U.roc_to_iso(r.get("發言日期") or r.get("Date") or "")
+            subj = col(r, "主旨", "Subject", "subject")
+            c = col(r, "公司代號", "CompanyCode", "Code")
+            d = U.roc_to_iso(col(r, "發言日期", "SpeakDate", "Date") or "")
             if not (c and d and subj):
                 continue
-            tm = re.sub(r"\D", "", str(r.get("發言時間") or "")).zfill(6)
-            out.append({"d": d, "tm": f"{tm[:2]}:{tm[2:4]}", "c": c, "n": str(r.get("公司名稱") or "").strip(),
-                        "t": subj[:120], "k": str(r.get("符合條款") or "").strip(), "mk": mk})
+            tm = re.sub(r"\D", "", col(r, "發言時間", "SpeakTime", "Time")).zfill(6)
+            out.append({"d": d, "tm": f"{tm[:2]}:{tm[2:4]}", "c": c, "n": col(r, "公司名稱", "CompanyName", "Name"),
+                        "t": subj[:120], "k": col(r, "符合條款", "Clause"), "mk": mk})
         if mk == "上櫃" and rows:
             got_otc = True
     if not out:
