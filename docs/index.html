@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>812拉基醫院</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Barlow+Condensed:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;900&display=swap">
+<style>
+/* 版面：左為醫院一樓平面圖（建築圖框、圖簽、指北），兩個題材是兩棟病房大樓，中間是聯合會診中心；右為病歷夾。刻意只做臨床冷白一種外觀。 */
+:root{
+  color-scheme:light;
+  --wall:#eef2f4;      /* 院內牆面：冷白 */
+  --sheet:#ffffff;     /* 圖紙與病歷 */
+  --ink:#16212b;       /* 墨線與主文字 */
+  --mute:#677583;      /* 註記 */
+  --line:#d3dbe1;      /* 分隔線 */
+  --grid:#e4eaee;      /* 藍圖格線 */
+  --a:#1f6f8b;         /* A 棟：青藍 */
+  --b:#a8690f;         /* B 棟：琥珀 */
+  --br:#71489a;        /* 聯合會診：紫 */
+  --up:#cf3535; --down:#21885a;   /* 台股慣例：紅漲綠跌 */
+  --t1:#2b5fb4; --t2:#cf3535; --t3:#e0a81c; --t4:#2f9a5d; --t5:#c9d1d7; /* TTAS 檢傷顏色 */
+  --serif:"Noto Serif TC","Songti TC",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --num:"Barlow Condensed","Arial Narrow",sans-serif;
+  --art:"LXGW WenKai TC","Kaiti TC","DFKai-SB","BiauKai",serif;   /* 圖簽用的手寫楷體 */
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--wall);color:var(--ink);font-family:var(--sans);font-size:13.5px;line-height:1.6}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.num{font-family:var(--num);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--mute)}
+
+.app{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 400px;grid-template-rows:auto minmax(0,1fr);gap:14px 18px;
+  padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));padding-block:14px 18px}
+
+/* ---------- 院名招牌 ---------- */
+.mast{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"sign depts tri";align-items:center;gap:12px 28px}
+.sign{grid-area:sign} .mast .depts{grid-area:depts} .triage{grid-area:tri}
+@media (max-width:1360px){
+  .mast{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"sign tri" "depts depts";row-gap:12px}
+  .mast .depts{justify-content:flex-start;padding-top:12px;border-top:1px solid var(--line)}
+  .mast .tools{margin-left:auto}
+}
+@media (max-width:640px){
+  .mast{grid-template-columns:minmax(0,1fr);grid-template-areas:"sign" "tri" "depts"}
+  .triage{justify-self:stretch;justify-content:space-between}
+  .mast .depts{gap:8px}
+  .dept{flex:1 1 140px;min-width:0} .dbtn{width:100%} .dbtn .body{flex:1;min-width:0}
+  .amp{display:none}
+  .mast .tools{margin-left:0;width:100%;justify-content:space-between}
+}
+.sign{display:flex;align-items:center;gap:14px}
+.cross{width:40px;height:40px;background:var(--ink);display:grid;place-items:center;border-radius:4px}
+.cross i{position:relative;width:20px;height:20px}
+.cross i::before,.cross i::after{content:"";position:absolute;background:#fff;border-radius:1px}
+.cross i::before{left:7px;top:0;width:6px;height:20px} .cross i::after{top:7px;left:0;width:20px;height:6px}
+.sign h1{margin:0;font-family:var(--serif);font-weight:900;font-size:24px;letter-spacing:.12em;line-height:1.15}
+.sign p{margin:2px 0 0;font-size:12px;color:var(--mute)}
+.sign p .num{font-size:15px;color:var(--ink)}
+.depts{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.dept{position:relative}
+.dbtn{display:flex;align-items:stretch;border-radius:4px;overflow:hidden;background:var(--sheet);border:1px solid var(--line);box-shadow:0 1px 0 rgba(22,33,43,.04)}
+.dbtn .tag{display:grid;place-items:center;width:34px;color:#fff;font-family:var(--num);font-weight:700;font-size:15px}
+.dbtn .body{display:flex;flex-direction:column;align-items:flex-start;padding:4px 12px 5px 10px;line-height:1.25}
+.dbtn .body small{font-size:10.5px;color:var(--mute)}
+.dbtn .body b{font-size:15px;font-weight:700}
+.dbtn .car{display:grid;place-items:center;padding:0 10px;color:var(--mute);font-size:10px;border-left:1px solid var(--line)}
+.dept.A .tag{background:var(--a)} .dept.B .tag{background:var(--b)}
+.dbtn:hover{border-color:var(--mute)}
+.amp{font-family:var(--num);font-size:20px;color:var(--mute)}
+.menu{position:absolute;top:calc(100% + 6px);left:0;z-index:30;width:270px;background:var(--sheet);border:1px solid var(--line);border-radius:6px;padding:6px 0;box-shadow:0 18px 40px rgba(22,33,43,.16)}
+.menu button{display:grid;grid-template-columns:minmax(0,1fr) 26px 60px;gap:10px;align-items:center;width:100%;text-align:left;padding:6px 14px;font-size:13px}
+.menu button:hover{background:var(--wall)}
+.menu button[aria-selected="true"]{font-weight:700}
+.menu button[disabled]{opacity:.35;cursor:default}
+.menu .num{text-align:right;color:var(--mute);font-size:15px}
+.menu i{display:block;height:3px;background:var(--grid);border-radius:2px} .menu i b{display:block;height:3px;background:var(--mute);border-radius:2px}
+.tools{display:flex;gap:4px;margin-left:6px}
+.tool{font-size:12.5px;color:var(--mute);padding:5px 9px;border-radius:4px}
+.tool:hover{background:var(--sheet);color:var(--ink)}
+.triage{display:flex;align-items:center;gap:14px;background:var(--sheet);border:1px solid var(--line);border-radius:6px;padding:8px 14px}
+.triage .lv{display:flex;flex-direction:column;line-height:1.25}
+.triage .lv small{font-size:10.5px;color:var(--mute)}
+.triage .lv b{font-size:15px}
+.tbar{display:flex;gap:3px;margin-top:4px}
+.tbar i{width:16px;height:5px;border-radius:1px;opacity:.22}
+.tbar i.on{opacity:1}
+.triage .score{font-family:var(--num);font-weight:600;font-size:42px;line-height:.9}
+.triage .score small{font-size:15px;color:var(--mute);font-weight:500}
+
+/* ---------- 平面圖 ---------- */
+.plan{position:relative;min-height:0;background:var(--sheet);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+canvas{display:block;width:100%;height:100%;touch-action:manipulation}
+.ctrl{position:absolute;top:22px;right:24px;display:flex;gap:4px;background:var(--sheet);border:1px solid var(--line);border-radius:5px;padding:3px}
+.ctrl button{min-width:30px;height:28px;padding:0 8px;border-radius:3px;font-size:12.5px;color:var(--mute)}
+.ctrl button:hover{background:var(--wall);color:var(--ink)}
+.legend{position:absolute;top:62px;right:24px;width:236px;background:var(--sheet);border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-size:12px;box-shadow:0 12px 30px rgba(22,33,43,.12);display:grid;gap:7px}
+.legend b{font-size:12.5px}
+.legend span{display:flex;align-items:center;gap:8px;color:var(--mute)}
+.legend i{flex:none;width:12px;height:12px;border-radius:50%;border:2px solid}
+.legend i.bed{border-radius:2px;width:16px;height:9px}
+.course{position:absolute;left:30px;bottom:20px;width:min(560px,calc(100% - 300px));display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;background:rgba(255,255,255,.92);padding:6px 12px 4px 6px;border:1px solid var(--line);border-radius:5px}
+.play{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:10px}
+.course input{width:100%;margin:0;accent-color:var(--ink)}
+.ticks{display:flex;justify-content:space-between;font-family:var(--num);font-size:13px;color:var(--mute);margin-top:-2px}
+.ticks span.on{color:var(--ink);font-weight:600}
+#tip{position:absolute;pointer-events:none;width:max-content;max-width:280px;background:var(--ink);color:#fff;border-radius:5px;padding:8px 11px;font-size:12px;box-shadow:0 10px 24px rgba(22,33,43,.25)}
+#tip .k{color:#aab7c2;font-size:11px} #tip b{display:block;font-size:13px;line-height:1.45;margin-top:1px}
+#tip .up{color:#ff8a8a} #tip .down{color:#6fe0a8}
+.toast{position:absolute;top:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:999px;padding:6px 16px;font-size:12px}
+
+/* 識別證／床頭卡 */
+.card{position:absolute;width:292px;background:var(--sheet);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 22px 50px rgba(22,33,43,.2),0 2px 6px rgba(22,33,43,.08);opacity:0;transform:translateY(6px) scale(.98);transition:opacity .22s ease,transform .22s ease}
+.card.in{opacity:1;transform:none}
+.card .band{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;color:#fff;font-size:12px}
+.card .band b{font-size:13px;letter-spacing:.06em}
+.card .band button{color:#fff;opacity:.85;font-size:17px;line-height:1}
+.card .inner{padding:12px 14px 14px;display:grid;gap:9px}
+.card .idrow{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:center}
+.card .ph{width:52px;height:52px;border-radius:6px;background:var(--wall);display:grid;place-items:center}
+.card .role{font-size:11px;color:var(--mute)}
+.card .nm{font-family:var(--serif);font-weight:900;font-size:17px;line-height:1.3}
+.card .dx{font-family:var(--serif);font-weight:600;font-size:14px;line-height:1.55;border-left:3px solid var(--line);padding-left:10px}
+.card .meta{font-size:11.5px;color:var(--mute)}
+.card .pts{display:flex;flex-wrap:wrap;gap:6px}
+.card .pt{display:flex;align-items:baseline;gap:6px;border:1px solid var(--line);border-radius:4px;padding:2px 8px;font-size:12px}
+.card .pt:hover{border-color:var(--ink)}
+.card .pt .num{font-size:14px}
+.card .bed{display:flex;align-items:baseline;gap:10px}
+.card .bed .no{font-family:var(--num);font-weight:700;font-size:40px;line-height:.9}
+.card .vit{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.card .vit div{padding:6px 10px}
+.card .vit div+div{border-left:1px solid var(--line)}
+.card .vit small{display:block;font-size:10.5px;color:var(--mute)}
+.card .vit .num{font-size:22px;font-weight:600;line-height:1.1}
+.card .docs{display:grid;gap:2px}
+.card .docs button{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;text-align:left;font-size:12.5px;padding:4px 0;border-top:1px solid var(--grid)}
+.card .docs button:first-child{border-top:0}
+.card .docs button:hover span:last-child{text-decoration:underline}
+.chip{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;border-radius:3px;padding:0 6px;line-height:18px;white-space:nowrap}
+
+/* ---------- 病歷夾 ---------- */
+.chart{min-height:0;display:flex;flex-direction:column;background:var(--sheet);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--wall);padding:4px;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{padding:7px 0;border-radius:4px;color:var(--mute);font-weight:500}
+.tabs button[aria-selected="true"]{background:var(--sheet);color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(22,33,43,.1)}
+.pane{flex:1;min-height:0;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:24px}
+h2{margin:0 0 4px;font-family:var(--serif);font-weight:900;font-size:16px;letter-spacing:.06em}
+.note{margin:0 0 10px;color:var(--mute);font-size:12px}
+.comp{display:grid;grid-template-columns:6.5em minmax(0,1fr) 3em;gap:8px 12px;align-items:center;font-size:12.5px}
+.comp .bar{height:6px;background:var(--grid);border-radius:3px;overflow:hidden}
+.comp .bar b{display:block;height:6px;background:var(--ink)}
+.comp .num{text-align:right;font-size:16px;font-weight:600}
+.row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;width:100%;text-align:left;padding:10px 0;border-top:1px solid var(--grid)}
+.row:first-of-type{border-top:0;padding-top:2px}
+.row:hover .t{text-decoration:underline}
+.row .t{font-family:var(--serif);font-weight:600;font-size:14px;line-height:1.5}
+.row .m{font-size:11.5px;color:var(--mute);margin-top:2px}
+.mini{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;margin-top:2px}
+table{width:100%;border-collapse:collapse}
+th{font-weight:500;font-size:11px;color:var(--mute);text-align:left;padding:0 0 6px;border-bottom:1px solid var(--line)}
+td{padding:7px 0;border-bottom:1px solid var(--grid);font-size:13px;vertical-align:middle}
+tr.pr{cursor:pointer} tr.pr:hover td{background:var(--wall)}
+td .code{font-family:var(--num);font-weight:600;color:var(--mute);font-size:14px;margin-right:6px}
+.r{text-align:right}
+td.v{font-family:var(--num);font-size:16px;font-weight:600;text-align:right;white-space:nowrap}
+.abw{display:flex;align-items:center;justify-content:center;gap:2px;width:62px}
+.abw i{height:6px;border-radius:1px} .abw .l{background:var(--a);margin-left:auto} .abw .rr{background:var(--b);margin-right:auto}
+.dxm{font-size:11px;font-weight:700;border-radius:3px;padding:1px 6px;white-space:nowrap}
+.dxm.ok{background:#e8f1ec;color:var(--down)} .dxm.ok.pos{background:#f8e9e9;color:var(--up)}
+.dxm.bad{background:#fff3d6;color:#8a5a00}
+.dxm.na{background:var(--wall);color:var(--mute);font-weight:500}
+.ward{display:grid;grid-template-columns:minmax(0,1fr) 22px 6.2em 22px minmax(0,1fr);gap:6px 8px;align-items:center;font-size:12px}
+.ward .l{display:flex;justify-content:flex-end} .ward .l i{height:8px;background:var(--a);border-radius:2px 0 0 2px}
+.ward .rr i{display:block;height:8px;background:var(--b);border-radius:0 2px 2px 0}
+.ward .nm{text-align:center;color:var(--ink)}
+.ward .num{font-size:14px;color:var(--mute)} .ward .na{text-align:right}
+.ref{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;width:100%;text-align:left;padding:12px 10px;border:1px solid var(--line);border-radius:6px}
+.ref[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 3px 0 0 var(--br)}
+.ref .no{font-family:var(--num);font-weight:700;font-size:24px;line-height:1;color:var(--mute)}
+.ref[aria-pressed="true"] .no{color:var(--ink)}
+.ref .kd{font-size:11.5px;color:var(--mute)} .ref .kd .num{font-size:14px;color:var(--ink);font-weight:600;margin-left:4px}
+.ref .pth{font-size:13px;line-height:1.75;margin-top:2px}
+.ref .pth .n{font-weight:700} .ref .pth .A{color:var(--a)} .ref .pth .B{color:var(--b)} .ref .pth .AB{color:var(--br)}
+.ref .pth .ar{color:var(--mute);margin:0 4px}
+.ref .why{font-size:12px;color:var(--mute);margin-top:2px}
+.refs{display:grid;gap:8px}
+.board{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.board div{padding:8px 0;text-align:center}
+.board div+div{border-left:1px solid var(--line)}
+.board .num{display:block;font-size:28px;font-weight:600;line-height:1}
+.board span{font-size:11px;color:var(--mute)}
+.q{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.q .hd{display:flex;align-items:baseline;gap:10px;padding:12px 14px;background:var(--wall)}
+.q .hd b{font-family:var(--serif);font-weight:900;font-size:22px}
+.q .hd .num{font-size:18px;color:var(--mute)}
+.q .hd span{font-size:12px;color:var(--mute)}
+.q ul{list-style:none;margin:0;padding:12px 14px;display:grid;gap:8px}
+.q li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;font-size:13px;line-height:1.5}
+.bets{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 14px}
+.bet{border-radius:6px;padding:11px 0;font-weight:700;font-size:15px;letter-spacing:.12em;color:#fff}
+.bet.u{background:var(--up)} .bet.d{background:var(--down)}
+.bet:disabled{opacity:.3;cursor:default}
+.reveal{padding:12px 14px 14px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
+.reveal .num{font-size:34px;font-weight:600;margin-right:6px}
+.reveal p{margin:4px 0 12px;color:var(--ink)}
+.cta{background:var(--ink);color:#fff;border-radius:6px;padding:9px 20px;font-weight:700;letter-spacing:.08em}
+.cta:hover{background:#2b3a48}
+.intro p{margin:0 0 10px;font-size:13.5px;line-height:1.8;max-width:36em}
+
+dialog{background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:10px;width:min(620px,calc(100vw - 32px));padding:20px 22px}
+dialog::backdrop{background:rgba(22,33,43,.45)}
+textarea{width:100%;height:200px;border:1px solid var(--line);border-radius:6px;padding:10px;font-size:13px;line-height:1.7;resize:vertical;background:var(--wall)}
+.drow{display:flex;gap:10px;justify-content:flex-end;align-items:center;flex-wrap:wrap;margin-top:12px}
+#impMsg{margin-right:auto;font-size:12px;color:var(--mute)} #impMsg.err{color:var(--up)}
+
+@media (max-width:1060px){
+  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 72vh auto;height:auto}
+  .pane{overflow:visible}
+}
+@media (max-width:640px){
+  .app{grid-template-rows:auto 165vh auto}
+  .course{left:12px;right:12px;width:auto;top:54px;bottom:auto}
+  .ctrl{top:12px;right:12px}
+  .legend{top:52px;right:12px}
+  .card{width:auto}
+}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+.legend[hidden],.card[hidden],#tip[hidden],.toast[hidden]{display:none}
+</style>
+
+<style>[hidden]{display:none!important}body{margin:0}</style>
+</head>
+<body>
+<div class="app">
+  <header class="mast">
+    <div class="sign">
+      <div class="cross" aria-hidden="true"><i></i></div>
+      <div><h1>812拉基醫院</h1><p>加權指數 <span class="num" id="taiex"></span>　<span id="asof"></span></p></div>
+    </div>
+    <div class="depts">
+      <div class="dept A" id="selA"><button class="dbtn" aria-haspopup="listbox" aria-expanded="false"><span class="tag">A</span><span class="body"><small>A 棟</small><b class="v"></b></span><span class="car">▾</span></button></div>
+      <span class="amp">×</span>
+      <div class="dept B" id="selB"><button class="dbtn" aria-haspopup="listbox" aria-expanded="false"><span class="tag">B</span><span class="body"><small>B 棟</small><b class="v"></b></span><span class="car">▾</span></button></div>
+      <div class="tools">
+        <button class="tool" id="swap">對調兩棟</button>
+        <button class="tool" id="dice">隨機會診</button>
+        <button class="tool" id="impBtn">新增新聞</button>
+      </div>
+    </div>
+    <div class="triage" title="依台灣急診五級檢傷（TTAS）呈現兩科會診強度：級數越小越緊密">
+      <div class="lv"><small>會診檢傷</small><b id="lvName"></b><div class="tbar" id="tbar"></div></div>
+      <div class="score" id="idx"></div>
+    </div>
+  </header>
+
+  <main class="plan" id="plate">
+    <canvas id="cv" aria-label="醫院平面圖：A 棟與 B 棟是兩個題材，醫師代表新聞，病床代表個股，中間是聯合會診中心"></canvas>
+    <div class="ctrl">
+      <button id="legBtn" aria-expanded="false">圖例</button>
+      <button id="zout" aria-label="縮小">－</button>
+      <button id="zin" aria-label="放大">＋</button>
+      <button id="zreset">全院</button>
+    </div>
+    <div class="legend" id="legend" hidden>
+      <b>怎麼看這張平面圖</b>
+      <span><i style="border-color:var(--a);background:#fff"></i>醫師＝一則新聞，職級越高新聞熱度越高</span>
+      <span><i style="border-color:var(--br);background:#fff"></i>紫框醫師：同時談到兩科的會診新聞</span>
+      <span><i class="bed" style="border-color:var(--up);background:#fbe9e9"></i>病床＝一檔個股，紅為最新收盤好轉（上漲）</span>
+      <span><i class="bed" style="border-color:var(--down);background:#e6f3ec"></i>綠為惡化（下跌），灰為未量測</span>
+      <span>醫師右上角 ＋／－：新聞利多或利空</span>
+      <span>走廊上的心電波：兩科會診的往來，越強越密</span>
+    </div>
+    <div class="course">
+      <button class="play" id="play" aria-label="依日期回放病程">▶</button>
+      <div><input type="range" id="range" min="0" max="0" value="0" aria-label="病程截至日期"><div class="ticks" id="ticks"></div></div>
+    </div>
+    <div class="card" id="card" hidden></div>
+    <div id="tip" hidden></div>
+    <div class="toast" id="toast" hidden></div>
+  </main>
+
+  <aside class="chart">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="obs">會診紀錄</button>
+      <button role="tab" aria-selected="false" data-tab="chain">轉診路徑</button>
+      <button role="tab" aria-selected="false" data-tab="quiz">預後挑戰</button>
+    </div>
+    <div class="pane" id="leaf"></div>
+  </aside>
+</div>
+
+<dialog id="dlg">
+  <h2>新增新聞，自動分科與配床</h2>
+  <p class="note">一行一則。開頭可加日期（例如 10/27），結尾加「+」或「-」標示利多利空。系統會用上市櫃公司名稱、常見簡稱與族群名（如「重電四雄」）找出個股病人，並依題材詞庫分到各科。</p>
+  <textarea id="impText" spellcheck="false" placeholder="10/27 輝達擴大 CPO 投資，日月光投控與京元電受惠 +&#10;10/27 長鑫擴產進度超前，南亞科、華邦電承壓 -"></textarea>
+  <div class="drow">
+    <span id="impMsg"></span>
+    <button class="tool" id="impCancel">取消</button>
+    <button class="tool" id="impAdd">加入現有新聞</button>
+    <button class="cta" id="impReplace">取代全部新聞</button>
+  </div>
+</dialog>
+
+<script src="engine.js"></script>
+<script>
+// 啟動：先載入每日更新的 data.json 與共用詞庫，再執行主程式
+(async()=>{
+  const plate=document.getElementById("plate");
+  try{
+    const [d,lex]=await Promise.all([fetch("data.json?v="+Date.now()).then(r=>{if(!r.ok)throw new Error("data.json "+r.status);return r.json();}),
+                                     fetch("lexicon.json?v="+Date.now()).then(r=>r.json())]);
+    setLexicon(lex);
+    Object.assign(window,{DATA_ASOF:d.asof,DATA_UPDATED:d.updated,DATA_NOTES:d.notes||[],TAIEX:d.taiex,INDS:d.inds,MKS:d.mks,UNI_RAW:d.uni_raw,QUOTES:d.quotes,NEWS:d.news});
+    const s=document.createElement("script");s.textContent=document.getElementById("app").textContent;document.body.appendChild(s);
+  }catch(e){plate.innerHTML='<p style="padding:40px;color:#677583">資料載入失敗：'+e.message+'。請確認 docs/data.json 存在，或稍後重新整理。</p>';}
+})();
+</script>
+<script type="text/plain" id="app">
+/* ================= 資料 ================= */
+const UNI={};UNI_RAW.split(";").forEach(s=>{const [c,n,m,i]=s.split(",");UNI[c]=[c,n,MKS[+m],INDS[+i]];});
+const MATCH=buildMatcher(Object.values(UNI));
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const CSS=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COL={a:CSS("--a"),b:CSS("--b"),br:CSS("--br"),up:CSS("--up"),down:CSS("--down"),mute:CSS("--mute"),ink:CSS("--ink"),line:CSS("--line"),grid:CSS("--grid"),wall:CSS("--wall"),sheet:CSS("--sheet")};
+const TT=[CSS("--t1"),CSS("--t2"),CSS("--t3"),CSS("--t4"),CSS("--t5")];
+const FONT={serif:CSS("--serif"),sans:CSS("--sans"),num:CSS("--num"),art:CSS("--art")};
+try{document.fonts.load('700 16px "LXGW WenKai TC"');document.fonts.load('400 12px "LXGW WenKai TC"');}catch(e){}
+const dateOrd=d=>{const m=/(\d{1,2})\/(\d{1,2})/.exec(d||"");return m?(+m[1])*100+(+m[2]):1000;};
+const dayNum=o=>o===1000?0:Math.floor(o/100)*31+o%100-1;
+const fmtDate=o=>o===1000?"10月":`${Math.floor(o/100)}/${o%100}`;
+const quote=c=>{const q=QUOTES[c];if(!q)return null;const prev=q[0]-q[1];return {close:q[0],chg:q[1],pct:prev?q[1]/prev*100:0,val:q[2]};};
+const pct=q=>`${q.pct>0?"+":""}${q.pct.toFixed(2)}%`;
+const AVATAR="data:image/jpeg;base64,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";
+const AV_IMG=new Image();AV_IMG.src=AVATAR;
+const ASOF_MD=DATA_ASOF?`${+DATA_ASOF.slice(5,7)}/${+DATA_ASOF.slice(8,10)}`:"最新";
+const RANK=["實習醫師","實習醫師","住院醫師","總醫師","主治醫師","科主任"];
+const RANKS=["實習","實習","住院","總醫","主治","主任"];
+const dept=t=>t+"科";
+
+let EVENTS=[],DATES=[];
+const state={A:"AI伺服器",B:"電力電網",upto:0,tab:"obs",sel:null,hover:null,chain:0,quiz:null};
+function ingest(list){
+  const seq={};
+  EVENTS=list.map((n,i)=>{const r=matchText(n.t+" "+(n.s||""),MATCH),o=dateOrd(n.d);seq[o]=(seq[o]||0)+1;
+    return {...n,id:"e"+i,o,cat:"D"+(o===1000?"10":String(o%100).padStart(2,"0"))+"-"+String(seq[o]).padStart(2,"0"),
+      codes:r.codes.map(x=>x.c),how:Object.fromEntries(r.codes.map(x=>[x.c,x.how])),themes:r.themes,heat:n.heat||3,sent:n.sent||0};});
+  DATES=[...new Set(EVENTS.map(e=>e.o))].sort((a,b)=>a-b);
+  $("range").max=DATES.length-1;$("range").value=DATES.length-1;state.upto=DATES.at(-1);
+}
+
+/* ================= 分析 ================= */
+function themeCounts(){const m={};EVENTS.filter(e=>e.o<=state.upto).forEach(e=>e.themes.forEach(t=>m[t]=(m[t]||0)+1));return m;}
+function analyse(A=state.A,B=state.B){
+  const vis=EVENTS.filter(e=>e.o<=state.upto);
+  vis.forEach(e=>{const a=e.themes.includes(A),b=e.themes.includes(B);e.g=a&&b?"ab":a?"a":b?"b":"o";});
+  const inA=vis.filter(e=>e.g==="a"),inB=vis.filter(e=>e.g==="b"),inAB=vis.filter(e=>e.g==="ab");
+  const st={};
+  vis.forEach(e=>{if(e.g==="o")return;e.codes.forEach(c=>{
+    const s=st[c]||(st[c]={code:c,name:UNI[c]?.[1]||c,mk:UNI[c]?.[2]||"",ind:UNI[c]?.[3]||"",a:0,b:0,ab:0,net:0,heat:0,evs:[]});
+    if(e.g!=="b")s.a++;if(e.g!=="a")s.b++;if(e.g==="ab")s.ab++;s.net+=e.sent*e.heat;s.heat+=e.heat;s.evs.push(e);});});
+  const stocks=Object.values(st).map(s=>{
+    s.side=s.a&&s.b?"both":s.a?"a":"b";
+    s.score=Math.sqrt(s.a*s.b)*2+s.ab*1.5+(s.a+s.b)*.3+s.heat*.08;
+    s.q=quote(s.code);
+    s.react=!s.q||s.q.chg===0||s.net===0?"na":Math.sign(s.q.chg)===Math.sign(s.net)?"ok":"div";
+    return s;}).sort((x,y)=>y.score-x.score);
+  const SA=new Set([...inA,...inAB].flatMap(e=>e.codes)),SB=new Set([...inB,...inAB].flatMap(e=>e.codes));
+  const IA=new Set([...SA].map(c=>UNI[c]?.[3]).filter(Boolean)),IB=new Set([...SB].map(c=>UNI[c]?.[3]).filter(Boolean));
+  const jac=(x,y)=>{const u=new Set([...x,...y]).size;return u?[...x].filter(v=>y.has(v)).length/u:0;};
+  const union=inA.length+inB.length+inAB.length;
+  const J=union?inAB.length/union:0,Js=jac(SA,SB),Ji=jac(IA,IB);
+  const links=[];
+  inA.forEach(x=>inB.forEach(y=>{
+    const shS=x.codes.filter(c=>y.codes.includes(c));
+    const ix=new Set(x.codes.map(c=>UNI[c]?.[3]));
+    const shI=[...new Set(y.codes.map(c=>UNI[c]?.[3]))].filter(i=>i&&ix.has(i)&&!shS.some(c=>UNI[c]?.[3]===i));
+    const shT=x.themes.filter(t=>t!==A&&t!==B&&y.themes.includes(t));
+    const tf=Math.exp(-Math.abs(dayNum(x.o)-dayNum(y.o))/6);
+    const w=(shS.length+shI.length*.35+shT.length*.5)*(.6+.4*tf);
+    if(w>0)links.push({x,y,w,shS,shI,shT});}));
+  const linkD=inA.length&&inB.length?links.length/(inA.length*inB.length):0;
+  const idx=Math.round(100*(1-Math.exp(-(J*1.6+Js*1.2+Ji*.4+linkD*.6))));
+  const wards={};stocks.forEach(s=>{const w=wards[s.ind]||(wards[s.ind]={ind:s.ind,a:0,b:0});if(s.a)w.a++;if(s.b)w.b++;});
+  const chains=[];
+  stocks.filter(s=>s.side==="both").forEach(s=>{
+    const ea=s.evs.filter(e=>e.g!=="b").sort((p,q)=>q.heat-p.heat)[0],eb=s.evs.filter(e=>e.g!=="a"&&e!==ea).sort((p,q)=>q.heat-p.heat)[0];
+    if(ea&&eb)chains.push({kind:"共同照護病人",nodes:[ea.id,"s"+s.code,eb.id],w:s.score*1.2,why:`${s.name}同時被兩科醫師點名，共 ${s.a+s.b} 則新聞`});
+    else if(ea&&ea.g==="ab")chains.push({kind:"聯合會診",nodes:[ea.id,"s"+s.code],w:s.score,why:`同一位會診醫師橫跨兩科，直接收治${s.name}`});});
+  links.filter(l=>!l.shS.length&&l.shI.length).sort((p,q)=>q.w-p.w).slice(0,4).forEach(l=>{
+    const ind=l.shI[0],s1=l.x.codes.find(c=>UNI[c]?.[3]===ind),s2=l.y.codes.find(c=>UNI[c]?.[3]===ind);
+    if(s1&&s2)chains.push({kind:"同病房",nodes:[l.x.id,"s"+s1,"s"+s2,l.y.id],w:l.w*2,why:`${UNI[s1][1]}與${UNI[s2][1]}住在同一個${ind}病房`});});
+  links.filter(l=>!l.shS.length&&!l.shI.length&&l.shT.length).sort((p,q)=>q.w-p.w).slice(0,2).forEach(l=>
+    chains.push({kind:"共同主訴",nodes:[l.x.id,l.y.id],w:l.w*1.5,why:`兩位醫師都提到${l.shT.join("、")}`}));
+  chains.sort((p,q)=>q.w-p.w);
+  return {vis,inA,inB,inAB,stocks,links,J,Js,Ji,linkD,idx,chains:chains.slice(0,8),wards:Object.values(wards).sort((p,q)=>(q.a+q.b)-(p.a+p.b))};
+}
+let R=null;
+const TTAS=[[80,1,"第一級 復甦急救"],[60,2,"第二級 危急"],[40,3,"第三級 緊急"],[20,4,"第四級 次緊急"],[0,5,"第五級 非緊急"]];
+
+/* ================= 平面圖繪製 ================= */
+const cv=$("cv"),ctx=cv.getContext("2d");
+let W=0,H=0,DPR=1,nodes=[],nodeMap={},edges=[],xlinks=[],alpha=1,keep={};
+const born=performance.now();
+const cam={x:0,y:0,k:.9,init:false},camT={x:0,y:0,k:1};
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const PAD={l:30,r:30,t:30,b:30};
+function resize(){
+  const r=cv.getBoundingClientRect();DPR=Math.min(2,devicePixelRatio||1);W=r.width;H=r.height;
+  cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+  if(!cam.init){cam.x=camT.x=W/2;cam.y=camT.y=H/2;cam.init=true;}
+}
+const toWorld=(sx,sy)=>[(sx-W/2)/cam.k+cam.x,(sy-H/2)/cam.k+cam.y];
+const toScreen=(wx,wy)=>[(wx-cam.x)*cam.k+W/2,(wy-cam.y)*cam.k+H/2];
+function flyTo(x,y,k){camT.x=x;camT.y=y;camT.k=Math.max(.6,Math.min(3,k));}
+function resetView(){const rs=["a","b","ab"].map(roomOf).filter(Boolean);if(!rs.length){flyTo(W/2,H/2,1);return;}
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;rs.forEach(r=>{x0=Math.min(x0,r.x0);y0=Math.min(y0,r.y0-20);x1=Math.max(x1,r.x1);y1=Math.max(y1,r.y1);});
+  // 安全區：避開右上控制列、左下病程列與右下圖簽
+  const top=vert()?118:78,bot=vert()?H-24:H-122,left=vert()?16:PAD.l+6,right=vert()?W-16:W-PAD.r-6;
+  const k=Math.min(1.9,(right-left)/(x1-x0),(bot-top)/(y1-y0)),scx=(left+right)/2,scy=(top+bot)/2;
+  flyTo((x0+x1)/2-(scx-W/2)/k,(y0+y1)/2-(scy-H/2)/k,k);}
+function flyToNodes(ns){ns=ns.filter(Boolean);if(!ns.length)return;
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;ns.forEach(n=>{x0=Math.min(x0,n.x);y0=Math.min(y0,n.y);x1=Math.max(x1,n.x);y1=Math.max(y1,n.y);});
+  flyTo((x0+x1)/2,(y0+y1)/2,Math.min(2,W/(x1-x0+300),H/(y1-y0+260)));}
+const vert=()=>W<640;
+const inner=()=>vert()?({x0:PAD.l+10,x1:W-PAD.r-10,y0:PAD.t+130,y1:H-PAD.b-30}):({x0:PAD.l+40,x1:W-PAD.r-40,y0:PAD.t+70,y1:H-PAD.b-150});
+let BANDS={};
+const GAP=118;
+function makeBands(cnt){const b=inner(),lo=vert()?b.y0:b.x0,hi=vert()?b.y1:b.x1,order=["a","ab","b"].filter(g=>cnt[g]>0);
+  const wts=order.map(g=>Math.sqrt(cnt[g])+1.2),tot=wts.reduce((s,x)=>s+x,0),avail=hi-lo-GAP*(order.length-1);let x=lo;BANDS={};
+  order.forEach((g,i)=>{const w=avail*wts[i]/tot;BANDS[g]=[x,x+w];x+=w+GAP;});}
+const anchor=g=>{const b=inner(),cy=(b.y0+b.y1)/2,cx=(b.x0+b.x1)/2;
+  if(BANDS[g]){const m=(BANDS[g][0]+BANDS[g][1])/2;return vert()?[cx,m]:[m,cy];}
+  if(vert())return g==="a"?[cx,b.y0+(b.y1-b.y0)*.16]:g==="b"?[cx,b.y0+(b.y1-b.y0)*.84]:[cx,cy];
+  return g==="a"?[b.x0+(b.x1-b.x0)*.17,cy]:g==="b"?[b.x0+(b.x1-b.x0)*.83,cy]:[cx,cy];};
+const gauss=()=>(Math.random()+Math.random()+Math.random()-1.5)/1.5;
+const rgba=(h,a)=>{const v=parseInt(h.slice(1),16);return `rgba(${v>>16&255},${v>>8&255},${v&255},${a})`;};
+const gc=g=>g==="a"?COL.a:g==="b"?COL.b:COL.br;
+const hidePx=s=>state.tab==="quiz"&&state.quiz&&!state.quiz.rev.has(s.code);
+const vital=s=>!s.q||hidePx(s)?"na":s.q.chg>0?"up":s.q.chg<0?"down":"flat";
+const vcol=v=>v==="up"?COL.up:v==="down"?COL.down:COL.mute;
+
+function build(){
+  R=analyse();
+  const show=R.vis.filter(e=>e.g!=="o");nodes=[];nodeMap={};edges=[];
+  const cnt={a:0,b:0,ab:0};show.forEach(e=>cnt[e.g]++);R.stocks.forEach(s=>cnt[s.side==="both"?"ab":s.side]++);makeBands(cnt);
+  show.forEach(e=>{const k=keep[e.id],[ax,ay]=anchor(e.g);
+    const n={id:e.id,type:"ev",e,g:e.g,r:11+e.heat*1.8,x:k?k.x:ax+gauss()*70,y:k?k.y:ay+gauss()*70,vx:0,vy:0};nodes.push(n);nodeMap[n.id]=n;});
+  R.stocks.forEach(s=>{const id="s"+s.code,k=keep[id],[ax,ay]=anchor(s.side==="both"?"ab":s.side);
+    const n={id,type:"st",s,r:11,x:k?k.x:ax+gauss()*90,y:k?k.y:ay+gauss()*90,vx:0,vy:0};nodes.push(n);nodeMap[id]=n;});
+  show.forEach(e=>e.codes.forEach(c=>nodeMap["s"+c]&&edges.push({s:nodeMap[e.id],t:nodeMap["s"+c],o:Math.random()})));
+  xlinks=R.links.map(l=>({s:nodeMap[l.x.id],t:nodeMap[l.y.id],w:l.w,l,o:Math.random()})).filter(l=>l.s&&l.t);
+  alpha=1;for(let i=0;i<320;i++)tick();alpha=.02;
+}
+function tick(){
+  if(alpha<.004)return;
+  const b=inner();
+  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+    const p=nodes[i],q=nodes[j];let dx=q.x-p.x,dy=q.y-p.y,d2=dx*dx+dy*dy||1,d=Math.sqrt(d2);
+    const f=900/d2*alpha;dx/=d;dy/=d;p.vx-=dx*f;p.vy-=dy*f;q.vx+=dx*f;q.vy+=dy*f;
+    const min=p.r+q.r+(p.type==="st"||q.type==="st"?44:22);if(d<min){const k=(min-d)/2;p.x-=dx*k;p.y-=dy*k;q.x+=dx*k;q.y+=dy*k;}}
+  edges.forEach(({s,t})=>{const dx=t.x-s.x,dy=t.y-s.y,d=Math.hypot(dx,dy)||1,k=(d-84)*.015*alpha;s.vx+=dx/d*k*.2;s.vy+=dy/d*k*.2;t.vx-=dx/d*k;t.vy-=dy/d*k;});
+  nodes.forEach(o=>{
+    const g=o.type==="ev"?o.g:(o.s.side==="both"?"ab":o.s.side),[ax,ay]=anchor(g),kx=o.type==="ev"?.012:.006;
+    o.vx+=(ax-o.x)*kx*alpha;o.vy+=(ay-o.y)*kx*.8*alpha;
+    o.vx*=.8;o.vy*=.8;o.x+=o.vx;o.y+=o.vy;
+    o.x=Math.max(b.x0+o.r,Math.min(b.x1-o.r,o.x));o.y=Math.max(b.y0+o.r,Math.min(b.y1-o.r,o.y));
+    const bd=BANDS[g];if(bd){if(vert())o.y=Math.max(bd[0]+o.r,Math.min(bd[1]-o.r,o.y));else o.x=Math.max(bd[0]+o.r,Math.min(bd[1]-o.r,o.x));}
+    keep[o.id]={x:o.x,y:o.y};});
+  alpha*=.985;
+}
+// 每棟的房間範圍：該棟醫師與病人
+function roomOf(g){const ns=nodes.filter(o=>o.type==="ev"?o.g===g:(g==="ab"?o.s.side==="both":o.s.side===g&&true));
+  if(!ns.length)return null;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+  ns.forEach(o=>{x0=Math.min(x0,o.x-o.r);y0=Math.min(y0,o.y-o.r);x1=Math.max(x1,o.x+o.r);y1=Math.max(y1,o.y+o.r);});
+  const p=30;return {x0:x0-p,y0:y0-p-14,x1:x1+p,y1:y1+p+16,cx:(x0+x1)/2,cy:(y0+y1)/2};}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function door(room,toward){if(vert())return toward.y>room.cy?{x:room.cx,y:room.y1,side:"b"}:{x:room.cx,y:room.y0,side:"t"};
+  return toward.x>room.cx?{x:room.x1,y:(room.y0+room.y1)/2,side:"r"}:{x:room.x0,y:(room.y0+room.y1)/2,side:"l"};}
+function drawRoom(room,col,label,sub,dr,u,a,signOnly){
+  const w=room.x1-room.x0,h=room.y1-room.y0;
+  if(!signOnly){
+  ctx.fillStyle=rgba(col,.045*a);rr(room.x0,room.y0,w,h,10);ctx.fill();
+  // 地磚格
+  ctx.save();rr(room.x0,room.y0,w,h,10);ctx.clip();ctx.strokeStyle=rgba(col,.07*a);ctx.lineWidth=u;ctx.beginPath();
+  for(let x=room.x0;x<room.x1;x+=24){ctx.moveTo(x,room.y0);ctx.lineTo(x,room.y1);}for(let y=room.y0;y<room.y1;y+=24){ctx.moveTo(room.x0,y);ctx.lineTo(room.x1,y);}ctx.stroke();ctx.restore();
+  // 雙線牆
+  ctx.strokeStyle=rgba(COL.ink,.78*a);ctx.lineWidth=2.2*u;rr(room.x0,room.y0,w,h,10);ctx.stroke();
+  ctx.strokeStyle=rgba(COL.ink,.35*a);ctx.lineWidth=.7*u;rr(room.x0+5,room.y0+5,w-10,h-10,6);ctx.stroke();
+  }
+  if(signOnly===false)return;
+  // 院內指標牌
+  ctx.font=`700 ${13*u}px ${FONT.sans}`;const tw=ctx.measureText(label).width;ctx.font=`600 ${12*u}px ${FONT.num}`;const sw=ctx.measureText(sub).width;
+  const pw=tw+sw+34*u,ph=26*u,px=room.x0+14,py=room.y0-ph/2;
+  ctx.fillStyle=rgba(col,a);rr(px,py,pw,ph,3*u);ctx.fill();
+  ctx.fillStyle=rgba("#ffffff",a);ctx.textAlign="left";ctx.font=`700 ${13*u}px ${FONT.sans}`;ctx.fillText(label,px+10*u,py+ph*.68);
+  ctx.globalAlpha=.8*a;ctx.font=`600 ${12*u}px ${FONT.num}`;ctx.fillText(sub,px+tw+22*u,py+ph*.68);ctx.globalAlpha=1;
+}
+function drawDoctor(o,col,u,isSel){
+  const {x,y,r}=o,e=o.e;
+  ctx.fillStyle=COL.sheet;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+  ctx.save();ctx.beginPath();ctx.arc(x,y,r-1.2*u,0,7);ctx.clip();
+  ctx.fillStyle=rgba(col,.12);ctx.fillRect(x-r,y-r,r*2,r*2);
+  if(e.heat===4&&AV_IMG.complete&&AV_IMG.naturalWidth){ctx.drawImage(AV_IMG,x-r,y-r,r*2,r*2);}else{
+  // 白袍肩線與領口
+  ctx.fillStyle="#ffffff";ctx.strokeStyle=rgba(COL.ink,.55);ctx.lineWidth=.8*u;
+  ctx.beginPath();ctx.moveTo(x-r*1.05,y+r);ctx.quadraticCurveTo(x-r*.95,y+r*.18,x,y+r*.12);ctx.quadraticCurveTo(x+r*.95,y+r*.18,x+r*1.05,y+r);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle=rgba(col,.9);ctx.beginPath();ctx.moveTo(x-r*.2,y+r*.14);ctx.lineTo(x,y+r*.62);ctx.lineTo(x+r*.2,y+r*.14);ctx.closePath();ctx.fill();
+  // 聽診器
+  ctx.strokeStyle=rgba(COL.ink,.7);ctx.lineWidth=.9*u;ctx.beginPath();ctx.moveTo(x-r*.34,y+r*.2);ctx.quadraticCurveTo(x-r*.42,y+r*.72,x-r*.05,y+r*.78);ctx.stroke();
+  ctx.fillStyle=rgba(COL.ink,.75);ctx.beginPath();ctx.arc(x-r*.02,y+r*.8,r*.08,0,7);ctx.fill();
+  // 頭部
+  ctx.fillStyle="#e8d9cb";ctx.strokeStyle=rgba(COL.ink,.45);ctx.beginPath();ctx.arc(x,y-r*.22,r*.3,0,7);ctx.fill();ctx.stroke();
+  ctx.fillStyle=rgba(COL.ink,.78);ctx.beginPath();ctx.arc(x,y-r*.3,r*.31,Math.PI*1.02,Math.PI*1.98);ctx.fill();
+  }
+  ctx.restore();
+  ctx.strokeStyle=col;ctx.lineWidth=(e.heat>=5?2.6:e.heat>=4?2:1.4)*u;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.stroke();
+  if(e.heat>=5){ctx.strokeStyle=rgba(col,.45);ctx.lineWidth=.8*u;ctx.beginPath();ctx.arc(x,y,r+3.5*u,0,7);ctx.stroke();}
+  // 利多利空章
+  if(e.sent){const bx=x+r*.74,by=y-r*.74,br=5*u;ctx.fillStyle=e.sent>0?COL.up:COL.down;ctx.beginPath();ctx.arc(bx,by,br,0,7);ctx.fill();
+    ctx.strokeStyle="#fff";ctx.lineWidth=1.3*u;ctx.beginPath();ctx.moveTo(bx-br*.5,by);ctx.lineTo(bx+br*.5,by);if(e.sent>0){ctx.moveTo(bx,by-br*.5);ctx.lineTo(bx,by+br*.5);}ctx.stroke();}
+  // 職級名牌
+  const lab=(o.g==="ab"?"會診":"")+RANKS[e.heat];ctx.font=`700 ${9.5*u}px ${FONT.sans}`;const lw=ctx.measureText(lab).width+8*u;
+  ctx.fillStyle=col;rr(x-lw/2,y+r+2*u,lw,13*u,2*u);ctx.fill();ctx.fillStyle="#fff";ctx.textAlign="center";ctx.fillText(lab,x,y+r+11.5*u);
+}
+function drawBed(o,u,t,focus){
+  const {x,y}=o,s=o.s,v=vital(s),c=vcol(v),w=26*u*1.05,h=15*u;
+  // 監視器
+  const mx=x-w/2,my=y-h/2-15*u,mw=w,mh=11*u;
+  ctx.fillStyle="#17212b";rr(mx,my,mw,mh,2*u);ctx.fill();
+  ctx.strokeStyle=v==="na"?"#7e8b96":v==="up"?"#ff7b7b":v==="down"?"#5fe3a1":"#b8c3cc";ctx.lineWidth=1*u;ctx.beginPath();
+  const ph=reduce?0:(t*1.3+o.s.code.charCodeAt(3)*.1)%1;
+  for(let i=0;i<=20;i++){const xx=mx+2*u+i*(mw-4*u)/20,q=(i/20+ph)%1;let yy=my+mh*.62;
+    if(v!=="na"){if(q>.42&&q<.46)yy-=mh*(v==="down"?.15:.45);else if(q>=.46&&q<.5)yy+=mh*(v==="down"?.3:.2);else if(q>.6&&q<.7)yy-=mh*.1;}
+    i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.stroke();
+  // 床
+  ctx.fillStyle=COL.sheet;ctx.strokeStyle=rgba(COL.ink,.7);ctx.lineWidth=1*u;rr(x-w/2,y-h/2,w,h,3*u);ctx.fill();ctx.stroke();
+  ctx.fillStyle=v==="up"?"#f6dada":v==="down"?"#d7eee2":"#e6ebef";rr(x-w/2+8*u,y-h/2+1.5*u,w-9.5*u,h-3*u,2*u);ctx.fill();
+  ctx.fillStyle="#fff";ctx.strokeStyle=rgba(COL.ink,.4);ctx.lineWidth=.7*u;rr(x-w/2+1.8*u,y-h/2+2.5*u,5*u,h-5*u,1.5*u);ctx.fill();ctx.stroke();
+  if(s.side==="both"){ctx.fillStyle=COL.br;rr(x+w/2-6*u,y-h/2-1*u,4*u,h+2*u,1*u);ctx.fill();}
+  // 床頭牌
+  ctx.textAlign="center";ctx.font=`700 ${11*u}px ${FONT.sans}`;ctx.fillStyle=rgba(COL.ink,.95);ctx.fillText(s.name,x,y+h/2+13*u);
+  ctx.font=`600 ${11*u}px ${FONT.num}`;ctx.fillStyle=v==="na"?COL.mute:c;
+  ctx.fillText(v==="na"?(s.q?"待揭曉":"未量測"):pct(s.q),x,y+h/2+25*u);
+}
+// 走廊：兩房之間一條直通道（主軸方向），雙線牆與房牆相接，開口乾淨；內含連續心電圖
+function drawCorridor(r1,r2,cw,st,t,u,a,dir){
+  const V=vert(),lo=V?Math.max(r1.x0,r2.x0)+cw/2+14:Math.max(r1.y0,r2.y0)+cw/2+30,hi=V?Math.min(r1.x1,r2.x1)-cw/2-14:Math.min(r1.y1,r2.y1)-cw/2-14;
+  const mid=V?(r1.cx+r2.cx)/2:(r1.cy+r2.cy)/2,c=lo<=hi?Math.max(lo,Math.min(hi,mid)):(lo+hi)/2;
+  const s0=V?r1.y1:r1.x1,s1=V?r2.y0:r2.x0,len=s1-s0;if(len<=0)return;
+  const P=(s,o)=>V?[c+o,s]:[s,c+o];   // 主軸座標 s，橫向偏移 o
+  const line=(sa,sb,o)=>{const [x0,y0]=P(sa,o),[x1,y1]=P(sb,o);ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);};
+  const rect=(sa,sb,o0,o1)=>{const [x0,y0]=P(sa,o0),[x1,y1]=P(sb,o1);ctx.rect(Math.min(x0,x1),Math.min(y0,y1),Math.abs(x1-x0),Math.abs(y1-y0));};
+  const h=cw/2;
+  ctx.save();ctx.globalAlpha=a;
+  // 地面：延伸進兩房 9px，蓋掉開口處的房牆
+  ctx.fillStyle="#f8f6fb";ctx.beginPath();rect(s0-9,s1+9,-h+1.1*u,h-1.1*u);ctx.fill();
+  // 地面方格
+  ctx.save();ctx.beginPath();rect(s0,s1,-h,h);ctx.clip();ctx.strokeStyle=rgba(COL.br,.07);ctx.lineWidth=u;ctx.beginPath();
+  for(let s=s0+6;s<s1;s+=12){const [x0,y0]=P(s,-h),[x1,y1]=P(s,h);ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);}ctx.stroke();ctx.restore();
+  // 雙線牆：外牆接房間外牆，內線接房間內線
+  ctx.strokeStyle=rgba(COL.ink,.78);ctx.lineWidth=2.2*u;ctx.beginPath();line(s0,s1,-h);line(s0,s1,h);ctx.stroke();
+  ctx.strokeStyle=rgba(COL.ink,.35);ctx.lineWidth=.7*u;ctx.beginPath();line(s0-5,s1+5,-h+5);line(s0-5,s1+5,h-5);ctx.stroke();
+  // 心電圖：底軌＋掃描亮段
+  if(st>0&&len>24){
+    const amp=Math.max(4,h-9),per=46,sp=reduce?0:t*(40+st*60)*(dir>0?1:-1);
+    const ecg=s=>{const q=(((s-sp)%per)+per)%per/per;
+      if(q>.18&&q<.24)return -.18*Math.sin((q-.18)/.06*Math.PI);
+      if(q>.34&&q<.37)return .22*((q-.34)/.03);
+      if(q>=.37&&q<.41)return .22-1.22*((q-.37)/.04);
+      if(q>=.41&&q<.45)return -1+1.25*((q-.41)/.04);
+      if(q>=.45&&q<.48)return .25-.25*((q-.45)/.03);
+      if(q>.58&&q<.7)return -.28*Math.sin((q-.58)/.12*Math.PI);return 0;};
+    ctx.save();ctx.beginPath();rect(s0+1,s1-1,-h+3,h-3);ctx.clip();
+    const trace=(alpha,w,from,to)=>{ctx.strokeStyle=rgba(COL.br,alpha);ctx.lineWidth=w;ctx.lineJoin="round";ctx.beginPath();
+      for(let s=from;s<=to;s+=1.5){const [x,y]=P(s,ecg(s)*amp);s===from?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.stroke();};
+    trace(.28,1*u,s0,s1);
+    const head=reduce?(s0+s1)/2:s0+(((t*(70+st*90))%(len+60))+len+60)%(len+60)-30,tail=48;
+    const from=dir>0?head-tail:head,to=dir>0?head:head+tail;
+    trace(.95,1.6*u,Math.max(s0,from),Math.min(s1,to));
+    const hp=dir>0?Math.min(s1,head):Math.max(s0,head);if(hp>s0&&hp<s1){const [x,y]=P(hp,ecg(hp)*amp);ctx.fillStyle=COL.br;ctx.beginPath();ctx.arc(x,y,2.2*u,0,7);ctx.fill();}
+    ctx.restore();}
+  ctx.restore();
+}
+function along(path,u){let L=0;const seg=[];for(let i=1;i<path.length;i++){const d=Math.hypot(path[i].x-path[i-1].x,path[i].y-path[i-1].y);seg.push(d);L+=d;}
+  let d=u*L;for(let i=0;i<seg.length;i++){if(d<=seg[i]){const k=d/seg[i],p=path[i],q=path[i+1];return {x:p.x+(q.x-p.x)*k,y:p.y+(q.y-p.y)*k,a:Math.atan2(q.y-p.y,q.x-p.x)};}d-=seg[i];}
+  const q=path.at(-1),p=path.at(-2);return {x:q.x,y:q.y,a:Math.atan2(q.y-p.y,q.x-p.x)};}
+function ecgGlyph(x,y,a,s,col,al){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.strokeStyle=rgba(col,al);ctx.lineWidth=1.4*s/10;ctx.lineJoin="round";ctx.beginPath();
+  const P=[[-12,0],[-6,0],[-4,-2],[-2,0],[0,0],[1.5,6],[3.5,-12],[5.5,4],[7,0],[10,0],[12,-2.5],[14,0],[18,0]];P.forEach(([px,py],i)=>{i?ctx.lineTo(px*s/10,py*s/10):ctx.moveTo(px*s/10,py*s/10);});ctx.stroke();ctx.restore();}
+function focusSet(){
+  const ch=state.tab==="chain"&&R.chains[state.chain];if(ch&&!state.hover)return new Set(ch.nodes);
+  const f=state.hover||state.sel;if(!f)return null;const s=new Set([f.id]);
+  edges.forEach(e=>{if(e.s===f)s.add(e.t.id);if(e.t===f)s.add(e.s.id);});
+  if(f.type==="ev")xlinks.forEach(l=>{if(l.s===f)s.add(l.t.id);if(l.t===f)s.add(l.s.id);});return s;}
+const ease=x=>1-Math.pow(1-x,3);
+function blueprint(){
+  // 藍圖格線（隨鏡頭移動）
+  const [wx0,wy0]=toWorld(0,0),[wx1,wy1]=toWorld(W,H);ctx.lineWidth=1/cam.k;
+  [[12,.55],[60,1]].forEach(([g,a])=>{ctx.strokeStyle=rgba(COL.grid,a);ctx.beginPath();
+    for(let x=Math.floor(wx0/g)*g;x<wx1;x+=g){ctx.moveTo(x,wy0);ctx.lineTo(x,wy1);}for(let y=Math.floor(wy0/g)*g;y<wy1;y+=g){ctx.moveTo(wx0,y);ctx.lineTo(wx1,y);}ctx.stroke();});
+}
+function titleBlock(){
+  // 建築圖框、圖簽與指北
+  const x0=PAD.l-14,y0=PAD.t-14,x1=W-PAD.r+14,y1=H-PAD.b+14;
+  ctx.strokeStyle=rgba(COL.ink,.7);ctx.lineWidth=1.4;ctx.strokeRect(x0+.5,y0+.5,x1-x0,y1-y0);
+  ctx.strokeStyle=rgba(COL.ink,.3);ctx.lineWidth=.6;ctx.strokeRect(x0+4.5,y0+4.5,x1-x0-8,y1-y0-8);
+  if(W>=640){
+    const lab=(s)=>{ctx.font=`400 12px ${FONT.art}`;return ctx.measureText(s).width;},val=(s)=>{ctx.font=`700 15px ${FONT.art}`;return ctx.measureText(s).width;};
+    const lv=TTAS.find(([th])=>R.idx>=th),cells=[["圖號","OPD-01"],["比例",`1 : ${(100/cam.k).toFixed(0)}`],["資料日",DATA_ASOF||"—"],["檢傷",`第 ${lv[1]} 級`]];
+    const cw=cells.map(([l,v],k)=>lab(l)+8+val(v)+(k===3?16:0)+18);const c1=Math.max(cw[0],cw[2]),c2=Math.max(cw[1],cw[3]);
+    ctx.font=`700 19px ${FONT.art}`;const t1=ctx.measureText("812拉基醫院").width;ctx.font=`400 13px ${FONT.art}`;const t2=ctx.measureText("會診平面圖").width;
+    const bw=Math.max(c1+c2,t1+t2+36),bh=82,bx=x1-bw-4,by=y1-bh-4,split=bx+Math.max(c1,bw-c2);
+    ctx.fillStyle=COL.sheet;ctx.fillRect(bx,by,bw,bh);ctx.strokeStyle=rgba(COL.ink,.6);ctx.lineWidth=.8;ctx.strokeRect(bx+.5,by+.5,bw,bh);
+    ctx.beginPath();ctx.moveTo(bx,by+34);ctx.lineTo(bx+bw,by+34);ctx.moveTo(bx,by+58);ctx.lineTo(bx+bw,by+58);ctx.moveTo(split,by+34);ctx.lineTo(split,by+bh);ctx.stroke();
+    ctx.textAlign="left";ctx.fillStyle=COL.ink;ctx.font=`700 19px ${FONT.art}`;ctx.fillText("812拉基醫院",bx+10,by+24);
+    ctx.font=`400 13px ${FONT.art}`;ctx.fillStyle=COL.mute;ctx.textAlign="right";ctx.fillText("會診平面圖",bx+bw-10,by+24);ctx.textAlign="left";
+    cells.forEach(([l,v],k)=>{const x=(k%2?split:bx)+8,y=by+(k<2?51:75);ctx.font=`400 12px ${FONT.art}`;ctx.fillStyle=COL.mute;ctx.fillText(l,x,y-1);
+      let vx=x+lab(l)+8;if(k===3){ctx.fillStyle=TT[lv[1]-1];ctx.fillRect(vx,y-10,10,10);vx+=16;}
+      ctx.font=`700 15px ${FONT.art}`;ctx.fillStyle=COL.ink;ctx.fillText(v,vx,y);});}
+  const nx=PAD.l+18,ny=vert()?PAD.t+108:PAD.t+40;ctx.strokeStyle=rgba(COL.ink,.7);ctx.lineWidth=1;ctx.beginPath();ctx.arc(nx,ny,13,0,7);ctx.stroke();
+  ctx.fillStyle=COL.ink;ctx.beginPath();ctx.moveTo(nx,ny-11);ctx.lineTo(nx+5,ny+6);ctx.lineTo(nx,ny+2);ctx.closePath();ctx.fill();
+  ctx.fillStyle=COL.sheet;ctx.strokeStyle=COL.ink;ctx.beginPath();ctx.moveTo(nx,ny-11);ctx.lineTo(nx-5,ny+6);ctx.lineTo(nx,ny+2);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.fillStyle=COL.ink;ctx.font=`700 11px ${FONT.num}`;ctx.textAlign="center";ctx.fillText("N",nx,ny-17);
+}
+function draw(ts){
+  const t=(ts||0)/1000;tick();
+  const sp=reduce?1:.12;cam.x+=(camT.x-cam.x)*sp;cam.y+=(camT.y-cam.y)*sp;cam.k+=(camT.k-cam.k)*sp;
+  const intro=reduce?1:ease(Math.min(1,(performance.now()-born)/1600));
+  const k=cam.k,u=1/k;
+  ctx.fillStyle=COL.sheet;ctx.fillRect(0,0,W,H);
+  ctx.save();ctx.translate(W/2,H/2);ctx.scale(k,k);ctx.translate(-cam.x,-cam.y);
+  blueprint();
+  const F=focusSet(),dimA=id=>F&&!F.has(id)?(state.sel?.14:.3):1,roomA=F?.55:1;
+  // 房間與走廊
+  const rA=roomOf("a"),rB=roomOf("b"),rC=roomOf("ab");
+  const st=R.idx/100,cw=26+st*20;
+  ctx.globalAlpha=intro;
+  const RM=[[rA,COL.a,`A 棟　${dept(state.A)}`,`${R.inA.length} 位醫師`],[rB,COL.b,`B 棟　${dept(state.B)}`,`${R.inB.length} 位醫師`],[rC,COL.br,"聯合會診中心",`${R.inAB.length} 位會診醫師`]].filter(x=>x[0]);
+  RM.forEach(([r,c,l,s])=>drawRoom(r,c,l,s,[],u,roomA,false));
+  const order=[rA,rC,rB].filter(Boolean);
+  for(let i=1;i<order.length;i++)drawCorridor(order[i-1],order[i],cw,st,t,u,roomA*intro,i===1&&order.length===3?1:-1);
+  RM.forEach(([r,c,l,s])=>drawRoom(r,c,l,s,[],u,roomA,true));
+  ctx.globalAlpha=1;
+  // 轉介虛線（跨棟關聯）
+  xlinks.forEach(l=>{const on=F&&F.has(l.s.id)&&F.has(l.t.id)&&(l.s===state.sel||l.t===state.sel||l.s===state.hover||l.t===state.hover);if(!on&&F)return;
+    ctx.strokeStyle=rgba(COL.br,on?.75:Math.min(.22,.06+l.w*.05));ctx.lineWidth=(on?1.4:.9)*u;ctx.setLineDash([4*u,4*u]);
+    const mx=(l.s.x+l.t.x)/2,my=(l.s.y+l.t.y)/2-Math.abs(l.t.x-l.s.x)*.18;ctx.beginPath();ctx.moveTo(l.s.x,l.s.y);ctx.quadraticCurveTo(mx,my,l.t.x,l.t.y);ctx.stroke();ctx.setLineDash([]);
+    if(on&&!reduce){const uu=(t*.3+l.o)%1,v=1-uu;const x=v*v*l.s.x+2*v*uu*mx+uu*uu*l.t.x,y=v*v*l.s.y+2*v*uu*my+uu*uu*l.t.y;ecgGlyph(x,y,0,10*u,COL.br,1);}});
+  // 診療關係線
+  edges.forEach(e=>{const {s,t:tn}=e,on=F&&F.has(s.id)&&F.has(tn.id);
+    ctx.strokeStyle=rgba(gc(s.g),on?.85:F?.05:.28);ctx.lineWidth=(on?1.6:.8)*u;ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(tn.x,tn.y);ctx.stroke();
+    if(on&&!reduce){const uu=(t*.45+e.o)%1;ctx.fillStyle=gc(s.g);ctx.beginPath();ctx.arc(s.x+(tn.x-s.x)*uu,s.y+(tn.y-s.y)*uu,2.4*u,0,7);ctx.fill();}});
+  // 轉診路徑
+  const ch=state.tab==="chain"&&R.chains[state.chain];
+  if(ch){const pts=ch.nodes.map(id=>nodeMap[id]).filter(Boolean);
+    if(pts.length>1){ctx.strokeStyle=rgba(COL.ink,.9);ctx.lineWidth=2.4*u;ctx.setLineDash([10*u,6*u]);ctx.lineDashOffset=reduce?0:-t*30*u;
+      ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
+      pts.forEach((p,i)=>{ctx.fillStyle=COL.ink;ctx.beginPath();ctx.arc(p.x-p.r-6*u,p.y-p.r-6*u,8*u,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.font=`700 ${10*u}px ${FONT.num}`;ctx.textAlign="center";ctx.fillText(i+1,p.x-p.r-6*u,p.y-p.r-2.5*u);});}}
+  // 病床
+  nodes.forEach(o=>{if(o.type!=="st")return;ctx.globalAlpha=dimA(o.id)*intro;drawBed(o,u,t,F&&F.has(o.id));ctx.globalAlpha=1;});
+  // 醫師
+  nodes.forEach(o=>{if(o.type!=="ev")return;ctx.globalAlpha=dimA(o.id)*intro;drawDoctor(o,gc(o.g),u,o===state.sel);ctx.globalAlpha=1;});
+  // 選取：呼叫鈴波紋與定位框
+  const sel=state.sel;
+  if(sel){const R0=sel.type==="ev"?sel.r+7*u:22*u;
+    for(let i=0;i<2;i++){const ph=reduce?.4:((t*.8+i/2)%1);ctx.strokeStyle=rgba(sel.type==="ev"?gc(sel.g):COL.ink,(1-ph)*.5);ctx.lineWidth=1.2*u;ctx.beginPath();ctx.arc(sel.x,sel.y,R0+ph*34*u,0,7);ctx.stroke();}
+    ctx.strokeStyle=COL.ink;ctx.lineWidth=1.4*u;const L=8*u,b=R0+2*u;
+    [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([sx,sy])=>{ctx.beginPath();ctx.moveTo(sel.x+sx*b,sel.y+sy*(b-L));ctx.lineTo(sel.x+sx*b,sel.y+sy*b);ctx.lineTo(sel.x+sx*(b-L),sel.y+sy*b);ctx.stroke();});}
+  // 聚焦時顯示醫師診斷摘要
+  if(state.sel)nodes.forEach(o=>{if(o.type!=="ev"||o===state.sel||!(F&&F.has(o.id)))return;const tt=o.e.t.length>16?o.e.t.slice(0,16)+"…":o.e.t;
+    ctx.font=`600 ${11*u}px ${FONT.serif}`;const w=ctx.measureText(tt).width+12*u;ctx.fillStyle="rgba(255,255,255,.94)";ctx.strokeStyle=rgba(gc(o.g),.6);ctx.lineWidth=.8*u;
+    rr(o.x+o.r+4*u,o.y-o.r-16*u,w,18*u,3*u);ctx.fill();ctx.stroke();ctx.fillStyle=COL.ink;ctx.textAlign="left";ctx.fillText(tt,o.x+o.r+10*u,o.y-o.r-3*u);});
+  ctx.restore();
+  titleBlock();
+  if(sel&&!$("card").hidden&&!vert()){const [sx,sy]=toScreen(sel.x,sel.y),cr=$("card").getBoundingClientRect(),pr=$("plate").getBoundingClientRect();
+    const cx=cr.left-pr.left,cy=cr.top-pr.top,ex=cx>sx?cx:cx+cr.width,ey=Math.max(cy+20,Math.min(cy+cr.height-20,sy));
+    const gx=sx+(ex>sx?28:-28);ctx.strokeStyle=rgba(COL.mute,.8);ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(gx,sy);ctx.lineTo(gx+(ex-gx)*.5,ey);ctx.lineTo(ex,ey);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=COL.mute;ctx.beginPath();ctx.arc(ex,ey,2.5,0,7);ctx.fill();}
+  placeCard();
+  requestAnimationFrame(draw);
+}
+
+/* ================= 識別證與床頭卡 ================= */
+const gName={a:"A 棟",b:"B 棟",ab:"聯合會診",o:"其他"};
+const sentTxt=s=>s>0?'<span class="up">利多</span>':s<0?'<span class="down">利空</span>':"中性";
+const avatarSVG=col=>`<svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="15" r="7" fill="#e8d9cb" stroke="#16212b" stroke-opacity=".4"/><path d="M13 14a7 7 0 0 1 14 0c-2-3-12-3-14 0z" fill="#16212b" fill-opacity=".8"/><path d="M5 40c1-11 7-15 15-15s14 4 15 15z" fill="#fff" stroke="#16212b" stroke-opacity=".5"/><path d="M17 25l3 9 3-9z" fill="${col}"/></svg>`;
+function dxTag(s){if(hidePx(s))return "";return s.react==="ok"?`<span class="dxm ok ${s.net>0?"pos":""}">診斷相符</span>`:s.react==="div"?'<span class="dxm bad">診斷不符</span>':`<span class="dxm na">${s.q?"無方向":"未量測"}</span>`;}
+function cardHTML(n){
+  if(n.type==="ev"){const e=n.e,col=gc(e.g);
+    return `<div class="band" style="background:${col}"><b>${e.g==="ab"?"聯合會診中心":gName[e.g]+"　"+esc(dept(e.g==="a"?state.A:state.B))}</b><button data-x aria-label="關閉">×</button></div>
+      <div class="inner"><div class="idrow"><div class="ph">${e.heat===4?`<img src="${AVATAR}" alt="" style="width:52px;height:52px;border-radius:50%;object-fit:cover">`:avatarSVG(col)}</div><div><div class="role">${e.g==="ab"?"會診":""}${RANK[e.heat]}　<span class="num">${e.cat}</span></div><div class="nm">${esc(e.src)}</div></div></div>
+      <div class="dx">${esc(e.t)}</div>
+      <div class="meta">${esc(e.d)}　診斷：${sentTxt(e.sent)}　主訴：${e.themes.map(esc).join("、")}</div>
+      ${e.codes.length?`<div class="meta">收治病人</div><div class="pts">${e.codes.map(c=>{const s=R.stocks.find(x=>x.code===c),q=quote(c),v=s?vital(s):"na";
+        return `<button class="pt" data-go="s${c}"><span>${esc(UNI[c]?.[1]||c)}</span><span class="num ${v}">${v==="na"?"—":pct(q)}</span></button>`;}).join("")}</div>`:'<div class="meta">這位醫師沒有收治上市櫃病人</div>'}
+      ${e.u?`<div class="meta"><a href="${esc(e.u)}" target="_blank" rel="noopener" style="color:inherit">閱讀原始新聞</a></div>`:""}</div>`;}
+  const s=n.s,v=vital(s),col=s.side==="both"?COL.br:gc(s.side);
+  return `<div class="band" style="background:${col}"><b>${s.side==="both"?"共同照護病人":gName[s.side]+"　"+esc(dept(s.side==="a"?state.A:state.B))}</b><button data-x aria-label="關閉">×</button></div>
+    <div class="inner"><div class="bed"><span class="no">${s.code}</span><span><div class="role">${esc(s.mk)}　${esc(s.ind)}病房</div><div class="nm">${esc(s.name)}</div></span></div>
+    <div class="vit"><div><small>${ASOF_MD} 收盤</small><span class="num">${s.q&&v!=="na"?s.q.close.toLocaleString():"—"}</span></div><div><small>生命徵象</small><span class="num ${v}">${v==="na"?(s.q?"待揭曉":"未量測"):pct(s.q)}</span></div></div>
+    <div class="meta">A 棟醫師 ${s.a} 位，B 棟醫師 ${s.b} 位，醫囑傾向 ${s.net>0?"+":""}${s.net}　${dxTag(s)}</div>
+    <div class="meta">主治團隊</div><div class="docs">${s.evs.slice(0,4).map(e=>`<button data-go="${e.id}"><span class="chip" style="background:${gc(e.g)}">${RANKS[e.heat]}</span><span>${esc(e.t)}</span></button>`).join("")}</div></div>`;
+}
+function openCard(n){const c=$("card");if(!n){c.hidden=true;c.classList.remove("in");return;}
+  c.innerHTML=cardHTML(n);c.hidden=false;c.classList.remove("in");void c.offsetWidth;c.classList.add("in");
+  c.querySelector("[data-x]").onclick=()=>select(null);
+  c.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>select(nodeMap[b.dataset.go]));}
+function placeCard(){const c=$("card");if(c.hidden||!state.sel)return;
+  if(vert()){const [,sy]=toScreen(state.sel.x,state.sel.y);c.style.left="12px";c.style.right="12px";c.style.bottom="auto";
+    c.style.top=Math.max(110,Math.min(H-c.offsetHeight-12,sy+46))+"px";return;}
+  const [sx,sy]=toScreen(state.sel.x,state.sel.y),cw=c.offsetWidth,chh=c.offsetHeight;
+  const x=state.cardSide==="left"?PAD.l+12:W-PAD.r-cw-12;
+  const y=Math.max(PAD.t+50,Math.min(H-PAD.b-chh-96,sy-chh*.35));c.style.left=x+"px";c.style.top=y+"px";c.style.right="auto";c.style.bottom="auto";}
+
+/* ================= 互動 ================= */
+function hit(sx,sy){const [x,y]=toWorld(sx,sy);let best=null,bd=1e9;nodes.forEach(o=>{const rr0=o.type==="st"?20:o.r+5;const d=Math.hypot(o.x-x,o.y-(o.type==="st"?y+3:y));if(d<Math.max(rr0,14/cam.k)&&d<bd){bd=d;best=o;}});return best;}
+const pos=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+// 聚焦：把選取節點與它的所有連線對象框在卡片「不會蓋到」的那半邊
+function neighbors(n){const s=new Set();edges.forEach(e=>{if(e.s===n)s.add(e.t);if(e.t===n)s.add(e.s);});
+  if(n.type==="ev")xlinks.forEach(l=>{if(l.s===n)s.add(l.t);if(l.t===n)s.add(l.s);});return [...s];}
+function focusNode(n){
+  if(vert()){const kk=Math.max(camT.k,1.4);flyTo(n.x,n.y+120/kk,kk);return;}
+  const nb=neighbors(n),dx=nb.length?nb.reduce((s,o)=>s+o.x-n.x,0)/nb.length:-1;
+  state.cardSide=dx<=0?"right":"left";
+  let x0=n.x,y0=n.y,x1=n.x,y1=n.y;nb.forEach(o=>{x0=Math.min(x0,o.x);y0=Math.min(y0,o.y);x1=Math.max(x1,o.x);y1=Math.max(y1,o.y);});
+  const cardW=Math.min(330,$("card").offsetWidth||300)+36,availW=W-PAD.l-PAD.r-cardW-30,availH=H-210;
+  const kk=Math.max(.7,Math.min(1.7,availW/(x1-x0+150),availH/(y1-y0+170)));
+  const sxTarget=state.cardSide==="right"?PAD.l+15+availW/2:W-PAD.r-15-availW/2;
+  flyTo((x0+x1)/2-(sxTarget-W/2)/kk,(y0+y1)/2+10/kk,kk);}
+function select(n){
+  state.sel=n||null;$("tip").hidden=true;
+  if(n)focusNode(n);else resetView();
+  openCard(n);
+  if(n&&state.tab==="chain")setTab("obs");else render();
+}
+let drag=null,suppress=false;
+cv.addEventListener("pointerdown",e=>{if(e.pointerType==="touch")return;drag={x:e.clientX,y:e.clientY,cx:camT.x,cy:camT.y,moved:false};});
+addEventListener("pointerup",()=>{if(drag){suppress=drag.moved;drag=null;}});
+cv.addEventListener("pointermove",e=>{
+  if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>4)drag.moved=true;
+    if(drag.moved){camT.x=cam.x=drag.cx-dx/cam.k;camT.y=cam.y=drag.cy-dy/cam.k;cv.style.cursor="grabbing";$("tip").hidden=true;return;}}
+  if(e.pointerType==="touch")return;const [x,y]=pos(e),h=hit(x,y);state.hover=h;cv.style.cursor=h?"pointer":"grab";
+  const tip=$("tip");if(!h||h===state.sel){tip.hidden=true;return;}tip.hidden=false;
+  if(h.type==="ev")tip.innerHTML=`<div class="k">${h.g==="ab"?"會診":""}${RANK[h.e.heat]}　${esc(h.e.src)}　${esc(h.e.d)}</div><b>${esc(h.e.t)}</b><div class="k">點一下查看識別證</div>`;
+  else{const s=h.s,v=vital(s);tip.innerHTML=`<div class="k">${s.code} 床　${esc(s.ind)}病房</div><b>${esc(s.name)}</b><div class="k">${v==="na"?(s.q?"生命徵象待揭曉":"未量測"):`生命徵象 <span class="${v}">${pct(s.q)}</span>`}</div>`;}
+  tip.style.left=Math.min(x+16,W-tip.offsetWidth-10)+"px";tip.style.top=Math.min(y+16,H-tip.offsetHeight-10)+"px";});
+cv.addEventListener("pointerleave",()=>{state.hover=null;$("tip").hidden=true;});
+cv.addEventListener("click",e=>{if(suppress){suppress=false;return;}const [x,y]=pos(e);select(hit(x,y));});
+cv.addEventListener("dblclick",()=>select(null));
+cv.addEventListener("wheel",e=>{e.preventDefault();const [sx,sy]=pos(e),[wx,wy]=toWorld(sx,sy);
+  const k2=Math.max(.6,Math.min(3,camT.k*Math.exp(-e.deltaY*.0016)));camT.k=k2;camT.x=wx-(sx-W/2)/k2;camT.y=wy-(sy-H/2)/k2;},{passive:false});
+$("zin").onclick=()=>{camT.k=Math.min(3,camT.k*1.3);};
+$("zout").onclick=()=>{camT.k=Math.max(.6,camT.k/1.3);};
+$("zreset").onclick=()=>select(null);
+$("legBtn").onclick=()=>{const l=$("legend");l.hidden=!l.hidden;$("legBtn").setAttribute("aria-expanded",!l.hidden);};
+function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2200);}
+
+/* ================= 病歷夾 ================= */
+function mini(e){return `<span class="mini" style="background:${gc(e.g==="o"?"ab":e.g)}">${RANKS[e.heat]}</span>`;}
+function row(e,extra=""){return `<button class="row" data-id="${e.id}">${mini(e)}<span><div class="t">${esc(e.t)}</div><div class="m">${esc(e.d)}　${esc(e.src)}　${sentTxt(e.sent)}${e.codes.length?"　"+e.codes.slice(0,4).map(c=>esc(UNI[c]?.[1]||c)).join("、"):""}</div>${extra}</span></button>`;}
+function obsHTML(){
+  const comp=[["共同會診",R.J],["共同病人",R.Js],["同病房",R.Ji],["轉介密度",R.linkD]];
+  const mx=Math.max(1,...R.stocks.map(x=>Math.max(x.a,x.b))),bad=R.stocks.filter(s=>s.react==="div").length;
+  const wm=Math.max(1,...R.wards.map(w=>Math.max(w.a,w.b)));
+  return `
+  <section><h2>會診強度從哪裡來</h2><p class="note">A 棟 ${R.inA.length} 位醫師、會診中心 ${R.inAB.length} 位、B 棟 ${R.inB.length} 位</p>
+    <div class="comp">${comp.map(([k,v])=>`<span>${k}</span><span class="bar"><b style="width:${Math.round(v*100)}%"></b></span><span class="num">${Math.round(v*100)}%</span>`).join("")}</div></section>
+  <section><h2>聯合會診醫師</h2><p class="note">同時談到${esc(state.A)}與${esc(state.B)}的新聞</p>
+    ${R.inAB.length?R.inAB.slice().sort((p,q)=>q.heat-p.heat).map(e=>row(e)).join(""):`<p class="note">兩科沒有共同會診。到「轉診路徑」看兩科是否透過共同病人或同病房相連。</p>`}</section>
+  <section><h2>病房分布</h2><p class="note">各產業病房裡，A 棟與 B 棟各收治幾位病人</p>
+    <div class="ward">${R.wards.slice(0,8).map(w=>`<span class="l"><i style="width:${w.a/wm*100}%"></i></span><span class="num na">${w.a||""}</span><span class="nm">${esc(w.ind.replace(/業$/,""))}</span><span class="num">${w.b||""}</span><span class="rr"><i style="width:${w.b/wm*100}%"></i></span>`).join("")}</div>
+    </section>
+  <section><h2>病人一覽</h2><p class="note">依共同照護程度排序；生命徵象為 ${ASOF_MD} 收盤漲跌${bad?`；${bad} 位病人的實際狀況與醫師診斷相反`:""}</p>
+    ${R.stocks.length?`<table><tr><th>床號與病人</th><th style="text-align:center">A　B</th><th class="r">生命徵象</th><th class="r">診斷</th></tr>${R.stocks.slice(0,20).map(s=>{const v=vital(s);return `
+      <tr class="pr" data-id="s${s.code}"><td><span class="code">${s.code}</span>${esc(s.name)}</td>
+      <td><div class="abw"><i class="l" style="width:${s.a/mx*28}px"></i><i class="rr" style="width:${s.b/mx*28}px"></i></div></td>
+      <td class="v ${v}">${v==="na"?"—":pct(s.q)}</td><td class="r">${dxTag(s)}</td></tr>`;}).join("")}</table>`:'<p class="note">這兩科的新聞沒有點名上市櫃個股。</p>'}</section>`;}
+function wardFix(){document.querySelectorAll(".ward .rr").forEach(()=>{});}
+function chainHTML(){
+  if(!R.chains.length)return '<p class="note">找不到連接兩科的共同病人、同病房或共同主訴。換一組科別，或把病程拉到最後一天。</p>';
+  const lab=id=>{const n=nodeMap[id];if(!n)return "";if(n.type==="st")return `<span class="n">${esc(n.s.name)}</span>`;
+    const e=n.e,t=e.t.length>18?e.t.slice(0,18)+"…":e.t;return `<span class="${e.g==="ab"?"AB":e.g.toUpperCase()}">${RANK[e.heat]}：${esc(t)}</span>`;};
+  return `<p class="note">兩科之間最強的轉診路徑，依強度排序。點一條，平面圖會帶你走一遍。</p><div class="refs">`+R.chains.map((c,i)=>`
+    <button class="ref" data-chain="${i}" aria-pressed="${i===state.chain}"><span class="no">${i+1}</span><span>
+      <div class="kd">${c.kind}<span class="num">${c.w.toFixed(1)}</span></div>
+      <div class="pth">${c.nodes.map(lab).join('<span class="ar">→</span>')}</div><div class="why">${esc(c.why)}</div></span></button>`).join("")+"</div>";}
+function bestScore(){try{return +localStorage.getItem("hospital_best")||0}catch(e){return 0}}
+function saveBest(v){try{localStorage.setItem("hospital_best",v)}catch(e){}}
+function newQuiz(){const pool=R.stocks.filter(s=>s.q&&s.q.chg!==0).slice(0,10);state.quiz={pool,i:0,score:0,streak:0,hits:0,model:0,ans:null,rev:new Set()};
+  const n=pool[0]?nodeMap["s"+pool[0].code]:null;state.sel=n;openCard(n);if(n)focusNode(n);render();}
+function quizHTML(){
+  const Q=state.quiz,pool=R.stocks.filter(s=>s.q&&s.q.chg!==0);
+  if(!Q)return `<section class="intro"><h2>預後挑戰</h2>
+    <p>從這兩科挑出最多 10 位病人，只看醫師們的診斷（相關新聞），判斷病人 ${ASOF_MD} 是好轉（收漲）還是惡化（收跌）。答對得 10 分，連續答對每題多 5 分。</p>
+    <p>院內的 AI 判讀系統會同時作答，它只把醫師診斷的利多利空加總。股價常常先反映消息，所以「診斷不符」的病人最容易判斷錯，也最能拉開差距。</p>
+    <p class="note">這組科別可出 ${pool.length} 題（沒有行情的病人不出題）。你的最高分 <span class="num" style="font-size:16px;color:var(--ink)">${bestScore()}</span></p>
+    ${pool.length?'<button class="cta" id="qStart">開始查房</button>':""}</section>`;
+  if(Q.i>=Q.pool.length){const b=bestScore();if(Q.score>b)saveBest(Q.score);
+    return `<section><h2>查房結束</h2><div class="board"><div><span class="num">${Q.score}</span><span>分數</span></div><div><span class="num">${Q.hits}/${Q.pool.length}</span><span>你判斷正確</span></div><div><span class="num">${Q.model}/${Q.pool.length}</span><span>AI 判讀正確</span></div></div>
+      <p class="note" style="margin-top:12px">${Q.hits>Q.model?"你贏過 AI 判讀系統，讀出了診斷以外的訊號。":Q.hits===Q.model?"和 AI 判讀系統打平。":"這輪 AI 判讀系統贏了，關鍵在診斷不符的病人。"}${Q.score>b?"這是新的最高分。":""}</p>
+      <button class="cta" id="qStart">再查一次房</button></section>`;}
+  const s=Q.pool[Q.i],done=Q.ans!==null,act=Math.sign(s.q.chg),mdl=Math.sign(s.net)||1;
+  return `<div class="board"><div><span class="num">${Q.score}</span><span>分數</span></div><div><span class="num">${Q.streak}</span><span>連續正確</span></div><div><span class="num">${Q.i+1}/${Q.pool.length}</span><span>第幾床</span></div></div>
+    <section class="q"><div class="hd"><b>${esc(s.name)}</b><span class="num">${s.code} 床</span><span>${esc(s.ind)}病房</span></div>
+    <ul>${s.evs.slice(0,4).map(e=>`<li><span class="chip" style="background:${gc(e.g)}">${RANKS[e.heat]}</span><span>${esc(e.t)}，${sentTxt(e.sent)}</span></li>`).join("")}</ul>
+    <div class="bets"><button class="bet u" data-bet="1" ${done?"disabled":""}>好轉</button><button class="bet d" data-bet="-1" ${done?"disabled":""}>惡化</button></div>
+    ${done?`<div class="reveal">${ASOF_MD} 生命徵象<br><span class="num ${act>0?"up":"down"}">${pct(s.q)}</span>
+      <p>你${Q.ans===act?"判斷正確":"判斷錯誤"}；AI 判讀${mdl===act?"正確":"錯誤"}，它看到的醫囑傾向是 ${s.net>0?"+":""}${s.net}。</p>
+      <button class="cta" id="qNext">${Q.i+1<Q.pool.length?"下一床":"看查房結果"}</button></div>`:""}</section>`;}
+function bet(v){const Q=state.quiz,s=Q.pool[Q.i],a=Math.sign(s.q.chg);Q.ans=v;Q.rev.add(s.code);
+  if(v===a){Q.streak++;Q.hits++;Q.score+=10+(Q.streak-1)*5;}else Q.streak=0;if((Math.sign(s.net)||1)===a)Q.model++;
+  openCard(nodeMap["s"+s.code]);render();}
+
+/* ================= 招牌與選單 ================= */
+function header(){
+  const tc=themeCounts();
+  [["A","selA"],["B","selB"]].forEach(([k,id])=>{$(id).querySelector(".v").textContent=`${dept(state[k])}　${tc[state[k]]||0} 位`;});
+  const lv=TTAS.find(([th])=>R.idx>=th);
+  $("lvName").textContent=lv[2];$("idx").innerHTML=`${R.idx}<small> /100</small>`;
+  $("tbar").innerHTML=TT.map((c,i)=>`<i class="${i+1===lv[1]?"on":""}" style="background:${c}"></i>`).join("");
+  $("ticks").innerHTML=DATES.map(o=>`<span class="${o<=state.upto?"on":""}">${fmtDate(o)}</span>`).join("");
+}
+let openMenu=null;
+function closeMenu(){if(!openMenu)return;openMenu.el.querySelector(".menu")?.remove();openMenu.el.querySelector(".dbtn").setAttribute("aria-expanded","false");openMenu=null;}
+function showMenu(slot){
+  const el=$(slot==="A"?"selA":"selB");if(openMenu&&openMenu.el===el){closeMenu();return;}closeMenu();
+  const tc=themeCounts(),mx=Math.max(1,...Object.values(tc)),other=slot==="A"?state.B:state.A;
+  const m=document.createElement("div");m.className="menu";m.setAttribute("role","listbox");
+  m.innerHTML=Object.keys(THEMES).map(t=>[t,tc[t]||0]).sort((p,q)=>q[1]-p[1]).map(([t,n])=>
+    `<button role="option" data-t="${esc(t)}" aria-selected="${t===state[slot]}" ${t===other||!n?"disabled":""}><span>${esc(dept(t))}</span><span class="num">${n}</span><i><b style="width:${n/mx*100}%"></b></i></button>`).join("");
+  el.appendChild(m);el.querySelector(".dbtn").setAttribute("aria-expanded","true");openMenu={el,slot};
+  m.querySelector('[aria-selected="true"]')?.focus();
+  m.onclick=e=>{const b=e.target.closest("[data-t]");if(!b||b.disabled)return;state[slot]=b.dataset.t;closeMenu();refresh();};
+}
+$("selA").querySelector(".dbtn").onclick=e=>{e.stopPropagation();showMenu("A");};
+$("selB").querySelector(".dbtn").onclick=e=>{e.stopPropagation();showMenu("B");};
+document.addEventListener("click",e=>{if(openMenu&&!openMenu.el.contains(e.target))closeMenu();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeMenu();if(state.sel)select(null);}});
+
+function render(){
+  header();const p=$("leaf");
+  p.innerHTML=state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():quizHTML();
+  p.querySelectorAll("[data-id]").forEach(el=>{
+    el.onmouseenter=()=>{state.hover=nodeMap[el.dataset.id]||null;};el.onmouseleave=()=>{state.hover=null;};
+    el.onclick=()=>{const n=nodeMap[el.dataset.id];if(n)select(n);};});
+  p.querySelectorAll("[data-chain]").forEach(el=>el.onclick=()=>{state.chain=+el.dataset.chain;const c=R.chains[state.chain];state.sel=null;openCard(null);flyToNodes(c.nodes.map(id=>nodeMap[id]));render();});
+  p.querySelectorAll("[data-bet]").forEach(el=>el.onclick=()=>bet(+el.dataset.bet));
+  $("qStart")&&($("qStart").onclick=newQuiz);
+  $("qNext")&&($("qNext").onclick=()=>{const Q=state.quiz;Q.i++;Q.ans=null;const s=Q.pool[Q.i];const n=s?nodeMap["s"+s.code]:null;state.sel=n;openCard(n);if(n)focusNode(n);else resetView();render();});
+}
+function setTab(t){state.tab=t;document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
+  if(t==="chain"&&R.chains[state.chain]){state.sel=null;openCard(null);flyToNodes(R.chains[state.chain].nodes.map(id=>nodeMap[id]));}
+  if(t!=="quiz"&&state.quiz){state.quiz=null;}
+  render();}
+function refresh(){state.sel=null;state.chain=0;state.quiz=null;openCard(null);build();resetView();render();}
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+$("swap").onclick=()=>{[state.A,state.B]=[state.B,state.A];Object.values(keep).forEach(k=>{if(vert())k.y=H-k.y;else k.x=W-k.x;});refresh();};
+$("dice").onclick=()=>{const tc=themeCounts(),ts=Object.keys(tc).filter(t=>tc[t]>=2);let best=null;
+  for(let i=0;i<60;i++){const a=ts[Math.random()*ts.length|0],b=ts[Math.random()*ts.length|0];if(a===b||(a===state.A&&b===state.B))continue;const r=analyse(a,b);if(r.idx>=20){best=[a,b,r.idx];break;}}
+  if(!best){toast("沒找到有會診關係的兩科，新增更多新聞再試");return;}
+  state.A=best[0];state.B=best[1];keep={};refresh();toast(`${dept(best[0])} 與 ${dept(best[1])}，會診強度 ${best[2]}`);};
+$("range").oninput=e=>{state.upto=DATES[+e.target.value];refresh();};
+let playing=null;
+$("play").onclick=()=>{if(playing){clearInterval(playing);playing=null;$("play").textContent="▶";return;}
+  let i=0;$("play").textContent="❚❚";const step=()=>{$("range").value=i;state.upto=DATES[i];refresh();if(++i>=DATES.length){clearInterval(playing);playing=null;$("play").textContent="▶";}};step();playing=setInterval(step,1500);};
+$("impBtn").onclick=()=>{$("impMsg").textContent="";$("impMsg").className="";$("dlg").showModal();};
+$("impCancel").onclick=()=>$("dlg").close();
+function parseImport(){return $("impText").value.split(/\n+/).map(l=>l.trim()).filter(Boolean).map(l=>{
+  let d="10月",sent=0;const m=/^(\d{1,2}\/\d{1,2})\s*/.exec(l);if(m){d=m[1];l=l.slice(m[0].length);}
+  const s=/\s*(\+|-|＋|－|利多|利空)\s*$/.exec(l);if(s){sent=/\+|＋|利多/.test(s[1])?1:-1;l=l.slice(0,s.index);}
+  return {d,t:l,s:"",src:"自行新增",u:"",sent,heat:3};});}
+function doImport(mode){const add=parseImport();
+  if(!add.length){$("impMsg").textContent="沒有讀到新聞，請一行貼一則。";$("impMsg").className="err";return;}
+  const base=mode==="add"?EVENTS.map(({d,t,s,src,u,sent,heat})=>({d,t,s,src,u,sent,heat})):[];
+  ingest([...base,...add]);keep={};
+  const tc=themeCounts(),ts=Object.keys(tc).sort((p,q)=>tc[q]-tc[p]);
+  if(!tc[state.A])state.A=ts[0]||state.A;if(!tc[state.B]||state.B===state.A)state.B=ts.find(t=>t!==state.A)||state.B;
+  $("dlg").close();refresh();toast(`新增 ${add.length} 位醫師，收治 ${add.reduce((n,a)=>n+matchText(a.t,MATCH).codes.length,0)} 位病人`);}
+$("impAdd").onclick=()=>doImport("add");$("impReplace").onclick=()=>doImport("replace");
+
+$("taiex").innerHTML=TAIEX?`${TAIEX.close.toLocaleString()}　<span class="${TAIEX.chg>0?"up":TAIEX.chg<0?"down":"flat"}">${TAIEX.chg>0?"+":""}${(+TAIEX.chg).toFixed(2)}（${TAIEX.pct>0?"+":""}${(+TAIEX.pct).toFixed(2)}%）</span>`:"—";
+$("asof").textContent=`${ASOF_MD} 收盤，資料更新 ${DATA_UPDATED||""}`;$("asof").title=DATA_NOTES.join("\n");$("plate").setAttribute("data-note",`${NEWS.length} 則新聞比對 ${Object.keys(UNI).length} 家上市櫃公司`);
+ingest(NEWS);
+// 平面圖尺寸改變（含頁面剛載入時版面尚未定型）就重新配置各棟位置並重新取景
+let lastW=0,lastH=0,rt;
+function relayout(first){resize();if(W<80||H<80)return;
+  if(first||Math.abs(W-lastW)>30||Math.abs(H-lastH)>30){const v0=lastW&&(lastW<640)!==(W<640);lastW=W;lastH=H;keep={};build();resetView();
+    if(first){cam.k=camT.k*.92;cam.x=camT.x;cam.y=camT.y;}if(state.sel){const n=nodeMap[state.sel.id];state.sel=n||null;openCard(state.sel);}}}
+const ro=new ResizeObserver(()=>{clearTimeout(rt);rt=setTimeout(()=>relayout(false),100);});ro.observe(cv);
+resize();R=analyse();relayout(true);render();requestAnimationFrame(draw);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+name: 每日更新資料
+
+on:
+  schedule:
+    # GitHub 排程用 UTC 時間；以下換算成台北時間
+    - cron: "17 0 * * 1-5"    # 08:17 開盤前，更新新聞
+    - cron: "23 7 * * 1-5"    # 15:23 收盤後，更新行情與新聞
+    - cron: "23 10 * * 1-5"   # 18:23 再補一次，確保證交所當日資料已上架
+  workflow_dispatch:          # 可在 Actions 頁面手動執行
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安裝套件
+        run: pip install requests==2.32.3
+
+      - name: 抓取並產生 data.json
+        run: python scripts/update.py
+
+      - name: 提交更新
+        run: |
+          git config user.name "812-hospital-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data.json
+          if git diff --cached --quiet; then
+            echo "資料沒有變化，不提交"
+          else
+            git commit -m "資料更新 $(TZ=Asia/Taipei date +'%Y-%m-%d %H:%M')"
+            git push
+          fi
