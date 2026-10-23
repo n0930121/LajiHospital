@@ -429,32 +429,39 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 .lobby.leave{opacity:0;transform:scale(1.35);pointer-events:none}
 .intro-in{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:36px;align-items:center;max-width:1040px;width:100%}
 .facade{width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.18))}
-.facade .sky0{stop-color:color-mix(in srgb,var(--sheet) 70%,var(--a))}.facade .sky1{stop-color:var(--sheet)}
-.facade .hill2{fill:color-mix(in srgb,var(--grid) 60%,var(--a) 14%)}.facade .hill1{fill:color-mix(in srgb,var(--grid) 70%,var(--ink) 10%)}
-.facade .bld{fill:color-mix(in srgb,var(--sheet) 88%,var(--ink));stroke:var(--ink);stroke-width:1.2}
-.facade .cap,.facade .crown{fill:var(--brand,#16212b)}
-.facade .gl0{stop-color:color-mix(in srgb,var(--a) 30%,var(--sheet))}.facade .gl1{stop-color:color-mix(in srgb,var(--a) 12%,var(--sheet))}
-.facade .glass{stroke:color-mix(in srgb,var(--ink) 40%,transparent);stroke-width:.6}
-.facade .mull{stroke:color-mix(in srgb,var(--ink) 35%,transparent);stroke-width:1}
-.facade .sign{fill:#fff;font-family:var(--art);font-size:15px;font-weight:700;letter-spacing:.14em}
-.facade .pad{fill:color-mix(in srgb,var(--ink) 70%,var(--sheet));}.facade .padring{fill:none;stroke:#e8b62c;stroke-width:1.2}
-.facade .padH{fill:#e8b62c;font:800 7px var(--num)}
-.facade .beacon{fill:#e23b3b;animation:beacon 1.6s steps(2) infinite}
+.fx .sky0{stop-color:color-mix(in srgb,var(--sheet) 70%,var(--a))}.fx .sky1{stop-color:var(--sheet)}
+.fx .hill2{fill:color-mix(in srgb,var(--grid) 80%,var(--a) 20%)}.fx .hill1{fill:color-mix(in srgb,var(--grid) 85%,var(--ink) 12%)}
+.fx .rain{fill:url(#fxRain);animation:fxRain .9s linear infinite}
+.fx .drop{stroke:color-mix(in srgb,var(--ink) 22%,transparent);stroke-width:.9;stroke-linecap:round;fill:none}
+@keyframes fxRain{to{transform:translate(-8px,32px)}}
+.fx .ground{fill:color-mix(in srgb,var(--grid) 70%,var(--sheet))}
+.fx .soft-line{stroke:color-mix(in srgb,var(--ink) 18%,transparent);stroke-width:1;fill:none;stroke-linecap:round}
+.fx .line{stroke:var(--ink);stroke-width:1.2;fill:none;stroke-linecap:round}
+.fx .wall{fill:var(--sheet);stroke:var(--ink);stroke-width:1.2}
+.fx .side{fill:color-mix(in srgb,var(--sheet) 82%,var(--ink));stroke:var(--ink);stroke-width:1.2}
+.fx .trim{fill:color-mix(in srgb,var(--ink) 55%,var(--sheet));stroke:var(--ink);stroke-width:.8}
+.fx .brand{fill:var(--brand,#16212b)}
+:root[data-theme="night"] .fx .brand{fill:color-mix(in srgb,var(--a) 40%,#0b1117)}
+.fx .sign{fill:#fff;font-family:var(--art);font-size:14px;font-weight:700;letter-spacing:.16em;text-anchor:middle}
+.fx .helipad-mark{fill:none;stroke:#e8b62c;stroke-width:3}
+.fx .helipad-h{fill:#e8b62c;font:800 26px var(--num);text-anchor:middle}
+.fx .beacon-light{fill:#e23b3b;animation:beacon 1.6s steps(2) infinite}
 @keyframes beacon{50%{opacity:.15}}
-.facade .win{fill:color-mix(in srgb,var(--ink) 18%,var(--sheet));stroke:color-mix(in srgb,var(--ink) 25%,transparent);stroke-width:.5}
-.facade .win.lit{fill:#ffd98a;stroke:#e0b45a;animation:lit 3.2s ease-in-out infinite}
-.facade .crossbox{fill:#fff;stroke:var(--ink);stroke-width:1}
-.facade .crossm{stroke:#d6452f;stroke-width:4;stroke-linecap:round}
-.facade .door{fill:var(--brand,#16212b)}.facade .canopy{stroke:var(--ink);stroke-width:4;stroke-linecap:round}
-.facade .er{fill:#fff;font:700 7px var(--sans);letter-spacing:.1em}
-.facade .sea{fill:color-mix(in srgb,var(--a) 22%,var(--wall))}.facade .quay{stroke:var(--ink);stroke-width:2}
-.facade .wave{fill:none;stroke:color-mix(in srgb,var(--a) 45%,var(--sheet));stroke-width:1.2;stroke-linecap:round}
-.facade .ship{fill:color-mix(in srgb,var(--ink) 75%,var(--sheet));animation:ship 9s ease-in-out infinite alternate}
+.fx .cross-panel{fill:#fff;stroke:var(--ink);stroke-width:.8}.fx .cross{fill:#d6452f}
+.fx .glass{fill:color-mix(in srgb,var(--a) 28%,var(--sheet));stroke:var(--ink);stroke-width:.8}
+.fx .glass-line{stroke:color-mix(in srgb,var(--ink) 40%,transparent);stroke-width:.8;fill:none}
+.fx .hill-line{stroke:#fff;stroke-opacity:.55;stroke-width:1.2;fill:none;stroke-linecap:round}
+.fx .win{fill:color-mix(in srgb,var(--ink) 16%,var(--sheet));stroke:color-mix(in srgb,var(--ink) 30%,transparent);stroke-width:.5}
+.fx .win.lit{fill:#ffd98a;stroke:#e0b45a;animation:lit 3.2s ease-in-out infinite}
+.fx .win:nth-child(3n+1){animation-delay:.5s}.fx .win:nth-child(3n+2){animation-delay:1.3s}.fx .row-2 .win,.fx .row-5 .win{animation-delay:2.1s}
+.fx .er{fill:var(--ink);font:700 8px var(--sans);letter-spacing:.12em;text-anchor:middle}
+.fx .paving{fill:color-mix(in srgb,var(--ink) 12%,var(--sheet));stroke:var(--ink);stroke-width:.8}
+.fx .sea{fill:color-mix(in srgb,var(--a) 24%,var(--wall))}
+.fx .wave{stroke:color-mix(in srgb,var(--a) 50%,var(--sheet));stroke-width:1.3;fill:none;stroke-linecap:round}
+.fx .reflection{stroke:#ffd98a;stroke-opacity:.4;stroke-width:2;fill:none;stroke-linecap:round}
+.fx .boat{animation:ship 9s ease-in-out infinite alternate}.fx .boat-shadow{fill:rgba(0,0,0,.18)}
 @keyframes ship{to{transform:translateX(-26px)}}
-.facade .refl rect{fill:#ffd98a;opacity:.35}
 @keyframes lit{50%{opacity:.6}}
-.facade .rain path{stroke:color-mix(in srgb,var(--ink) 22%,transparent);stroke-width:.8;animation:rain 1.1s linear infinite}
-@keyframes rain{from{transform:translate(0,-20px);opacity:0}30%{opacity:1}to{transform:translate(-6px,30px);opacity:0}}
 .ib .ik{margin:0;color:var(--mute);font-size:13px;letter-spacing:.12em}
 .ib .ih{margin:4px 0 16px;font-family:var(--art);font-size:40px;letter-spacing:.1em}
 .ig{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--sheet)}
@@ -466,7 +473,7 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 .it{color:var(--mute);margin:14px 0 18px}
 #enterBtn{padding:12px 34px;font-size:16px}
 @media (max-width:760px){.intro-in{grid-template-columns:minmax(0,1fr);gap:16px}.ib .ih{font-size:30px}.ig{grid-template-columns:repeat(2,minmax(0,1fr))}.ig>div{border-left:0!important;border-top:1px solid var(--line)!important}.ig>div:nth-child(-n+2){border-top:0!important}.ig>div:nth-child(2n){border-left:1px solid var(--line)!important}}
-@media (prefers-reduced-motion:reduce){.lobby{transition:none}.facade .win.lit,.facade .rain path,.facade .ship,.facade .beacon{animation:none}}
+@media (prefers-reduced-motion:reduce){.lobby{transition:none}.fx .win.lit,.fx .rain,.fx .boat,.fx .beacon-light{animation:none}}
 /* 病史（紙本） */
 .film.paper{background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--line),0 30px 80px rgba(0,0,0,.25)}
 .film.paper::before{background:none}
@@ -1770,51 +1777,162 @@ function angioHTML(){
         ${L.ss.map(s=>`<button class="pc ${s.exposed?"exp":s.lag?"lag":""}" data-film-go="${s.c}" style="background:${filmCol(s.p||0)}" title="${s.exposed?`潛在接觸者：上游「${esc(s.exposed)}」生病`:s.lag?`等待好轉：上游「${esc(s.lag)}」轉好`:""}">${esc(UNI[s.c]?.[1]||s.c)} <em>${s.p!=null?(s.p>0?"+":"")+s.p.toFixed(1)+"%":"—"}</em>${s.k?`<u style="background:${s.net>0?"#d0473b":s.net<0?"#1f7a53":"#677583"}">${s.k}</u>`:""}</button>`).join("")}</div>`).join("")}</div></div>`;}).join("")}</div>`;}
 
 // ---------- 開場：醫院外觀＋今日院況 ----------
-// 醫院外觀：參考基隆港邊的醫療大樓──山坡背景、主塔樓加兩翼低樓、頂樓停機坪、港口與細雨
-function facadeSVG(lit){
-  let w="",n=0;const win=(x,y,ww,hh)=>{const on=n<lit&&((n*7)%11)<7;w+=`<rect x="${x}" y="${y}" width="${ww}" height="${hh}" rx="1.5" class="win${on?" lit":""}" style="animation-delay:${(n%13)*.17}s"/>`;n++;};
-  for(let r=0;r<9;r++)for(let c=0;c<5;c++)win(176+c*22,92+r*17,14,10);          // 主塔樓
-  for(let r=0;r<4;r++)for(let c=0;c<4;c++)win(76+c*20,186+r*15,13,8);            // 西翼
-  for(let r=0;r<3;r++)for(let c=0;c<4;c++)win(316+c*20,201+r*15,13,8);           // 東翼
-  let rain="";for(let i=0;i<34;i++){const x=(i*53)%460,y=(i*37)%220;rain+=`<path d="M${x} ${y}l-4 12" style="animation-delay:${(i%9)*.21}s"/>`;}
-  return `<svg class="facade" viewBox="0 0 460 330" aria-hidden="true">
-  <defs><linearGradient id="fSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sky0"/><stop offset="1" class="sky1"/></linearGradient>
-    <linearGradient id="fGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" class="gl0"/><stop offset=".55" class="gl1"/><stop offset="1" class="gl0"/></linearGradient></defs>
-  <rect width="460" height="330" fill="url(#fSky)" rx="10"/>
-  <path class="hill2" d="M0 170 Q60 120 120 145 T240 120 T360 135 T460 110 V270 H0Z"/>
-  <path class="hill1" d="M0 205 Q70 165 150 190 T300 175 T460 185 V270 H0Z"/>
-  <g class="rain">${rain}</g>
-  <!-- 西翼、東翼 -->
-  <rect x="66" y="176" width="100" height="94" class="bld"/><rect x="66" y="172" width="100" height="6" class="cap"/>
-  <rect x="306" y="190" width="94" height="80" class="bld"/><rect x="306" y="186" width="94" height="6" class="cap"/>
-  <!-- 主塔樓 -->
-  <rect x="164" y="70" width="142" height="200" class="bld tower"/>
-  <rect x="170" y="86" width="130" height="160" fill="url(#fGlass)" class="glass"/>
-  ${[192,214,236,258,280].map(x=>`<path d="M${x-3} 86V246" class="mull"/>`).join("")}
-  <rect x="160" y="44" width="150" height="30" rx="2" class="crown"/>
-  <text x="235" y="65" text-anchor="middle" class="sign">812 拉基醫院</text>
-  <!-- 頂樓停機坪 -->
-  <path d="M190 44 L198 34 H272 L280 44Z" class="pad"/><ellipse cx="235" cy="38" rx="20" ry="4" class="padring"/><text x="235" y="40.6" text-anchor="middle" class="padH">H</text>
-  <circle cx="300" cy="32" r="2" class="beacon"/><path d="M300 34V44" class="mull"/>
-  <!-- 紅十字 -->
-  <rect x="100" y="150" width="32" height="22" rx="2" class="crossbox"/><path d="M116 154v14M109 161h14" class="crossm"/>
-  ${w}
-  <!-- 大門雨庇與入口 -->
-  <rect x="200" y="246" width="70" height="24" class="door"/><path d="M188 244 H282" class="canopy"/><path d="M235 246V270" class="mull"/>
-  <text x="235" y="258" text-anchor="middle" class="er">急診 ER</text>
-  <!-- 港邊 -->
-  <rect x="0" y="270" width="460" height="60" class="sea" rx="0"/>
-  <path d="M0 270 H460" class="quay"/>
-  ${[284,296,309,321].map((y,i)=>`<path d="M${20+i*30} ${y} q12 -3 24 0 t24 0 M${250+i*24} ${y+2} q12 -3 24 0 t24 0" class="wave"/>`).join("")}
-  <g class="ship"><path d="M352 300 h74 l-8 12 h-60z"/><rect x="368" y="290" width="30" height="10"/><rect x="384" y="282" width="8" height="8"/></g>
-  <g class="refl">${n?`<rect x="176" y="276" width="110" height="3"/><rect x="190" y="284" width="80" height="2"/><rect x="204" y="291" width="52" height="2"/>`:""}</g>
-</svg>`;}
+// 醫院外觀：Codex 依三總基隆分院設計的港邊醫院（主體），外加天空、山坡、雨絲圖樣
+function facadeSVG(){
+  return `<svg class="facade fx" viewBox="0 0 460 330" aria-hidden="true">
+<defs><linearGradient id="fxSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sky0"/><stop offset="1" class="sky1"/></linearGradient>
+<pattern id="fxRain" width="24" height="32" patternUnits="userSpaceOnUse"><path class="drop" d="M14 2l-3 9 M4 18l-3 9 M21 20l-3 8"/></pattern>
+<clipPath id="fxClip"><rect width="460" height="330" rx="10"/></clipPath></defs>
+<g clip-path="url(#fxClip)">
+<rect width="460" height="330" fill="url(#fxSky)"/>
+<path class="hill2" d="M0 150 Q60 105 120 128 T240 104 T360 120 T460 96 V250 H0Z"/>
+<path class="hill1" d="M0 190 Q70 150 150 172 T300 158 T460 168 V250 H0Z"/>
+<rect class="rain" x="-64" y="-96" width="588" height="426"/>
+<!-- 建築前廣場 -->
+<path class="ground" d="M0 246H460V282H0Z"/>
+<path class="soft-line" d="M24 258h99 M340 258h96 M10 270h43 M400 268h45"/>
+<!-- 醫院主體，寬度 322 -->
+<rect class="side" x="69" y="127" width="322" height="122" rx="2"/>
+<rect class="wall" x="76" y="116" width="308" height="133"/>
+<rect class="side" x="185" y="99" width="90" height="17"/>
+<rect class="trim" x="181" y="96" width="98" height="5" rx="1"/>
+<!-- 屋頂停機坪：圓圈與 H -->
+<rect class="trim" x="187" y="79" width="86" height="19" rx="4"/>
+<g transform="translate(230 88.5) scale(1 .38)">
+  <circle class="helipad-mark" r="33"/>
+  <text class="helipad-h" x="0" y="9">H</text>
+</g>
+<!-- 屋頂警示燈 -->
+<path class="line" d="M290 114V88"/>
+<rect class="trim" x="284" y="110" width="12" height="6" rx="1"/>
+<path class="beacon-light" d="M286 89v-5a4 4 0 0 1 8 0v5Z"/>
+<path class="line" d="M285 90h10"/>
+<!-- 橫向招牌 -->
+<rect class="brand" x="100" y="120" width="260" height="23" rx="2"/>
+<text class="sign" x="230" y="137">812 拉基醫院</text>
+<!-- 白底紅十字 -->
+<rect class="cross-panel" x="364" y="121" width="16" height="20" rx="2"/>
+<path class="cross" d="M370 125h4v4h4v4h-4v4h-4v-4h-4v-4h4Z"/>
+<!-- 中央玻璃帷幕 -->
+<rect class="glass" x="199" y="148" width="62" height="81"/>
+<path class="glass-line" d="M219 148v81 M241 148v81 M199 168h62 M199 188h62 M199 208h62"/>
+<path class="hill-line" d="m204 166 12-12 M204 180l28-26"/>
+<!-- 六十扇獨立窗戶，其中三十扇亮燈 -->
+<g class="windows row-1">
+  <rect class="win lit" x="84" y="151" width="13" height="8" rx="1"/>
+  <rect class="win" x="106" y="151" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="128" y="151" width="13" height="8" rx="1"/>
+  <rect class="win" x="150" y="151" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="172" y="151" width="13" height="8" rx="1"/>
+  <rect class="win" x="275" y="151" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="297" y="151" width="13" height="8" rx="1"/>
+  <rect class="win" x="319" y="151" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="341" y="151" width="13" height="8" rx="1"/>
+  <rect class="win" x="363" y="151" width="13" height="8" rx="1"/>
+</g>
+<g class="windows row-2">
+  <rect class="win" x="84" y="166" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="106" y="166" width="13" height="8" rx="1"/>
+  <rect class="win" x="128" y="166" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="150" y="166" width="13" height="8" rx="1"/>
+  <rect class="win" x="172" y="166" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="275" y="166" width="13" height="8" rx="1"/>
+  <rect class="win" x="297" y="166" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="319" y="166" width="13" height="8" rx="1"/>
+  <rect class="win" x="341" y="166" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="363" y="166" width="13" height="8" rx="1"/>
+</g>
+<g class="windows row-3">
+  <rect class="win lit" x="84" y="181" width="13" height="8" rx="1"/>
+  <rect class="win" x="106" y="181" width="13" height="8" rx="1"/>
+  <rect class="win" x="128" y="181" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="150" y="181" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="172" y="181" width="13" height="8" rx="1"/>
+  <rect class="win" x="275" y="181" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="297" y="181" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="319" y="181" width="13" height="8" rx="1"/>
+  <rect class="win" x="341" y="181" width="13" height="8" rx="1"/>
+  <rect class="win" x="363" y="181" width="13" height="8" rx="1"/>
+</g>
+<g class="windows row-4">
+  <rect class="win" x="84" y="196" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="106" y="196" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="128" y="196" width="13" height="8" rx="1"/>
+  <rect class="win" x="150" y="196" width="13" height="8" rx="1"/>
+  <rect class="win" x="172" y="196" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="275" y="196" width="13" height="8" rx="1"/>
+  <rect class="win" x="297" y="196" width="13" height="8" rx="1"/>
+  <rect class="win" x="319" y="196" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="341" y="196" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="363" y="196" width="13" height="8" rx="1"/>
+</g>
+<g class="windows row-5">
+  <rect class="win lit" x="84" y="211" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="106" y="211" width="13" height="8" rx="1"/>
+  <rect class="win" x="128" y="211" width="13" height="8" rx="1"/>
+  <rect class="win" x="150" y="211" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="172" y="211" width="13" height="8" rx="1"/>
+  <rect class="win" x="275" y="211" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="297" y="211" width="13" height="8" rx="1"/>
+  <rect class="win" x="319" y="211" width="13" height="8" rx="1"/>
+  <rect class="win" x="341" y="211" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="363" y="211" width="13" height="8" rx="1"/>
+</g>
+<g class="windows row-6">
+  <rect class="win" x="84" y="226" width="13" height="8" rx="1"/>
+  <rect class="win" x="106" y="226" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="128" y="226" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="150" y="226" width="13" height="8" rx="1"/>
+  <rect class="win" x="172" y="226" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="275" y="226" width="13" height="8" rx="1"/>
+  <rect class="win" x="297" y="226" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="319" y="226" width="13" height="8" rx="1"/>
+  <rect class="win lit" x="341" y="226" width="13" height="8" rx="1"/>
+  <rect class="win" x="363" y="226" width="13" height="8" rx="1"/>
+</g>
+<!-- 急診入口與雨庇 -->
+<rect class="brand" x="211" y="229" width="38" height="20"/>
+<path class="glass-line" d="M230 230v19"/>
+<path class="line" d="M225 238v5 M235 238v5"/>
+<rect class="wall" x="199" y="211" width="62" height="16"/>
+<text class="er" x="230" y="222.5">急診 ER</text>
+<path class="brand" d="M194 226h72l8 6h-88Z"/>
+<path class="line" d="M194 233v16 M266 233v16"/>
+<path class="paving" d="M204 249h52l12 7h-76Z"/>
+<path class="soft-line" d="M200 253h60"/>
+<path class="line" d="M69 249h322"/>
+<!-- 港岸與碼頭 -->
+<rect class="sea" x="0" y="275" width="460" height="55"/>
+<path class="line" d="M0 275h460"/>
+<path class="paving" d="M28 266h108v13H28Z"/>
+<path class="trim" d="M98 279h38v22H98Z"/>
+<path class="line" d="M103 286h28 M103 292h28"/>
+<path class="line" d="M40 260v6 M37 260h6 M80 260v6 M77 260h6 M121 260v6 M118 260h6"/>
+<path class="soft-line" d="M33 272h97"/>
+<!-- 海面紋理與微弱倒影 -->
+<path class="wave" d="M12 291h29 M54 306h24 M17 320h48 M150 289h24 M180 312h45 M245 296h27 M281 319h39 M405 282h31 M421 312h26"/>
+<path class="reflection" d="M208 282h44 M217 288h28 M205 295h34 M221 302h22"/>
+<!-- 緩慢漂移的小船 -->
+<g class="boat">
+  <ellipse class="boat-shadow" cx="357" cy="313" rx="45" ry="3"/>
+  <path class="line" d="M355 275v17 M355 275h17"/>
+  <path class="brand" d="M372 275v7l-17-3v-4Z"/>
+  <rect class="wall" x="337" y="285" width="35" height="14" rx="2"/>
+  <rect class="glass" x="342" y="288" width="10" height="7" rx="1"/>
+  <rect class="glass" x="357" y="288" width="10" height="7" rx="1"/>
+  <path class="trim" d="M333 284h43v3h-43Z"/>
+  <path class="brand" d="M318 298h82l-12 12h-57Z"/>
+  <path class="line" d="M325 303h68"/>
+  <circle class="cross-panel" cx="378" cy="303" r="3"/>
+  <path class="wave" d="M306 312h16 M394 312h17"/>
+</g>
+</g></svg>`;}
 function introHTML(){
   const lv=TTAS.find(([th])=>R.idx>=th),ms=Object.values(MACRO||{}),red=ms.filter(m=>m.light==="red").length,sox=USD["^SOX"];
   const last=NEWS_DATES().at(-1),today=EVENTS.filter(e=>e.o===last).length,TS=themeStats().list.slice(0,3);
   const crit=[...new Set(recentEvents(2).flatMap(e=>e.codes))].map(c=>({c,q:quote(c)})).filter(x=>x.q&&x.q.pct<=-5).length;
   const L=lvOf(xpGet().xp),wins=Math.min(48,Math.max(8,today));
-  return `<div class="intro-in">${facadeSVG(wins)}
+  return `<div class="intro-in">${facadeSVG()}
   <div class="ib"><p class="ik">今日院況　${esc(REPORT?.date||isoOf(last)||"")}</p>
     <h2 class="ih">${esc(lv[2])}</h2>
     <div class="ig">
