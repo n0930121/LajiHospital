@@ -289,13 +289,78 @@ def merge_news(fresh, prev_news):
         if g.get("date") and g["date"] < keep_from.isoformat():
             continue
         sent, heat = score(g["t"], g["cover"])
-        if g.get("old"):  # 舊新聞保留原本的判讀，避免每天被規則覆寫
-            old = next((p for p in prev_news if p["t"] == g["t"]), {})
+        old = next((p for p in prev_news or [] if p["t"] == g["t"]), {}) if g.get("old") else {}
+        if old.get("curated"):  # 人工整理的新聞保留原判讀；其餘每天用最新規則重算
             sent, heat = old.get("sent", sent), old.get("heat", heat)
-        out.append({"d": g["d"], "date": g.get("date"), "t": g["t"], "s": g["s"], "src": g["src"], "u": g["u"],
-                    "sent": sent, "heat": heat, "cover": g["cover"]})
+        item = {"d": g["d"], "date": g.get("date"), "t": g["t"], "s": g["s"], "src": g["src"], "u": g["u"],
+                "sent": sent, "heat": heat, "cover": g["cover"]}
+        if old.get("curated"):
+            item["curated"] = True
+        out.append(item)
     out.sort(key=lambda x: (x.get("date") or "", x["heat"]), reverse=True)
     return out[: CFG["news"]["max_items"]]
+
+
+# ---------------------------------------------------------------- 歷史行情
+HIST = os.path.join(ROOT, "docs", "history.json")
+TWSE_DAY = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={d}&type=ALLBUT0999&response=json"
+
+
+def parse_mi_index(js):
+    """證交所 MI_INDEX（某一天全部上市股票）→ {代號: 收盤價}"""
+    tables = js.get("tables")
+    if tables is None:  # 舊格式：fields9 / data9
+        tables = [{"fields": js[k], "data": js.get("data" + k[6:], [])} for k in js if k.startswith("fields")]
+    for t in tables or []:
+        f = t.get("fields") or []
+        if "證券代號" in f and "收盤價" in f:
+            ci, pi = f.index("證券代號"), f.index("收盤價")
+            out = {}
+            for row in t.get("data") or []:
+                code, close = str(row[ci]).strip(), num(row[pi])
+                if len(code) == 4 and close is not None:
+                    out[code] = close
+            return out
+    return {}
+
+
+def update_history(quotes, asof, keep=40, target=23):
+    try:
+        h = json.load(open(HIST, encoding="utf-8"))
+        rows = {d: {} for d in h["dates"]}
+        for code, arr in h["close"].items():
+            for d, v in zip(h["dates"], arr):
+                if v is not None:
+                    rows[d][code] = v
+    except Exception:  # noqa: BLE001
+        rows = {}
+    if asof and quotes:
+        rows[asof] = {c: q[0] for c, q in quotes.items() if len(c) == 4}
+    # 歷史不足一個月時，用證交所單日行情往回補（只補上市股）
+    if asof and len(rows) < target:
+        day = dt.date.fromisoformat(asof)
+        tries = 0
+        while len(rows) < target and tries < 45:
+            day -= dt.timedelta(days=1)
+            tries += 1
+            iso = day.isoformat()
+            if day.weekday() >= 5 or iso in rows:
+                continue
+            try:
+                got = parse_mi_index(json.loads(fetch(TWSE_DAY.format(d=day.strftime("%Y%m%d")), f"mi_{day:%Y%m%d}.json")))
+                if got:
+                    rows[iso] = got
+                if not OFFLINE:
+                    time.sleep(2.5)  # 證交所限制查詢頻率
+            except Exception as e:  # noqa: BLE001
+                if not isinstance(e, FileNotFoundError):
+                    note(f"回補 {iso} 行情失敗（{e}）")
+    dates = sorted(rows)[-keep:]
+    codes = sorted({c for d in dates for c in rows[d]})
+    hist = {"dates": dates, "close": {c: [rows[d].get(c) for d in dates] for c in codes}}
+    with open(HIST, "w", encoding="utf-8") as f:
+        json.dump(hist, f, ensure_ascii=False, separators=(",", ":"))
+    print(f"歷史行情：{len(dates)} 個交易日、{len(codes)} 檔")
 
 
 # ---------------------------------------------------------------- 主流程
@@ -312,6 +377,10 @@ def main():
     uni = get_universe(prev)
     quotes, asof = get_quotes(prev)
     taiex = get_taiex(prev)
+    try:
+        update_history(quotes, asof)
+    except Exception as e:  # noqa: BLE001
+        note(f"歷史行情更新失敗（{e}）")
 
     words = set()
     for ws in lex["themes"].values():
