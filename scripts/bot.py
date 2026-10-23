@@ -84,6 +84,9 @@ def diagnosis_text(code, data, uni, lex, matcher):
     snaps = [x for x in snaps if x[1]]
     if snaps:
         lines.append("海外病史：" + "、".join(f"{u['n']} {s['pct']:+.2f}%" for u, s in snaps[:3]))
+    mo = [m for m in (data.get("mops") or []) if m.get("c") == code][:2]
+    for m in mo:
+        lines.append(f"申報組：{m['d'][5:].replace('-', '/')} {m['t'][:40]}")
     lines += ["", f"看床頭卡：{SITE}#s{code}", "以上只是觀察重點，不構成投資建議。"]
     return "\n".join(lines)
 

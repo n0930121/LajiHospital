@@ -38,7 +38,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
 .num{font-family:var(--num);font-variant-numeric:tabular-nums;letter-spacing:.01em}
 .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--mute)}
 
-.app{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 400px;grid-template-rows:auto auto minmax(0,1fr);gap:14px 18px;
+.app{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 440px;grid-template-rows:auto auto minmax(0,1fr);gap:14px 18px;
   padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));padding-block:14px 18px}
 
 /* ---------- 院名招牌 ---------- */
@@ -149,7 +149,7 @@ canvas{display:block;width:100%;height:100%;touch-action:manipulation}
 
 /* ---------- 病歷夾 ---------- */
 .chart{min-height:0;display:flex;flex-direction:column;background:var(--sheet);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.tabs{display:grid;grid-template-columns:repeat(5,1fr);background:var(--wall);padding:4px;gap:4px;border-bottom:1px solid var(--line)}
+.tabs{display:grid;grid-template-columns:repeat(6,1fr);background:var(--wall);padding:4px;gap:4px;border-bottom:1px solid var(--line)}
 .tabs button{padding:7px 0;border-radius:4px;color:var(--mute);font-weight:500}
 .tabs button[aria-selected="true"]{background:var(--sheet);color:var(--ink);font-weight:700;box-shadow:0 1px 2px rgba(22,33,43,.1)}
 .pane{flex:1;min-height:0;overflow:auto;padding:16px 18px;display:flex;flex-direction:column;gap:24px}
@@ -598,6 +598,101 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 }
 .tools .reg input{height:40px}
 @media (max-width:640px){.mright{grid-template-columns:repeat(3,minmax(0,1fr));width:100%}}
+/* ---------- 醫技大樓 ---------- */
+.mt-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 14px}
+.mt-nav button{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:8px;align-items:center;text-align:left;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--sheet)}
+.mt-nav .ic{grid-row:1/3;width:20px;height:20px;margin:0;color:var(--mute)}
+.mt-nav b{font-size:14px}.mt-nav small{font-size:11px;color:var(--mute)}
+.mt-nav button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--a)}.mt-nav button[aria-pressed="true"] .ic{color:var(--a)}
+.mt-h3{margin:18px 0 8px;font-size:14px;display:flex;align-items:center;gap:6px}.mt-h3 small{font-weight:400;color:var(--mute);font-size:11.5px}
+.mt-h3 .ic{width:16px;height:16px;margin:0}
+.mt-filter{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0 10px}
+.mt-filter button{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--mute)}
+.mt-filter button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.mt-none{color:var(--mute);font-size:12.5px;text-align:center;padding:10px}
+.mt-empty{display:grid;justify-items:center;gap:8px;padding:28px 16px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:8px}
+.mt-empty .ic{width:28px;height:28px;margin:0}
+/* 檢驗報告單：白紙、細格線 */
+.mt-sheet{background:#fff;color:#1d2731;border:1px solid #d6dde2;border-radius:3px;padding:16px 16px 12px;box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 24px -14px rgba(0,0,0,.35)}
+.mt-sheet .up{color:#c8322f}.mt-sheet .down{color:#1f6fb2}
+.mt-lh{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #1d2731;padding-bottom:8px}
+.mt-lh b{display:block;font-family:var(--art);font-size:17px;letter-spacing:.08em}.mt-lh small{font-size:10.5px;color:#7a8791;letter-spacing:.08em}
+.mt-bc{width:86px;height:22px;fill:#1d2731}
+.mt-meta{display:grid;grid-template-columns:repeat(2,1fr);margin:0;border-bottom:1px solid #d6dde2}
+.mt-meta div{display:flex;gap:8px;padding:6px 0;font-size:12.5px;border-top:1px solid #edf1f3}.mt-meta div:nth-child(-n+2){border-top:0}
+.mt-meta dt{color:#7a8791;min-width:4.5em}.mt-meta dd{margin:0;font-weight:600}
+.mt-how{font-size:11.5px;color:#5d6a74;line-height:1.6;margin:8px 0 0}
+.mt-sheet .mt-filter button{border-color:#d6dde2;color:#5d6a74}.mt-sheet .mt-filter button[aria-pressed="true"]{background:#1d2731;border-color:#1d2731;color:#fff}
+.mt-tb{width:100%;border-collapse:collapse;font-size:12.5px}
+.mt-tb th{font-weight:500;color:#7a8791;font-size:11px;text-align:left;padding:4px 4px;border-bottom:1px solid #1d2731}
+.mt-tb th:nth-child(2),.mt-tb th:nth-child(3){text-align:right}
+.mt-tb td{padding:5px 4px;border-bottom:1px solid #edf1f3;vertical-align:middle}
+.mt-tb td small{display:block;font-size:10.5px;color:#8a96a0}
+.mt-pt{display:flex;gap:6px;align-items:baseline;text-align:left}.mt-pt b{font-weight:600}.mt-pt .num{color:#8a96a0;font-size:12px}
+.mt-pt:hover b{text-decoration:underline}
+.mt-res{text-align:right;font-size:15px;white-space:nowrap}.mt-res i{font-style:normal;font-weight:700;font-size:11px;margin-left:4px}
+tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weight:700}
+.mt-ref{text-align:right;color:#8a96a0;white-space:nowrap}
+.mt-consult{font-size:10.5px;font-weight:700;color:#fff;background:var(--br);border-radius:3px;padding:2px 6px;white-space:nowrap}
+.mt-grp td{background:#f4f7f9;font-weight:700;font-size:12px;padding:6px}.mt-grp small{display:inline!important;font-weight:400}
+.mt-sheet .mt-h3{color:#1d2731}
+.mt-inds{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mt-inds>div>small{font-size:11px;color:#7a8791}
+.mt-ind{display:grid;grid-template-columns:minmax(0,1fr) 40px auto;gap:6px;align-items:center;font-size:12px;padding:3px 0}
+.mt-ind span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mt-bar{position:relative;height:4px;background:linear-gradient(90deg,#cfe0ee,#eef1f3 50%,#f3d6d5)}.mt-bar i{position:absolute;top:-3px;width:2px;height:10px;background:#1d2731}
+.mt-sign{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:8px;border-top:1px solid #d6dde2;font-size:11px;color:#7a8791}
+.mt-sign u{text-decoration:none;font-family:var(--art);font-size:14px;color:#22468f;border-bottom:1px solid currentColor}
+/* 申報組：櫃台與申報單 */
+.mt-counter{background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.mt-counter h3{margin:0 0 6px;font-size:14px}
+.mt-rf{margin:0;display:flex;align-items:baseline;gap:6px}.mt-rf b{font-size:30px;line-height:1}.mt-rf span{color:var(--mute);font-size:12.5px}
+.mt-prog{height:8px;border-radius:4px;background:var(--grid);overflow:hidden;margin:8px 0 6px}.mt-prog i{display:block;height:100%;background:var(--a);border-radius:4px}
+.mt-dl{margin:0;font-size:12px;color:var(--mute)}.mt-dl b{color:var(--ink);font-size:14px}
+.mt-cross{margin-top:14px}.mt-cross h3{margin:0 0 4px;font-size:14px}
+.mt-xr{display:grid;grid-template-columns:auto 1fr;column-gap:8px;width:100%;text-align:left;padding:7px 10px;border-left:3px solid var(--a);background:var(--sheet);border-radius:0 6px 6px 0;margin-top:6px}
+.mt-xr b{font-size:13.5px}.mt-xr span{font-size:12px;color:var(--a);font-weight:600;align-self:center}.mt-xr small{grid-column:1/-1;font-size:11.5px;color:var(--mute)}
+.mt-xr.clar{border-left-color:#c0362c}.mt-xr.clar span{color:#c0362c}
+.mt-slips{display:grid;gap:8px}
+.mt-slip{position:relative;background:#fff;color:#1d2731;border:1px solid #dfe5e9;border-radius:3px;padding:9px 12px 10px;overflow:hidden;
+  background-image:linear-gradient(90deg,#f3c9c4 0 1px,transparent 1px);background-size:100% 100%;background-position:34px 0;background-repeat:no-repeat;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.mt-slip header{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:#7a8791}
+.mt-kind{font-size:10.5px;font-weight:700;color:#fff;background:#6f7d88;border-radius:2px;padding:1px 6px}
+.k-澄清 .mt-kind{background:#c0362c}.k-股利 .mt-kind,.k-庫藏股 .mt-kind{background:#b7791f}.k-董事會 .mt-kind{background:#2b5fb4}.k-資產 .mt-kind{background:#71489a}.k-財務 .mt-kind,.k-法說 .mt-kind{background:#1f7a53}
+.mt-co{display:flex;align-items:baseline;gap:6px;margin-top:3px;text-align:left}.mt-co b{font-size:14px}.mt-co .num{color:#8a96a0;font-size:12px}
+.mt-co em{font-style:normal;font-size:10.5px;color:var(--br);border:1px solid var(--br);border-radius:2px;padding:0 4px}
+.mt-co:hover b{text-decoration:underline}
+.mt-slip p{margin:4px 0 0;font-size:12.5px;line-height:1.55;padding-right:58px}
+.mt-recv{position:absolute;right:10px;bottom:8px;transform:rotate(-12deg);font-family:var(--art);font-weight:700;font-size:12px;letter-spacing:.12em;color:#c0362c;border:2px solid #c0362c;border-radius:4px;padding:1px 6px;opacity:.75;mix-blend-mode:multiply}
+.k-其他 .mt-recv,.k-人事 .mt-recv{color:#6f7d88;border-color:#6f7d88}
+/* 資訊室：機櫃 */
+.mt-rack{background:linear-gradient(180deg,#2a3138,#1b2026);border-radius:8px;padding:10px;box-shadow:inset 0 0 0 1px #3a434c,0 10px 22px -12px rgba(0,0,0,.6);display:grid;gap:5px}
+.mt-unit{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;padding:7px 10px;border-radius:3px;
+  background:linear-gradient(180deg,#3b444d,#303840);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -1px 0 rgba(0,0,0,.4);color:#dfe6ec}
+.mt-unit b{font-size:13px}.mt-unit .num{color:#aab6c0;font-size:13px}
+.mt-unit em{grid-column:2/4;font-style:normal;font-size:11px;color:#9aa7b2}
+.mt-leds{grid-row:1/3;display:flex;gap:4px}.mt-leds i{width:8px;height:8px;border-radius:50%;background:#555}
+.mt-unit.ok .pw{background:#38d77d;box-shadow:0 0 6px #38d77d}.mt-unit.part .pw{background:#f2b33d;box-shadow:0 0 6px #f2b33d}.mt-unit.down .pw{background:#ff5a52;box-shadow:0 0 6px #ff5a52}.mt-unit.idle .pw{background:#7d8a95}
+.mt-unit .act{background:#3fa8ff;animation:mtBlink 1.3s steps(2) infinite}.mt-unit:nth-child(2n) .act{animation-duration:.9s}.mt-unit:nth-child(3n) .act{animation-duration:1.7s}
+.mt-unit.down .act{background:#555;animation:none}
+@keyframes mtBlink{50%{opacity:.15}}
+.mt-vent{position:absolute;right:62px;top:9px;width:28px;height:14px;background:repeating-linear-gradient(90deg,rgba(0,0,0,.35) 0 2px,transparent 2px 4px);opacity:.5}
+.mt-status{margin:8px 0 0;font-size:12.5px;padding:6px 10px;border-radius:5px;background:var(--wall)}
+.mt-status.good{color:var(--down)}.mt-status.warn{color:#b7791f}
+.mt-board{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:10px}
+.mt-board>div{background:#11171c;color:#d8f5e4;border-radius:6px;padding:9px 12px;font-family:var(--num)}
+.mt-board small{display:block;font-family:var(--sans);font-size:11px;color:#7e9488}
+.mt-board b{font-size:20px;color:#7dffb2;text-shadow:0 0 8px rgba(125,255,178,.45)}
+.mt-board span{font-size:12px;color:#a9c7b6;margin-left:4px}.mt-board #mtNext small:last-child{margin-top:2px;color:#7e9488}
+.mt-inv{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.mt-inv div{display:grid;grid-template-columns:1fr auto;align-items:baseline;padding:7px 10px;background:var(--sheet);border:1px solid var(--line);border-radius:6px}
+.mt-inv span{font-size:12px;color:var(--mute)}.mt-inv b{font-size:16px}.mt-inv small{grid-column:1/-1;font-size:10.5px;color:var(--mute)}
+.mt-sched{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+.mt-sched li{display:grid;grid-template-columns:4.6em 1fr;gap:8px;padding:5px 0 5px 12px;position:relative;font-size:12.5px}
+.mt-sched li::before{content:"";position:absolute;left:-6px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--sheet);border:2px solid var(--a)}
+.mt-sched b{font-size:15px}
+.mt-log{margin:0;background:#11171c;color:#b8d4c4;border-radius:6px;padding:10px 12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.6;white-space:pre-wrap;max-height:180px;overflow:auto}
+.mt-chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:0 4px 4px 0;background:var(--sheet)}
+@media (prefers-reduced-motion:reduce){.mt-unit .act{animation:none}}
 .legend[hidden],.card[hidden],#tip[hidden],.toast[hidden]{display:none}
 </style>
 
@@ -673,6 +768,7 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
       <button role="tab" aria-selected="false" data-tab="obs">會診紀錄</button>
       <button role="tab" aria-selected="false" data-tab="chain">轉診路徑</button>
       <button role="tab" aria-selected="false" data-tab="rad">放射科</button>
+      <button role="tab" aria-selected="false" data-tab="lab">醫技大樓</button>
       <button role="tab" aria-selected="false" data-tab="quiz">查房</button>
     </div>
     <div class="pane" id="leaf"></div>
@@ -703,7 +799,7 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
                                      fetch("lexicon.json?v="+Date.now()).then(r=>r.json())]);
     window.HIST=await fetch("history.json?v="+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null);
     setLexicon(lex);
-    Object.assign(window,{CALENDAR:d.calendar||[],WEEKLY:d.weekly||null,LEX_CHAINS:lex.chains||[],LEX_GLOBAL:lex.global_themes||[]});
+    Object.assign(window,{CALENDAR:d.calendar||[],WEEKLY:d.weekly||null,LEX_CHAINS:lex.chains||[],LEX_GLOBAL:lex.global_themes||[],MOPS:d.mops||[],SOURCES:d.sources||null});
     Object.assign(window,{INST:d.inst||{},INST_DATE:d.inst_date,REV:d.rev||{},USD:d.us||{},MACRO:d.macro||{},REPORT:d.report||null,US_LIST:lex.us||[]});
     Object.assign(window,{DATA_ASOF:d.asof,DATA_UPDATED:d.updated,DATA_NOTES:d.notes||[],TAIEX:d.taiex,INDS:d.inds,MKS:d.mks,UNI_RAW:d.uni_raw,QUOTES:d.quotes,NEWS:d.news});
     const s=document.createElement("script");s.textContent=document.getElementById("app").textContent;document.body.appendChild(s);
@@ -1722,13 +1818,15 @@ const IC={
   trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8.5 20h7"/>',
   track:'<path d="M4 19V5M4 19h16"/><path d="m7 15 4-4 3 3 5-6"/><circle cx="19" cy="8" r="1.4"/>',
   amb:'<rect x="2" y="8" width="13" height="9" rx="1.5"/><path d="M15 11h3.5l3 3v3H15"/><circle cx="6.5" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/><path d="M8.5 10.5v4M6.5 12.5h4"/>',
+  stamp:'<path d="M9 3h6v5l3 4H6l3-4z"/><path d="M4 15h16v3H4zM6 21h12"/>',
+  server:'<rect x="4" y="3" width="16" height="6" rx="1"/><rect x="4" y="10" width="16" height="6" rx="1"/><path d="M7 6h1M7 13h1M11 6h6M11 13h6M8 16v3M16 16v3M5 21h14"/>',
   lobby:'<path d="M3 21h18M5 21V8l7-4 7 4v13"/><path d="M10 21v-5h4v5M9 10h6M12 7v6"/>'};
 document.body.insertAdjacentHTML("afterbegin",`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${Object.entries(IC).map(([k,v])=>`<symbol id="i-${k}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${v}</symbol>`).join("")}</defs></svg>`);
 const ic=(n,cls="")=>`<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 // 分頁加圖示
-[["ovw","lobby"],["obs","clip"],["chain","chain"],["rad","film"],["quiz","bed"]].forEach(([t,n])=>{const b=document.querySelector(`[data-tab="${t}"]`);if(b&&!b.querySelector(".ic"))b.insertAdjacentHTML("afterbegin",ic(n));});
+[["ovw","lobby"],["obs","clip"],["chain","chain"],["rad","film"],["lab","lab"],["quiz","bed"]].forEach(([t,n])=>{const b=document.querySelector(`[data-tab="${t}"]`);if(b&&!b.querySelector(".ic"))b.insertAdjacentHTML("afterbegin",ic(n));});
 // 區塊標題自動加圖示
-const H2IC={"早晨交班報告":"clip","我的主治病人":"bed","今日院務看板":"pulse","科別聲量":"doc","全院會診矩陣":"chain","病危通知與好轉出院":"amb","疾管署監測站":"shield","國際醫療中心":"globe","分診區":"track","家屬探病動線":"family","出院追蹤門診":"track","接觸者追蹤":"chain","門診預約表":"cal","院長週報":"trophy","連續探病榜":"family","放射科":"film","晨間查房":"bed","今日影像摘要":"film"};
+const H2IC={"月營收申報進度":"cal","新聞與申報對照":"chain","重大訊息收件匣":"stamp","資料庫存":"server","排程表":"cal","系統日誌":"doc","各科體檢中位數":"lab","早晨交班報告":"clip","我的主治病人":"bed","今日院務看板":"pulse","科別聲量":"doc","全院會診矩陣":"chain","病危通知與好轉出院":"amb","疾管署監測站":"shield","國際醫療中心":"globe","分診區":"track","家屬探病動線":"family","出院追蹤門診":"track","接觸者追蹤":"chain","門診預約表":"cal","院長週報":"trophy","連續探病榜":"family","放射科":"film","晨間查房":"bed","今日影像摘要":"film"};
 function decorateH2(root){root.querySelectorAll("h2").forEach(h=>{if(h.querySelector(".ic"))return;const k=Object.keys(H2IC).find(x=>h.textContent.trim().startsWith(x));if(k)h.insertAdjacentHTML("afterbegin",ic(H2IC[k]));});}
 
 // ---------- 讀取外部資料：Telegram 主治病人、行事曆、週報 ----------
@@ -2077,9 +2175,120 @@ $("palBtn").onclick=e=>{e.stopPropagation();const p=$("palPanel");p.hidden=!p.hi
 document.addEventListener("click",e=>{const p=$("palPanel");if(!p.hidden&&!p.contains(e.target)&&e.target!==$("palBtn"))p.hidden=true;});
 buildPalPanel();
 
+
+/* ================= 醫技大樓：檢驗科、申報組、資訊室 ================= */
+state.mt=state.mt||"lab";state.labF=state.labF||"all";state.mopsF=state.mopsF||"all";
+function goStock(c){if(EV_COUNT[c])jumpTo("s"+c);else openOutpatient(c);}
+const stockName=c=>UNI[c]?.[1]||c;
+const inPair=c=>{const n=nodeMap["s"+c];return !!n;};
+const quant=(a,q)=>{const s=a.slice().sort((x,y)=>x-y),i=(s.length-1)*q,lo=Math.floor(i),hi=Math.ceil(i);return s[lo]+(s[hi]-s[lo])*(i-lo);};
+// 病歷條碼：用股票代號產生，每檔不同
+function barcode(code,w=86,h=22){let x=0,bars="";const seq=(code+"812").split("").map(Number);
+  for(let i=0;i<22&&x<w;i++){const d=seq[i%seq.length],bw=1+(d%3),gap=1+((d+i)%2);bars+=`<rect x="${x}" y="0" width="${bw}" height="${h}"/>`;x+=bw+gap;}
+  return `<svg class="mt-bc" viewBox="0 0 ${w} ${h}" aria-hidden="true">${bars}</svg>`;}
+function mtNav(){const B=[["lab","lab","檢驗科","營收體檢"],["mops","stamp","申報組","公司申報"],["it","server","資訊室","資料機房"]];
+  return `<nav class="mt-nav" aria-label="醫技大樓單位">${B.map(([k,i,n,d])=>`<button data-mt="${k}" aria-pressed="${state.mt===k}">${ic(i)}<b>${n}</b><small>${d}</small></button>`).join("")}</nav>`;}
+function labHTML(){return mtNav()+(state.mt==="mops"?mopsHTML():state.mt==="it"?itHTML():labReportHTML());}
+
+// ---------- 檢驗科：月營收檢驗報告單 ----------
+function labStats(){
+  const by={};Object.entries(REV||{}).forEach(([c,r])=>{const u=UNI[c];if(!u||r[2]==null||Math.abs(r[2])>900)return;(by[u[3]]=by[u[3]]||[]).push([c,r]);});
+  const ref={};Object.entries(by).forEach(([ind,rs])=>{if(rs.length<5)return;const ys=rs.map(x=>x[1][2]);const q1=quant(ys,.25),q3=quant(ys,.75),md=quant(ys,.5),iqr=Math.max(8,q3-q1);
+    ref[ind]={md,q1,q3,lo:q1-iqr,hi:q3+iqr,n:rs.length};});
+  const rows=[];Object.entries(by).forEach(([ind,rs])=>{const R0=ref[ind];if(!R0)return;rs.forEach(([c,r])=>{const y=r[2],f=y>R0.hi&&y-R0.md>=15?"H":y<R0.lo&&R0.md-y>=15?"L":"";
+    rows.push({c,ind,y,ym:r[0],rev:r[1],f,ref:R0,z:f==="H"?(y-R0.hi)/Math.max(10,R0.q3-R0.q1):f==="L"?(R0.lo-y)/Math.max(10,R0.q3-R0.q1):0,news:EV_COUNT[c]||0});});});
+  return {rows,ref};}
+function labReportHTML(){
+  if(!REV||!Object.keys(REV).length)return `<section class="mt-empty">${ic("lab")}<p>還沒有月營收資料。下一次自動更新後，檢驗科就會開始出報告。</p></section>`;
+  const {rows,ref}=labStats(),F=state.labF;
+  const pick=r=>F==="pair"?inPair(r.c):F==="watch"?WATCH.has(r.c):F==="news"?r.news>0:true;
+  const ab=rows.filter(r=>r.f&&pick(r));
+  const H=ab.filter(r=>r.f==="H").sort((a,b)=>b.z-a.z).slice(0,F==="all"?14:40),L=ab.filter(r=>r.f==="L").sort((a,b)=>b.z-a.z).slice(0,F==="all"?10:40);
+  const ym=Object.values(REV).map(r=>r[0]).sort().at(-1)||"",ymTxt=ym?`${+ym.slice(0,-2)+1911}/${ym.slice(-2)}`:"—";
+  const tot=rows.length,nH=rows.filter(r=>r.f==="H").length,nL=rows.filter(r=>r.f==="L").length;
+  const row=r=>`<tr class="${r.f}"><td><button class="mt-pt" data-stock="${r.c}"><b>${esc(stockName(r.c))}</b><span class="num">${r.c}</span></button><small>${esc(r.ind)}</small></td>
+    <td class="num mt-res">${r.y>0?"+":""}${r.y.toFixed(1)}<i>${r.f==="H"?"H ↑":"L ↓"}</i></td>
+    <td class="num mt-ref">${r.ref.lo.toFixed(0)} ～ ${r.ref.hi.toFixed(0)}</td>
+    <td>${r.news?`<button class="mt-consult" data-stock="${r.c}" title="近期有 ${r.news} 則新聞提到">需會診</button>`:""}</td></tr>`;
+  const inds=Object.entries(ref).sort((a,b)=>b[1].md-a[1].md),top=inds.slice(0,5),bot=inds.slice(-5).reverse();
+  const indRow=([n,R0])=>`<div class="mt-ind"><span>${esc(n)}</span><span class="mt-bar"><i style="left:${Math.max(0,Math.min(100,50+R0.md/2))}%"></i></span><span class="num ${R0.md>0?"up":"down"}">${R0.md>0?"+":""}${R0.md.toFixed(1)}%</span></div>`;
+  return `<section class="mt-sheet">
+    <header class="mt-lh"><div><b>812拉基醫院　檢驗報告單</b><small>Laboratory Report</small></div>${barcode(ym||"0000")}</header>
+    <dl class="mt-meta"><div><dt>檢體</dt><dd>月營收</dd></div><div><dt>檢驗項目</dt><dd>營收年增率（%）</dd></div><div><dt>採檢月份</dt><dd class="num">${ymTxt}</dd></div><div><dt>受檢人數</dt><dd class="num">${tot.toLocaleString()} 家</dd></div></dl>
+    <p class="mt-how">參考值＝同產業的正常範圍（中間一半公司的區間再往外放寬）。超出上限標 <b class="up">H ↑</b>，低於下限標 <b class="down">L ↓</b>；近期有新聞的標「需會診」，點了直接看病床。</p>
+    <div class="mt-filter" role="group" aria-label="篩選">${[["all","全部"],["pair","目前兩棟"],["news","有新聞"],["watch","主治病人"]].map(([k,n])=>`<button data-mtk="labF" data-mtf="${k}" aria-pressed="${F===k}">${n}</button>`).join("")}</div>
+    <table class="mt-tb"><thead><tr><th>受檢者</th><th>結果</th><th>參考值</th><th></th></tr></thead>
+    <tbody><tr class="mt-grp"><td colspan="4">偏高　${nH} 家　<small>營收成長明顯優於同業</small></td></tr>${H.map(row).join("")||'<tr><td colspan="4" class="mt-none">沒有符合篩選的偏高個案</td></tr>'}
+    <tr class="mt-grp"><td colspan="4">偏低　${nL} 家　<small>營收明顯落後同業</small></td></tr>${L.map(row).join("")||'<tr><td colspan="4" class="mt-none">沒有符合篩選的偏低個案</td></tr>'}</tbody></table>
+    <h3 class="mt-h3">各科體檢中位數</h3>
+    <div class="mt-inds"><div><small>最健康的五科</small>${top.map(indRow).join("")}</div><div><small>最需要調養的五科</small>${bot.map(indRow).join("")}</div></div>
+    <footer class="mt-sign"><span>報告日期 ${esc(DATA_ASOF||"")}</span><span>檢驗師 <u>自動判讀</u></span><span>覆核 <u>${esc(lvOf(xpGet().xp).name)}</u></span></footer>
+  </section>`;}
+
+// ---------- 申報組：重大訊息與營收申報 ----------
+const MOPS_KIND=[["澄清","澄清報導",/澄清|媒體報導|報導之說明|說明媒體/],["股利","股利配發",/股利|配息|除息|除權/],["董事會","董事會決議",/董事會|股東會/],["資產","資產交易",/取得|處分|資產|設備|廠房|土地/],
+  ["庫藏股","庫藏股",/庫藏股|買回/],["法說","法說會",/法人說明會|法說/],["財務","財務報告",/營收|自結|財務|獲利|盈餘|虧損/],["人事","人事異動",/總經理|董事長|財務長|發言人|辭任|異動/]];
+const mopsKind=t=>{const k=MOPS_KIND.find(([,,re])=>re.test(t));return k?{k:k[0],n:k[1]}:{k:"其他",n:"其他公告"};};
+function revFiling(){
+  const ym=Object.values(REV||{}).map(r=>r[0]).sort().at(-1);if(!ym)return null;
+  const done=Object.values(REV).filter(r=>r[0]===ym).length,total=Object.keys(UNI).filter(c=>/^[1-9]\d{3}$/.test(c)).length;
+  const y=+ym.slice(0,-2)+1911,m=+ym.slice(-2),dl=new Date(m===12?y+1:y,m===12?0:m,10);
+  const days=Math.ceil((dl-new Date())/864e5);return {ym,y,m,done,total,dl,days};}
+function mopsHTML(){
+  const RF=revFiling(),list=(MOPS||[]).map(x=>({...x,kind:mopsKind(x.t)})),F=state.mopsF;
+  const recent=new Set(recentEvents(3).flatMap(e=>e.codes));
+  const pick=x=>F==="pair"?inPair(x.c):F==="watch"?WATCH.has(x.c):F==="clar"?x.kind.k==="澄清":F==="news"?recent.has(x.c):true;
+  const shown=list.filter(pick).slice(0,40);
+  const both=[...new Map(list.filter(x=>recent.has(x.c)).map(x=>[x.c,x])).values()].slice(0,8);
+  const pctDone=RF?Math.min(100,RF.done/RF.total*100):0;
+  const slip=x=>`<article class="mt-slip k-${x.kind.k}"><header><span class="num">${esc(x.d.slice(5).replace("-","/"))} ${esc(x.tm)}</span><span class="mt-kind">${esc(x.kind.n)}</span></header>
+    <button class="mt-co" data-stock="${x.c}"><b>${esc(x.n||stockName(x.c))}</b><span class="num">${x.c}</span>${recent.has(x.c)?'<em>有新聞</em>':""}</button>
+    <p>${esc(x.t)}</p><span class="mt-recv" aria-hidden="true">${x.kind.k==="澄清"?"澄　清":"已受理"}</span></article>`;
+  return `<section class="mt-desk">
+    <div class="mt-counter"><h3>月營收申報進度</h3>${RF?`<p class="mt-rf"><b class="num">${RF.done.toLocaleString()}</b><span>／${RF.total.toLocaleString()} 家已申報 ${RF.m} 月營收</span></p>
+      <div class="mt-prog" role="progressbar" aria-valuenow="${Math.round(pctDone)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pctDone}%"></i></div>
+      <p class="mt-dl">${RF.days>0?`截止日 ${RF.dl.getMonth()+1}/10，還剩 <b>${RF.days}</b> 天`:`${RF.m} 月營收已過截止日（${RF.dl.getMonth()+1}/10）；下一批 ${RF.m===12?1:RF.m+1} 月營收在 ${RF.m>=11?(RF.m-10):(RF.m+2)}/10 前申報`}</p>`:"<p>還沒有營收資料</p>"}
+    </div>
+    ${both.length?`<div class="mt-cross"><h3>新聞與申報對照</h3><p class="note">近三天上過新聞、又有公司正式申報的病人。公司出面「澄清」時，要特別留意新聞的可信度。</p>
+      ${both.map(x=>`<button class="mt-xr ${x.kind.k==="澄清"?"clar":""}" data-stock="${x.c}"><b>${esc(x.n||stockName(x.c))}</b><span>${x.kind.k==="澄清"?"公司出面澄清新聞":"消息有正式申報佐證"}</span><small>${esc(x.t.slice(0,28))}${x.t.length>28?"…":""}</small></button>`).join("")}</div>`:""}
+    <h3 class="mt-h3">重大訊息收件匣 <small>${list.length} 件</small></h3>
+    <div class="mt-filter" role="group" aria-label="篩選">${[["all","全部"],["clar","澄清報導"],["news","有新聞"],["pair","目前兩棟"],["watch","主治病人"]].map(([k,n])=>`<button data-mtk="mopsF" data-mtf="${k}" aria-pressed="${F===k}">${n}</button>`).join("")}</div>
+    ${list.length?(shown.length?`<div class="mt-slips">${shown.map(slip).join("")}</div>`:'<p class="mt-none">沒有符合篩選的申報</p>'):`<div class="mt-empty">${ic("stamp")}<p>重大訊息從下一次自動更新開始收件（週一早上 8:17）。屆時這裡會出現每天公司向證交所申報的公告。</p></div>`}
+  </section>`;}
+
+// ---------- 資訊室：資料機房 ----------
+const RUNS=[[8,17,"開盤前：新聞、美股、總經"],[15,23,"收盤後：行情、法人、營收、新聞，並推播 Telegram"],[18,23,"晚間補抓：確保證交所資料完整"]];
+function nextRun(){const now=new Date(),tp=new Date(now.toLocaleString("en-US",{timeZone:"Asia/Taipei"})),off=now-tp;
+  for(let d=0;d<8;d++){for(const [h,mi,t] of RUNS){const c=new Date(tp);c.setDate(c.getDate()+d);c.setHours(h,mi,0,0);const wd=c.getDay();if(wd===0||wd===6)continue;if(c>tp)return {at:new Date(+c+off),local:c,t};}}return null;}
+function nextRunHTML(){const n=nextRun();if(!n)return "—";const ms=n.at-new Date(),h=Math.floor(ms/36e5),m=Math.floor(ms%36e5/6e4);
+  const wd="日一二三四五六"[n.local.getDay()];return `<b class="num">${h?`${h} 小時 `:""}${m} 分</b><span>後（週${wd} ${String(n.local.getHours()).padStart(2,"0")}:${String(n.local.getMinutes()).padStart(2,"0")}）</span><small>${esc(n.t)}</small>`;}
+function itHTML(){
+  const S=SOURCES||[],stat=x=>x.ok===x.all?"ok":x.ok===0?"down":"part";
+  const unit=x=>{const st=stat(x);return `<div class="mt-unit ${st}" title="${esc(x.err.join("\n")||"全部成功")}"><span class="mt-leds"><i class="pw"></i><i class="act"></i></span>
+    <b>${esc(x.n)}</b><span class="num">${x.ok}/${x.all}</span><em>${st==="ok"?"正常":st==="down"?"離線，沿用上一版":"部分失敗，已用備援"}</em><span class="mt-vent" aria-hidden="true"></span></div>`;};
+  const bad=S.filter(x=>x.ok<x.all);
+  const hasI=INST&&Object.keys(INST).length,revYm=Object.values(REV||{}).map(r=>r[0]).sort().at(-1),usD=Object.values(USD||{}).map(x=>x.date).sort().at(-1);
+  const inv=[["上市櫃公司",Object.keys(UNI).length.toLocaleString()+" 家",""],["今日行情",Object.keys(QUOTES).length.toLocaleString()+" 檔",DATA_ASOF],["新聞",NEWS.length+" 則",NEWS_DATES().length?fmtDate(NEWS_DATES().at(-1)):""],
+    ["三大法人",hasI?Object.keys(INST).length.toLocaleString()+" 檔":"—",INST_DATE||""],["月營收",Object.keys(REV||{}).length.toLocaleString()+" 家",revYm?`${+revYm.slice(0,-2)+1911}/${revYm.slice(-2)}`:""],
+    ["美股",Object.keys(USD||{}).length+" 檔",usD||""],["總經指標",Object.keys(MACRO||{}).length+" 項",""],["重大訊息",(MOPS||[]).length+" 件",(MOPS||[])[0]?.d||""]];
+  const tg=[...(typeof TG_WATCH!=="undefined"?TG_WATCH:[])];
+  return `<section class="mt-room">
+    <div class="mt-rack" aria-label="資料來源狀態">${S.length?S.map(unit).join(""):`<div class="mt-unit idle"><span class="mt-leds"><i class="pw"></i></span><b>等待下一次更新</b><em>機房燈號從下一次自動更新開始顯示</em></div>`}</div>
+    <p class="mt-status ${S.length?(bad.length?"warn":"good"):""}">${S.length?(bad.length?`${bad.length} 個來源有狀況，網站已自動沿用上一版資料。滑過機櫃看原因。`:"全部資料來源正常運作。"):"本次資料是在機房上線前產生的。"}</p>
+    <div class="mt-board"><div><small>上次更新</small><b class="num">${esc(DATA_UPDATED||"—")}</b></div><div id="mtNext"><small>下次自動更新</small>${nextRunHTML()}</div></div>
+    <h3 class="mt-h3">資料庫存</h3>
+    <div class="mt-inv">${inv.map(([k,v,d])=>`<div><span>${k}</span><b class="num">${v}</b><small>${esc(d||"")}</small></div>`).join("")}</div>
+    <h3 class="mt-h3">排程表 <small>週一到週五，台北時間</small></h3>
+    <ol class="mt-sched">${RUNS.map(([h,m,t])=>`<li><b class="num">${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}</b><span>${esc(t)}</span></li>`).join("")}<li><b class="num">每 10 分</b><span>Telegram 掛號櫃台回覆訊息（GitHub 偶爾延遲）</span></li></ol>
+    <h3 class="mt-h3">系統日誌</h3>
+    <pre class="mt-log">${(DATA_NOTES||[]).length?DATA_NOTES.map(n=>"! "+esc(n)).join("\n"):"> 本次更新沒有錯誤"}${"\n"}> 資料日 ${esc(DATA_ASOF||"")}，更新於 ${esc(DATA_UPDATED||"")}</pre>
+    <h3 class="mt-h3">Telegram 主治病人 <small>${tg.length} 位</small></h3>
+    <p class="note">${tg.length?tg.map(c=>`<button class="mt-chip" data-stock="${c}">${esc(stockName(c))}</button>`).join(""):"還沒有。傳 /watch 2330 給機器人就會出現在這裡。"}</p>
+  </section>`;}
+
 function render(){
   header();const p=$("leaf");
-  p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():state.tab==="rad"?radHTML():quizHTML();
+  p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():state.tab==="rad"?radHTML():state.tab==="lab"?labHTML():quizHTML();
   p.querySelectorAll("[data-id]").forEach(el=>{
     el.onmouseenter=()=>{state.hover=nodeMap[el.dataset.id]||null;};el.onmouseleave=()=>{state.hover=null;};
     el.onclick=()=>{const n=nodeMap[el.dataset.id];if(n)select(n);};});
@@ -2093,6 +2302,10 @@ function render(){
   p.querySelectorAll("[data-theme-a]").forEach(el=>el.onclick=()=>{const t=el.dataset.themeA;if(t===state.B)[state.A,state.B]=[state.B,state.A];else state.A=t;keep={};refresh();});
   $("repCard")&&($("repCard").onclick=reportCard);
   p.querySelectorAll("[data-film]").forEach(el=>el.onclick=()=>openFilm(el.dataset.film));
+  p.querySelectorAll("[data-mt]").forEach(el=>el.onclick=()=>{state.mt=el.dataset.mt;render();p.scrollTop=0;});
+  p.querySelectorAll("[data-mtf]").forEach(el=>el.onclick=()=>{state[el.dataset.mtk]=el.dataset.mtf;render();});
+  p.querySelectorAll("[data-stock]").forEach(el=>el.onclick=()=>goStock(el.dataset.stock));
+  clearInterval(window.__mtClock);if(state.tab==="lab"&&state.mt==="it")window.__mtClock=setInterval(()=>{const e=$("mtNext");if(e)e.innerHTML=nextRunHTML();else clearInterval(window.__mtClock);},30000);
   decorateH2(p);
   $("qStart")&&($("qStart").onclick=newQuiz);
   $("qNext")&&($("qNext").onclick=()=>{const Q=state.quiz;Q.i++;Q.ans=null;const s=Q.pool[Q.i];

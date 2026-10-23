@@ -710,3 +710,74 @@ def weekly_text(w, site):
          "【本週惡化】" + "、".join(f"{n} {p:+.1f}%" for n, _, p in w["worst"]),
          "", "以上為新聞與行情的觀察整理，不構成投資建議。", site]
     return "\n".join(s)
+
+
+# ---------------------------------------------------------------- 申報組：公司重大訊息
+MOPS_SRC = [("https://openapi.twse.com.tw/v1/opendata/t187ap04_L", "mops_twse.json", "上市"),
+            ("https://www.tpex.org.tw/openapi/v1/mopsfe_t187ap04_O", "mops_tpex.json", "上櫃"),
+            ("https://www.tpex.org.tw/openapi/v1/t187ap04_O", "mops_tpex2.json", "上櫃")]
+
+
+def get_mops(prev, keep_days=5, cap=400):
+    """證交所／櫃買中心每日重大訊息。回傳 [{d, tm, c, n, t, k, mk}]，新的在前；抓不到就沿用上一版。"""
+    out, got_otc = [], False
+    for url, key, mk in MOPS_SRC:
+        if mk == "上櫃" and got_otc:
+            continue
+        try:
+            rows = json.loads(U.fetch(url, key, tries=1, timeout=20))
+        except Exception as e:  # noqa: BLE001
+            if mk == "上市":
+                U.note(f"上市重大訊息抓取失敗（{str(e)[:60]}）")
+            continue
+        if not isinstance(rows, list):
+            continue
+        for r in rows:
+            subj = next((str(v) for k, v in r.items() if "主旨" in k), "").strip()
+            c = str(r.get("公司代號") or r.get("SecuritiesCompanyCode") or "").strip()
+            d = U.roc_to_iso(r.get("發言日期") or r.get("Date") or "")
+            if not (c and d and subj):
+                continue
+            tm = re.sub(r"\D", "", str(r.get("發言時間") or "")).zfill(6)
+            out.append({"d": d, "tm": f"{tm[:2]}:{tm[2:4]}", "c": c, "n": str(r.get("公司名稱") or "").strip(),
+                        "t": subj[:120], "k": str(r.get("符合條款") or "").strip(), "mk": mk})
+        if mk == "上櫃" and rows:
+            got_otc = True
+    if not out:
+        return prev
+    seen, merged = set(), []
+    for m in out + (prev or []):
+        k = (m["c"], m["d"], m["t"])
+        if k not in seen:
+            seen.add(k)
+            merged.append(m)
+    days = sorted({m["d"] for m in merged})[-keep_days:]
+    merged = [m for m in merged if m["d"] in days]
+    merged.sort(key=lambda m: (m["d"], m["tm"]), reverse=True)
+    return merged[:cap]
+
+
+# ---------------------------------------------------------------- 資訊室：各資料來源的燈號
+SOURCE_GROUPS = [
+    ("證交所", ("isin_twse", "twse_", "mi_", "t86_", "rev_twse", "mops_twse")),
+    ("櫃買中心", ("isin_tpex", "tpex_", "rev_tpex", "mops_tpex")),
+    ("公開資訊觀測站", ("rev_mops",)),
+    ("Yahoo 股市新聞", ("rss_0_",)),
+    ("Google 新聞", ("rss_1_",)),
+    ("鉅亨網", ("cnyes",)),
+    ("美股報價", ("us_", "stooq")),
+    ("總經指標", ("macro_", "fred_")),
+]
+
+
+def source_status(log):
+    """把這次每個抓取結果歸到資料來源，算出成功數與失敗原因。"""
+    out = []
+    for name, pres in SOURCE_GROUPS:
+        rows = [x for x in log if x[0].startswith(pres)]
+        if not rows:
+            continue
+        ok = sum(1 for x in rows if x[1])
+        errs = [f"{k}：{e}" for k, good, e in rows if not good][:4]
+        out.append({"n": name, "ok": ok, "all": len(rows), "err": errs})
+    return out

@@ -40,6 +40,7 @@ TPEX_QUOTES = "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes"
 
 OFFLINE = None
 NOTES = []
+FETCH_LOG = []   # 每次抓取的結果：(檔名, 成功與否, 錯誤訊息)，給資訊室的機房燈號用
 
 
 def note(msg):
@@ -53,7 +54,9 @@ def fetch(url, key, binary=False, tries=2, timeout=20):
     if OFFLINE:
         path = os.path.join(OFFLINE, key)
         if not os.path.exists(path):
+            FETCH_LOG.append((key, False, "樣本不存在"))
             raise FileNotFoundError(path)
+        FETCH_LOG.append((key, True, ""))
         data = open(path, "rb").read()
         return data if binary else data.decode("utf-8")
     import requests
@@ -62,11 +65,13 @@ def fetch(url, key, binary=False, tries=2, timeout=20):
         try:
             r = requests.get(url, timeout=timeout, headers={"User-Agent": "Mozilla/5.0 (812-laji-hospital updater)"})
             r.raise_for_status()
+            FETCH_LOG.append((key, True, ""))
             return r.content if binary else r.text
         except Exception as e:  # noqa: BLE001
             last = e
             if i + 1 < tries:
                 time.sleep(2)
+    FETCH_LOG.append((key, False, str(last)[:90]))
     raise last
 
 
@@ -425,6 +430,7 @@ def main():
     except Exception as e:  # noqa: BLE001
         note(f"法人歷史更新失敗（{e}）")
     rev = extras.get_revenue() or prev.get("rev")
+    mops = extras.get_mops(prev.get("mops"))
     us_series = extras.get_us(lex)
     macro_series = extras.get_macro(CFG)
     us_snap = save_us_history(us_series, lex) if us_series else prev.get("us")
@@ -462,6 +468,7 @@ def main():
         "rev": rev,
         "us": us_snap,
         "macro": macro,
+        "mops": mops,
         "notes": NOTES,
     }
     matcher = extras.Matcher(uni, lex)
@@ -484,6 +491,7 @@ def main():
     except Exception as e:  # noqa: BLE001
         note(f"院長週報產生失敗（{e}）")
     data["notes"] = NOTES
+    data["sources"] = extras.source_status(FETCH_LOG)
     site = "https://n0930121.github.io/LajiHospital/"
     if os.environ.get("FORCE_PUSH") == "1" or (not OFFLINE and NOW.hour == CFG.get("push", {}).get("hour", 15)):
         msg = extras.handover_text(data.get("report"), site)
