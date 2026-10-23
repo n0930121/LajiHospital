@@ -44,7 +44,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
 /* ---------- 院名招牌 ---------- */
 .mast{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"sign depts tri";align-items:center;gap:12px 28px}
 .sign{grid-area:sign} .mast .depts{grid-area:depts}
-@media (max-width:1360px){
+@media (max-width:1519px){
   .mast{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"sign tri" "depts depts";row-gap:12px}
   .mast .depts{justify-content:flex-start;padding-top:12px;border-top:1px solid var(--line)}
   .mast .tools{margin-left:auto}
@@ -71,7 +71,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
 .dbtn .tag{display:grid;place-items:center;width:34px;color:#fff;font-family:var(--num);font-weight:700;font-size:15px}
 .dbtn .body{display:flex;flex-direction:column;align-items:flex-start;padding:4px 12px 5px 10px;line-height:1.25}
 .dbtn .body small{font-size:10.5px;color:var(--mute)}
-.dbtn .body b{font-size:15px;font-weight:700}
+.dbtn .body b{font-size:15px;font-weight:700;white-space:nowrap}
 .dbtn .car{display:grid;place-items:center;padding:0 10px;color:var(--mute);font-size:10px;border-left:1px solid var(--line)}
 .dept.A .tag{background:var(--a)} .dept.B .tag{background:var(--b)}
 .dbtn:hover{border-color:var(--mute)}
@@ -84,7 +84,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
 .menu .num{text-align:right;color:var(--mute);font-size:15px}
 .menu i{display:block;height:3px;background:var(--grid);border-radius:2px} .menu i b{display:block;height:3px;background:var(--mute);border-radius:2px}
 .tools{display:flex;gap:4px;margin-left:6px}
-.tool{font-size:12.5px;color:var(--mute);padding:5px 9px;border-radius:4px}
+.tool{white-space:nowrap;font-size:12.5px;color:var(--mute);padding:5px 9px;border-radius:4px}
 .tool:hover{background:var(--sheet);color:var(--ink)}
 .triage{display:flex;align-items:center;gap:14px;background:var(--sheet);border:1px solid var(--line);border-radius:6px;padding:8px 14px}
 .triage .lv{display:flex;flex-direction:column;line-height:1.25}
@@ -590,7 +590,7 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 .tbar{margin-top:0}
 .triage .score{font-size:30px;line-height:1}
 .triage .score small{font-size:12px}
-@media (min-width:1361px){
+@media (min-width:1520px){
   .mast{align-items:center}
   .mast .depts{display:grid;grid-template-columns:auto auto auto minmax(0,1fr);grid-template-rows:46px 46px;gap:8px 10px;justify-content:start;align-items:center}
   .mast .depts .amp{text-align:center}
@@ -934,7 +934,10 @@ function drawDoctor(o,col,u,isSel){
   const lab=(o.g==="ab"?"會診":"")+RANKS[e.heat];ctx.font=`700 ${9.5*u}px ${FONT.sans}`;const lw=ctx.measureText(lab).width+8*u;
   ctx.fillStyle=col;rr(x-lw/2,y+r+2*u,lw,13*u,2*u);ctx.fill();ctx.fillStyle="#fff";ctx.textAlign="center";ctx.fillText(lab,x,y+r+11.5*u);
 }
-function drawBed(o,u,t,focus){
+function drawDot(o,col,u){const e=o.e,rr0=Math.max(4.5,o.r*.42);
+  ctx.fillStyle=e.sent>0?COL.up:e.sent<0?COL.down:rgba(col,.5);ctx.beginPath();ctx.arc(o.x,o.y,rr0,0,7);ctx.fill();
+  ctx.strokeStyle=col;ctx.lineWidth=1.4*u;ctx.beginPath();ctx.arc(o.x,o.y,rr0+1.5*u,0,7);ctx.stroke();}
+function drawBed(o,u,t,focus,brief){
   const {x,y}=o,s=o.s,v=vital(s),c=vcol(v),w=26*u*1.05,h=15*u;
   // 監視器
   const mx=x-w/2,my=y-h/2-15*u,mw=w,mh=11*u;
@@ -962,6 +965,7 @@ function drawBed(o,u,t,focus){
     const age=(performance.now()-BUILT)/1000;if(age<3.2&&!reduce)drawAmbulance(x-w/2-140*u*(1-ease(Math.min(1,age/2.2))),y,u,Math.min(1,(3.2-age)/0.6));}
   // 床頭牌
   ctx.textAlign="center";ctx.font=`700 ${11*u}px ${FONT.sans}`;ctx.fillStyle=rgba(COL.ink,.95);ctx.fillText(s.name,x,y+h/2+13*u);
+  if(brief)return;
   ctx.font=`600 ${11*u}px ${FONT.num}`;ctx.fillStyle=v==="na"?COL.mute:c;
   ctx.fillText(v==="na"?(s.q?"待揭曉":"未量測"):pct(s.q),x,y+h/2+25*u);
 }
@@ -1081,9 +1085,12 @@ function draw(ts){
       ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);ctx.lineDashOffset=0;
       pts.forEach((p,i)=>{ctx.fillStyle=COL.ink;ctx.beginPath();ctx.arc(p.x-p.r-6*u,p.y-p.r-6*u,8*u,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.font=`700 ${10*u}px ${FONT.num}`;ctx.textAlign="center";ctx.fillText(i+1,p.x-p.r-6*u,p.y-p.r-2.5*u);});}}
   // 病床
-  nodes.forEach(o=>{if(o.type!=="st")return;ctx.globalAlpha=dimA(o.id)*intro;drawBed(o,u,t,F&&F.has(o.id));ctx.globalAlpha=1;});
+  // 分層顯示：縮小看全院時，住院以下醫師畫成小圓點、病床只留名字；放大或點選相關的人才畫完整
+  const far=k<.75&&nodes.length>40;
+  nodes.forEach(o=>{if(o.type!=="st")return;ctx.globalAlpha=dimA(o.id)*intro;drawBed(o,u,t,F&&F.has(o.id),far&&!(F&&F.has(o.id)));ctx.globalAlpha=1;});
   // 醫師
-  nodes.forEach(o=>{if(o.type!=="ev")return;ctx.globalAlpha=dimA(o.id)*intro;drawDoctor(o,gc(o.g),u,o===state.sel);ctx.globalAlpha=1;});
+  nodes.forEach(o=>{if(o.type!=="ev")return;ctx.globalAlpha=dimA(o.id)*intro;
+    if(far&&o.e.heat<=2&&o!==state.sel&&o!==state.hover&&!(F&&F.has(o.id)))drawDot(o,gc(o.g),u);else drawDoctor(o,gc(o.g),u,o===state.sel);ctx.globalAlpha=1;});
   // 選取：呼叫鈴波紋與定位框
   const sel=state.sel;
   if(sel){const R0=sel.type==="ev"?sel.r+7*u:22*u;
@@ -2041,14 +2048,19 @@ const PALETTES=[
  {k:"celadon",n:"青瓷綠",ink:"#263634",a:"#6f978b",b:"#ab8564",br:"#7c7398",wall:"#eef3f1",sw:["#263634","#a6c6bb"]}];
 let PAL="std";try{PAL=localStorage.getItem("laji_palette")||"std";}catch(e){}
 function applyPalette(k,save){const p=PALETTES.find(x=>x.k===k)||PALETTES[0];PAL=p.k;const r=document.documentElement.style,night=document.documentElement.dataset.theme==="night";
-  ["--ink","--wall","--sheet","--grid","--line","--a","--b","--br","--brand"].forEach(v=>r.removeProperty(v));
+  ["--ink","--wall","--sheet","--grid","--line","--mute","--a","--b","--br","--brand"].forEach(v=>r.removeProperty(v));
   r.setProperty("--brand",p.ink);
   // 平面圖是 canvas，只吃得懂 #rrggbb，所以夜班的配色也在這裡先算成十六進位色碼
   const mix=(c1,c2,t)=>{const h=x=>parseInt(x.slice(1),16),A=h(c1),B=h(c2);return "#"+[16,8,0].map(k=>Math.round((A>>k&255)*(1-t)+(B>>k&255)*t).toString(16).padStart(2,"0")).join("");};
   if(p.k!=="std"){
-    if(night){const S={"--wall":mix(p.ink,"#000000",.6),"--sheet":mix(p.ink,"#000000",.42),"--grid":mix(p.ink,"#000000",.25),"--line":mix(p.ink,"#ffffff",.12),"--ink":mix(p.wall,"#ffffff",.2),
-        "--a":mix(p.a,"#ffffff",.32),"--b":mix(p.b,"#ffffff",.32),"--br":mix(p.br,"#ffffff",.32),"--brand":mix(p.ink,"#ffffff",.15)};Object.entries(S).forEach(([k,v])=>r.setProperty(k,v));}
-    else{r.setProperty("--ink",p.ink);r.setProperty("--wall",p.wall);r.setProperty("--grid",mix(p.wall,p.ink,.06));r.setProperty("--line",mix(p.wall,p.ink,.14));r.setProperty("--a",p.a);r.setProperty("--b",p.b);r.setProperty("--br",p.br);}}
+    // 整個畫面都換色：底色、紙面、格線、分隔線、註記字都由這組色系調出來
+    const base=mix(p.a,p.ink,.35);
+    const S=night?{"--wall":mix(base,"#000000",.8),"--sheet":mix(base,"#000000",.7),"--grid":mix(base,"#000000",.6),"--line":mix(base,"#000000",.45),
+        "--ink":mix(p.wall,"#ffffff",.25),"--mute":mix(mix(p.wall,p.a,.45),"#000000",.15),
+        "--a":mix(p.a,"#ffffff",.32),"--b":mix(p.b,"#ffffff",.32),"--br":mix(p.br,"#ffffff",.32),"--brand":mix(base,"#000000",.45)}
+      :{"--wall":mix(p.wall,p.a,.2),"--sheet":mix(p.wall,"#ffffff",.3),"--grid":mix(mix(p.wall,"#ffffff",.3),p.a,.13),"--line":mix(mix(p.wall,"#ffffff",.3),p.ink,.18),
+        "--ink":p.ink,"--mute":mix(p.ink,p.wall,.4),"--a":p.a,"--b":p.b,"--br":p.br,"--brand":p.ink};
+    Object.entries(S).forEach(([k,v])=>r.setProperty(k,v));}
   if(save)try{localStorage.setItem("laji_palette",p.k);}catch(e){}
   refreshColors();$("palBtn").innerHTML=`<i style="background:linear-gradient(135deg,${p.sw[0]} 50%,${p.sw[1]} 50%)"></i>配色`;
   document.querySelectorAll("[data-pal]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.pal===p.k));
