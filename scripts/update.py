@@ -492,6 +492,15 @@ def main():
         note(f"院長週報產生失敗（{e}）")
     data["notes"] = NOTES
     data["sources"] = extras.source_status(FETCH_LOG)
+    try:
+        msg, data["alerts_sent"] = extras.alerts(data, hist, prev.get("alerts_sent"))
+        if msg and not OFFLINE:
+            extras.broadcast(msg)
+        elif msg:
+            print(msg)
+    except Exception as e:  # noqa: BLE001
+        note(f"主動通報失敗（{e}）")
+        data["alerts_sent"] = prev.get("alerts_sent", [])
     site = "https://n0930121.github.io/LajiHospital/"
     if os.environ.get("FORCE_PUSH") == "1" or (not OFFLINE and NOW.hour == CFG.get("push", {}).get("hour", 15)):
         msg = extras.handover_text(data.get("report"), site)

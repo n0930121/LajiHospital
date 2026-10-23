@@ -708,6 +708,73 @@ tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weigh
 .mt-chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:2px 10px;margin:0 4px 4px 0;background:var(--sheet)}
 @media (prefers-reduced-motion:reduce){.mt-unit .act{animation:none}}
 @media (max-width:640px){.mt-ico,.mt-nav small,.mt-fl{display:none}.mt-nav button{grid-template-columns:1fr;justify-items:center;padding:10px 4px 10px 8px}.mt-nav b{white-space:nowrap}}
+/* ---------- 第四期 ---------- */
+.lat-head{display:grid;grid-template-columns:minmax(0,1fr) 100px 64px;gap:10px;font-size:10px;color:var(--mute);font-family:var(--num);letter-spacing:.02em}
+.lat-head span:nth-child(2){display:grid;grid-template-columns:repeat(5,1fr);text-align:center}.lat-head i{font-style:normal}
+.lat-row{grid-template-columns:minmax(0,1fr) 100px 64px!important}
+.lat-k{text-align:right;font-weight:700;font-size:13px}.lat-k small{display:block;font-weight:400;font-size:10.5px;color:var(--mute)}
+.epi{width:100%;height:auto;display:block;margin-top:4px}.epi-ax{font:500 10px var(--num);fill:var(--mute)}.epi-lb{font:700 11px var(--sans);fill:var(--ink)}
+.epi-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--mute);margin:4px 0 8px}.epi-legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.epi-card{border:1px solid var(--line);border-left:4px solid var(--ec);border-radius:0 6px 6px 0;padding:9px 12px;margin-top:8px;background:var(--sheet)}
+.epi-card b{font-size:13.5px}.epi-card p{margin:4px 0;font-size:12.5px;line-height:1.6}.epi-ch{color:var(--mute)}
+.epi-card .cbtn{margin-top:4px}
+.case{border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin-top:8px;background:var(--sheet);border-top:3px solid var(--kc)}
+.case header{display:flex;gap:8px;align-items:baseline}.case-no{font-size:11px;color:var(--kc);font-weight:700}.case header b{font-size:13.5px}
+.case .mt-co{margin:6px 0 2px}.case .mt-co .num{font-size:13px}
+.case p{margin:4px 0 0;font-size:12.5px;line-height:1.6}.case-news{color:var(--mute);font-family:var(--serif)}
+/* 假設門診與處方箋：浮在平面圖上的紙本 */
+.film.wi .wi-body,.film.rx .wi-body{height:calc(100% - 44px);overflow:auto;padding:4px 4px 16px}
+.wi-form{display:flex;gap:8px;margin:6px 0 8px}
+.wi-form input{flex:1;min-width:0;height:44px;border:1.5px solid var(--ink);border-radius:6px;background:var(--sheet);padding:0 14px;font-size:15px}
+.wi-ex{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}.wi-ex small{color:var(--mute)}
+.wi-ex button{font-size:12px;border:1px dashed var(--line);border-radius:999px;padding:3px 10px;color:var(--mute)}.wi-ex button:hover{border-color:var(--ink);color:var(--ink)}
+.wi-none{padding:20px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:8px}
+.wi-chart{max-width:760px;background:#fff;color:#1d2731;border:1px solid #d6dde2;border-radius:3px;padding:14px 18px;box-shadow:0 10px 24px -14px rgba(0,0,0,.35)}
+.wi-chart header{display:flex;justify-content:space-between;font-family:var(--art);font-size:16px;font-weight:700;border-bottom:2px solid #1d2731;padding-bottom:6px;letter-spacing:.08em}
+.wi-chart dl{margin:0}.wi-chart dl>div{display:grid;grid-template-columns:5.5em 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #edf1f3}
+.wi-chart dt{color:#7a8791;font-size:12.5px;padding-top:2px}.wi-chart dd{margin:0;font-size:13px;line-height:1.7}.wi-chart small{color:#8a96a0;font-size:11.5px}
+.wi-chart .up{color:#c8322f}.wi-chart .down{color:#1f8a5a}.wi-chart .flat{color:#7a8791}
+.wi-q{font-family:var(--art);font-size:17px!important;color:#22468f}
+.wi-dir{display:inline-block;font-weight:700;border:1.5px solid currentColor;border-radius:3px;padding:0 8px}
+.wi-dept{font-size:12.5px;font-weight:700;border:1px solid #1d2731;border-radius:4px;padding:1px 8px;margin:0 6px 4px 0}.wi-dept:hover{background:#1d2731;color:#fff}
+.wi-pt{font-size:12.5px;border:1px solid #d6dde2;border-radius:4px;padding:1px 8px;margin:0 6px 5px 0;background:#f7f9fa}.wi-pt em{font-style:normal;font-family:var(--num)}
+.wi-pt:hover{border-color:#1d2731}
+.wi-chain{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-bottom:5px;font-size:12px}.wi-chain b{margin-right:4px}
+.wi-chain span{border-radius:3px;padding:1px 6px;background:#f1f4f6;color:#7a8791}.wi-chain span.src{background:#1d2731;color:#fff}.wi-chain span.next{background:#fff;border:1px dashed #9aa6af;color:#1d2731}
+.wi-chain span em{font-style:normal;font-family:var(--num)}.wi-chain span.src em{color:#fff}.wi-chain i{font-style:normal;color:#9aa6af}
+.wi-rx{margin-top:10px;padding:10px 12px;background:#f4f7f9;border-left:3px solid #22468f}.wi-rx b{font-size:12px;color:#22468f;letter-spacing:.2em}
+.wi-rx p{margin:3px 0 0;font-family:var(--art);font-size:15.5px;line-height:1.7;color:#22468f}
+.wi-chart .disc{margin-top:8px}
+.rx-pad{max-width:440px;margin:6px auto 0;background:#fff;color:#1d2731;border:1px solid #d6dde2;border-radius:3px;padding:16px 20px;box-shadow:0 10px 24px -14px rgba(0,0,0,.35);
+  background-image:repeating-linear-gradient(transparent 0 31px,#e6eef4 31px 32px)}
+.rx-pad header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #1d2731;padding-bottom:4px}
+.rx-pad header b{font-family:var(--art);font-size:17px;letter-spacing:.1em}.rx-sym{font-family:var(--serif);font-size:34px;line-height:1;color:#c0362c}
+.rx-meta{display:grid;grid-template-columns:1fr 1fr;margin:6px 0 0}.rx-meta div{display:flex;gap:8px;padding:5px 0;font-size:13px}.rx-meta dt{color:#7a8791}.rx-meta dd{margin:0;font-weight:600}
+.rx-meta .stage{color:#fff;border-radius:3px;padding:0 6px;font-size:12px}
+.rx-act{border:0;margin:10px 0 0;padding:0;display:flex;gap:8px}.rx-act legend{font-size:12px;color:#7a8791;margin-bottom:4px}
+.rx-act label{flex:1}.rx-act input{position:absolute;opacity:0}
+.rx-act span{display:block;text-align:center;padding:9px 0;border:1.5px solid #c9d2d8;border-radius:6px;font-weight:700;cursor:pointer}
+.rx-act input:checked+span{border-color:#1d2731;background:#1d2731;color:#fff}.rx-act input:focus-visible+span{outline:2px solid var(--a);outline-offset:2px}
+.rx-why{display:block;margin-top:12px}.rx-why span{font-size:12px;color:#7a8791}
+.rx-why textarea{height:58px;min-height:0;width:100%;margin-top:3px;border:0;border-bottom:1.5px solid #1d2731;background:transparent;font-family:var(--art);font-size:16px;color:#22468f;resize:none;padding:4px 2px}
+.rx-sug{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.rx-sug button{font-size:11.5px;border:1px dashed #b7c1c8;border-radius:999px;padding:2px 8px;color:#5d6a74}
+.rx-pad footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px}.rx-pad footer span{font-size:12px;color:#7a8791}
+.rx-pad footer u{text-decoration:none;font-family:var(--art);font-size:15px;color:#22468f;border-bottom:1px solid currentColor}
+.rx-sum{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.rx-sum div{padding:8px 0;text-align:center}.rx-sum div+div{border-left:1px solid var(--line)}.rx-sum small{display:block;font-size:11px;color:var(--mute)}.rx-sum b{font-size:24px}
+.rx-report{margin-top:8px;padding:9px 12px;border-left:3px solid var(--a);background:var(--wall);border-radius:0 6px 6px 0}.rx-report b{font-size:12px}.rx-report p{margin:2px 0 0;font-size:12.5px;line-height:1.6}
+.rx-list{margin-top:8px}.rx-row{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 8px;align-items:center;padding:8px 26px 8px 0;border-bottom:1px solid var(--line)}
+.rx-tag{font-size:11px;font-weight:700;border-radius:3px;padding:1px 6px;color:#fff;background:var(--mute)}.rx-tag.up{background:var(--up)}.rx-tag.down{background:var(--down)}
+.rx-res{text-align:right;font-size:12.5px;white-space:nowrap}.rx-res em{font-style:normal;font-size:11px;font-weight:700;margin-left:4px;border-radius:3px;padding:0 5px}
+.rx-ok{color:#fff;background:var(--down)}.rx-bad{color:#fff;background:#8d9ba7}.rx-wait{color:var(--mute);border:1px solid var(--line)}
+.rx-meta2{grid-column:2/-1;color:var(--mute);font-size:11px}
+.rx-del{position:absolute;right:2px;top:8px;color:var(--mute);font-size:16px;line-height:1;padding:2px 4px}
+.ach{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 6px}
+.ach-i{display:grid;justify-items:center;gap:4px;text-align:center}
+.ach-s{display:grid;place-items:center;align-content:center;width:62px;height:62px;border-radius:50%;border:2px dashed var(--line);color:var(--line);font-family:var(--art);line-height:1.1}
+.ach-s b{font-size:16px}.ach-s small{font-size:10px}
+.ach-i.on .ach-s{border:2.5px solid #c0362c;color:#c0362c;box-shadow:inset 0 0 0 3px var(--sheet),inset 0 0 0 4px #c0362c;transform:rotate(-8deg)}
+.ach-d{font-size:10.5px;color:var(--mute);line-height:1.35}.ach-i.on .ach-d{color:var(--ink)}
 .legend[hidden],.card[hidden],#tip[hidden],.toast[hidden]{display:none}
 </style>
 
@@ -728,6 +795,7 @@ tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weigh
         <div class="reg"><input id="regIn" placeholder="掛號：代號或名稱" autocomplete="off" aria-label="搜尋股票"><div class="reg-list" id="regList" hidden></div></div>
         <button class="tool" id="swap">對調兩棟</button>
         <button class="tool" id="dice">隨機會診</button>
+        <button class="tool" id="wiBtn">假設門診</button>
         <button class="tool" id="impBtn">新增新聞</button>
         <button class="tool" id="nightBtn" aria-pressed="false">夜班</button>
       </div>
@@ -852,6 +920,7 @@ function ingest(list){
       codes:r.codes.map(x=>x.c),how:Object.fromEntries(r.codes.map(x=>[x.c,x.how])),themes:r.themes,heat:n.heat||3,sent:n.sent||0};});
   DATES=[...new Set(EVENTS.map(e=>e.o))].sort((a,b)=>a-b);
   $("range").max=DATES.length-1;$("range").value=DATES.length-1;state.upto=DATES.at(-1);
+  try{LAT={};}catch(e){}
 }
 
 /* ================= 分析 ================= */
@@ -1255,7 +1324,7 @@ function cardHTML(n){
     ${contactBlock(s.code)}
     <div class="meta">A 棟醫師 ${s.a} 位，B 棟醫師 ${s.b} 位，醫囑傾向 ${s.net>0?"+":""}${s.net}　${dxTag(s)}</div>
     <div class="meta">主治團隊</div><div class="docs">${s.evs.slice(0,4).map(e=>`<button data-go="${e.id}"><span class="chip" style="background:${gc(e.g)}">${RANKS[e.heat]}</span><span>${esc(e.t)}</span></button>`).join("")}</div>
-    <div class="cbtns"><button class="cbtn" data-story="${s.code}">${ic("clip")}查看病史</button><button class="cbtn" data-cert="${s.code}">開立診斷證明書</button></div>
+    <div class="cbtns"><button class="cbtn" data-story="${s.code}">${ic("clip")}查看病史</button><button class="cbtn" data-rx="${s.code}">開處方</button><button class="cbtn" data-cert="${s.code}">開立診斷證明書</button></div>
     <div class="disc">診斷與醫囑由新聞、股價、法人與營收自動歸納，只是觀察重點，不構成投資建議。</div></div>`;
 }
 function openCard(n){if(n&&window.innerWidth<=640&&document.body.dataset.mview==="chart")mview("plan");const c=$("card");if(!n){c.hidden=true;c.classList.remove("in");return;}
@@ -1265,7 +1334,8 @@ function wireCard(c){
   c.querySelector("[data-x]")&&(c.querySelector("[data-x]").onclick=()=>{state.dock=null;select(null);});
   c.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{const n=nodeMap[b.dataset.go];if(n){state.dock=null;select(n);}else jumpTo(b.dataset.go);});
   c.querySelectorAll("[data-watch]").forEach(b=>b.onclick=()=>{toggleWatch(b.dataset.watch);b.classList.toggle("on",WATCH.has(b.dataset.watch));});
-  c.querySelectorAll("[data-cert]").forEach(b=>b.onclick=()=>{certificate(b.dataset.cert);xpAdd(3,"開立診斷證明書");});
+  c.querySelectorAll("[data-cert]").forEach(b=>b.onclick=()=>{certificate(b.dataset.cert);if(xpOnce("cert"+b.dataset.cert+DATA_ASOF))xpAdd(3,"開立診斷證明書");});
+  c.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>openRx(b.dataset.rx));
   c.querySelectorAll("[data-story]").forEach(b=>b.onclick=()=>openStory(b.dataset.story));
   c.querySelectorAll("[data-us]").forEach(b=>b.onclick=()=>openUS(b.dataset.us));
   c.querySelectorAll("[data-out]").forEach(b=>b.onclick=()=>openOutpatient(b.dataset.out));}
@@ -1379,7 +1449,7 @@ function quizHTML(){
       <p>你${Q.ans===act?"判斷正確":"判斷錯誤"}；AI 判讀${mdl===act?"正確":"錯誤"}，它看到的醫囑傾向是 ${s.net>0?"+":""}${s.net}。</p>
       <button class="cta" id="qNext">${Q.i+1<Q.pool.length?"下一床":"看查房結果"}</button></div>`:""}</section>`;}
 function bet(v){const Q=state.quiz,s=Q.pool[Q.i],a=Math.sign(s.q.chg);Q.ans=v;Q.rev.add(s.code);
-  if(v===a){Q.streak++;Q.hits++;Q.score+=10+(Q.streak-1)*5;xpAdd(10,"判斷正確");}else Q.streak=0;if((Math.sign(s.net)||1)===a)Q.model++;
+  if(v===a){Q.streak++;Q.hits++;Q.score+=10+(Q.streak-1)*5;xpAdd(10,"判斷正確");lsSet("laji_hits",lsGet("laji_hits",0)+1);try{if(diagnose(s.code).st==="resist")achUnlock("resist");}catch(e){}}else Q.streak=0;if((Math.sign(s.net)||1)===a)Q.model++;
   const nn=nodeMap["s"+s.code];if(nn)openCard(nn);else openOutpatient(s.code);render();}
 
 /* ================= 招牌與選單 ================= */
@@ -1597,6 +1667,7 @@ function diagnose(code){
   const cs=chainsFor(code);if(cs.length){const {ch,i}=cs[0],S=chainState(ch),me=S.lv[i].ss.find(s=>s.c===code);if(me&&(me.exposed||me.lag))why.push(`接觸者追蹤：${ch.n}產業鏈上游「${me.exposed||me.lag}」${me.exposed?"生病，留意被傳染":"轉好，可能隨後跟上"}`);}
   if(rv&&rv[2]!=null)why.push(`檢驗報告：${rv[0].slice(0,-2)}/${rv[0].slice(-2)} 月營收年增 ${rv[2]>0?"+":""}${rv[2].toFixed(1)}%${rv[2]>=20?"，體檢良好":rv[2]<=-10?"，體檢紅字":""}`);
   if(links.length){const b=links.sort((a,b)=>Math.abs(b.snap.pct)-Math.abs(a.snap.pct))[0];why.push(`海外病史：${b.u.n} 當晚 ${b.snap.pct>0?"+":""}${b.snap.pct.toFixed(2)}%${b.c?`（感染係數 ${b.c.r.toFixed(2)}）`:""}`);}
+  const lw=latencyWhy(code);if(lw)why.push(lw);
   return {st,...STAGES[st],why};}
 function diagBlock(s){if(hidePx(s))return `<div class="diag"><div class="hd"><b>綜合診斷</b><small>查房作答後揭曉</small></div></div>`;
   const d=diagnose(s.code);
@@ -1637,7 +1708,7 @@ function outCardHTML(code){
   <div class="vit"><div><small>${ASOF_MD} 收盤</small><span class="num">${q&&!hidePx(s)?q.close.toLocaleString():"—"}</span></div><div><small>生命徵象</small><span class="num ${vital(s)}">${vital(s)==="na"?(q?"待揭曉":"未量測"):pct(q)}</span></div></div>
   ${diagBlock(s)}${vitalCurve(code,evs)}${labsBlock(code)}${usBlock(code)}${contactBlock(code)}
   ${evs.length?`<div class="meta">病歷</div><div class="docs">${evs.slice(0,5).map(e=>`<button data-go="${e.id}"><span class="chip" style="background:${COL.mute}">${RANKS[e.heat]}</span><span>${esc(e.t)}</span></button>`).join("")}</div>`:""}
-  <div class="cbtns"><button class="cbtn" data-story="${code}">${ic("clip")}查看病史</button><button class="cbtn" data-cert="${code}">開立診斷證明書</button></div>
+  <div class="cbtns"><button class="cbtn" data-story="${code}">${ic("clip")}查看病史</button><button class="cbtn" data-rx="${code}">開處方</button><button class="cbtn" data-cert="${code}">開立診斷證明書</button></div>
   <div class="disc">診斷與醫囑由新聞、股價、法人與營收自動歸納，只是觀察重點，不構成投資建議。</div></div>`;}
 function openOutpatient(code){if(window.innerWidth<=640)mview("plan");state.sel=null;state.dock={type:"out",code};const c=$("card");c.innerHTML=outCardHTML(code);c.hidden=false;c.classList.remove("in");void c.offsetWidth;c.classList.add("in");wireCard(c);render();}
 
@@ -1710,7 +1781,7 @@ function flowHTML(){const keys=Object.keys(INST||{});if(!keys.length)return "";
   const row=([n,v])=>`<span class="l">${v<0?`<span class="num">${fmtK(v)}</span><i style="width:${Math.abs(v)/mx*100}%;background:${COL.down}"></i>`:""}</span><span class="nm">${esc(n.replace(/業$/,""))}</span><span class="r">${v>0?`<i style="width:${v/mx*100}%;background:${COL.up}"></i><span class="num">+${fmtK(v)}</span>`:""}</span>`;
   return `<section><h2>家屬探病動線</h2><p class="note">${INST_DATE?esc(INST_DATE.slice(5).replace("-","/"))+" ":""}外資加投信在各產業病房的買賣超（張），看資金往哪幾棟走</p>
   <div class="flow">${buy.map(row).join("")}<span></span><span class="nm" style="color:var(--mute)">⋯</span><span></span>${sell.map(row).join("")}</div></section>`;}
-function ovwHTML(){return handoverHTML()+watchHTML()+ovwHTMLold()+contactHTML()+calHTML()+followHTML()+streakHTML()+weeklyHTML()+cdcHTML()+intlHTML()+quadHTML()+flowHTML();}
+function ovwHTML(){return handoverHTML()+watchHTML()+ovwHTMLold()+epidemicHTML()+latencyHTML()+contactHTML()+calHTML()+followHTML()+streakHTML()+weeklyHTML()+casesHTML()+cdcHTML()+intlHTML()+quadHTML()+flowHTML();}
 
 // ---------- 放射科 ----------
 function radHTML(){
@@ -2118,7 +2189,7 @@ function introHTML(){
     <div class="lb-idcard">
       <i class="lb-slot" aria-hidden="true"></i>
       <div class="lb-id-hd">812拉基醫院　員工識別證</div>
-      <div class="lb-id-bd"><img src="${AVATAR}" alt=""><div><small>職級</small><b>${L.name}</b><span>經驗值 ${L.xp}，${nx}</span></div></div>
+      <div class="lb-id-bd"><img src="${AVATAR}" alt=""><div><small>職級</small><b>${L.name}</b><span>經驗值 ${L.xp}，${nx}</span><span>成就章 ${ACH.filter(x=>achGet()[x[0]]).length}／${ACH.length}</span></div></div>
     </div>
   </figure>
   <section class="lb-board" aria-labelledby="formTitle">
@@ -2300,9 +2371,199 @@ function itHTML(){
     <p class="note">${tg.length?tg.map(c=>`<button class="mt-chip" data-stock="${c}">${esc(stockName(c))}</button>`).join(""):"還沒有。傳 /watch 2330 給機器人就會出現在這裡。"}</p>
   </section>`;}
 
+/* ================= 第四期：假設門診、處方箋、潛伏期、流行病預報、病例討論會、成就章 ================= */
+const SENT_LEX={"pos":{"漲停":2,"創高":2,"新高":2,"大漲":2,"飆":1.5,"噴":1,"勁揚":1,"走強":1,"走揚":1,"受惠":1,"買超":1,"上修":1.5,"調升":1.5,"看好":1,"成長":1,"年增":1,"擴產":1,"接單":1,"訂單":0.5,"獲利創":1.5,"回升":1,"反彈":1,"止跌":1,"利多":1.5,"加碼":1,"強勢":1,"搶進":1,"亮燈":1.5,"亮眼":1,"優於預期":1.5,"樂觀":1,"逆勢":0.5,"轉機":1.5,"送暖":1.5,"撿便宜":1,"逢低":0.5,"落底":1,"報復性上漲":2,"上漲":1,"收紅":1,"點火":1,"領漲":1.5,"攻頂":1.5,"翻紅":1,"大單":0.5,"喊買":1.5,"目標價調升":2,"獲利創新高":2,"調漲":1,"漲價":1,"擴大":1,"啟動":0.5,"大增":1.5,"突破":1,"簽約":1,"拿下":1,"獲選":1},"neg":{"跌停":2,"重挫":2,"大跌":2,"走弱":1,"賣超":1,"下修":1.5,"調降":1.5,"衰退":1.5,"年減":1,"疑慮":1,"擔憂":1,"示警":1.5,"利空":1.5,"跌破":1.5,"失守":1.5,"減碼":1,"承壓":1,"虧損":1.5,"不如預期":1.5,"保守":1,"出脫":1,"摜":1.5,"翻黑":1,"獲利了結":1,"壓力":0.5,"下滑":1,"殺盤":1.5,"下殺":1,"殺低":1,"崩跌":2,"崩盤":2,"大砍":1.5,"砍單":1.5,"下跌":1,"收黑":1,"重摔":2,"警訊":1.5,"恐慌":1.5,"套牢":1,"關稅":1.5,"制裁":1.5,"禁令":1.5,"延後":1,"取消":1,"跌價":1,"降價":1,"停工":1.5,"地震":1,"大減":1.5,"限制":1,"調查":0.5}};
+function sentimentOf(t){let v=0;for(const [w,x] of Object.entries(SENT_LEX.pos))if(t.includes(w))v+=x;for(const [w,x] of Object.entries(SENT_LEX.neg))if(t.includes(w))v-=x;
+  if(/不如預期/.test(t)&&/預期/.test(t))v-=0;return Math.round(v*10)/10;}
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+const sgn=v=>v>0?"+":"";
+const fp=(v,d=2)=>v==null?"—":`${sgn(v)}${v.toFixed(d)}%`;
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+
+// ---------- 潛伏期：消息出來後第幾天反應最大 ----------
+let LAT={};
+function latency(t){if(t in LAT)return LAT[t];
+  if(!window.HIST||HIST.dates.length<6)return LAT[t]=null;
+  const hd=HIST.dates,K=4,sum=Array(K+1).fill(0),cnt=Array(K+1).fill(0);
+  EVENTS.forEach(e=>{if(!e.sent||!e.themes.includes(t))return;const iso=e.date||isoOf(e.o);if(!iso)return;const i=hd.findIndex(d=>d>=iso);if(i<1)return;
+    e.codes.forEach(c=>{const a=HIST.close[c];if(!a)return;for(let k=0;k<=K;k++){const j=i+k;if(j>=hd.length||a[j]==null||a[j-1]==null)break;sum[k]+=e.sent*(a[j]/a[j-1]-1)*100;cnt[k]++;}});});
+  if(cnt[0]<8||cnt[2]<5)return LAT[t]=null;   // 至少要有消息後第 2 天的行情，才看得出反應高峰
+  const prof=sum.map((x,k)=>cnt[k]>=5?x/cnt[k]:null);let best=0;prof.forEach((v,k)=>{if(v!=null&&v>prof[best])best=k;});
+  return LAT[t]={k:best,prof,n:cnt[0],ok:prof[best]>0.05};}
+const latTxt=L=>!L?"":!L.ok?"消息與股價的關係不明顯":L.k===0?"消息當天就反應最大":`消息後第 ${L.k} 個交易日反應最大`;
+function tradingDaysSince(iso){if(!window.HIST||!iso)return null;const hd=HIST.dates,i=hd.findIndex(d=>d>=iso);return i<0?0:hd.length-1-i;}
+function mainTheme(code){const m={};EVENTS.filter(e=>e.codes.includes(code)).forEach(e=>e.themes.forEach(t=>{if(!isG(t))m[t]=(m[t]||0)+e.heat;}));return Object.keys(m).sort((a,b)=>m[b]-m[a])[0]||null;}
+function latencyWhy(code){const t=mainTheme(code),L=t&&latency(t);if(!L||!L.ok)return null;
+  const evs=EVENTS.filter(e=>e.codes.includes(code)&&e.sent),last=evs.map(e=>e.date||isoOf(e.o)).filter(Boolean).sort().at(-1),d=tradingDaysSince(last);
+  return `潛伏期：${dept(t)}${latTxt(L)}${d!=null?`；這檔最近一則消息至今 ${d} 個交易日${d<L.k?"，反應可能還沒走完":d===L.k?"，正在反應高峰":"，主要反應應已過去"}`:""}`;}
+function latencyHTML(){
+  const top=themeStats().list.slice(0,8).map(s=>({t:s.t,L:latency(s.t)})).filter(x=>x.L);
+  if(!top.length)return `<section><h2>潛伏期分析</h2><p class="note">要累積幾個交易日的歷史行情，才能算出各科消息多久反應到股價。</p></section>`;
+  const mx=Math.max(.3,...top.flatMap(x=>x.L.prof.filter(v=>v!=null).map(Math.abs)));
+  const mini=L=>{const w=100,h=26,bw=w/5;return `<svg class="spark" viewBox="0 0 ${w} ${h}" aria-hidden="true"><path d="M0 ${h/2}H${w}" stroke="${COL.line}"/>${L.prof.map((v,k)=>{if(v==null)return "";const bh=Math.abs(v)/mx*(h/2-1);
+    return `<rect x="${k*bw+2}" y="${v>0?h/2-bh:h/2}" width="${bw-4}" height="${Math.max(1,bh)}" rx="1.5" fill="${k===L.k&&L.ok?COL.ink:COL.mute}" opacity="${v>0?1:.45}"><title>第 ${k} 天：${fp(v)}</title></rect>`;}).join("")}</svg>`;};
+  return `<section><h2>潛伏期分析</h2><p class="note">各科消息出來後，股價朝消息方向反應的平均幅度。D0 是新聞當天（或之後第一個交易日），往右是第 1～4 天；最深的那根就是反應高峰。</p>
+    <div class="lat-head"><span></span><span>${[0,1,2,3,4].map(k=>`<i>D${k}</i>`).join("")}</span><span></span></div>
+    ${top.map(({t,L})=>`<div class="th-row lat-row"><span class="nm">${esc(dept(t))}</span><span>${mini(L)}</span><span class="lat-k">${L.ok?(L.k===0?"當天":`第 ${L.k} 天`):"不明顯"}<small>${L.n} 筆</small></span></div>`).join("")}
+    <p class="disc">樣本是近一個月的新聞與行情，數量少時僅供參考。</p></section>`;}
+
+// ---------- 流行病預報：流行曲線與可能的下一波 ----------
+const EPI_COL=()=>document.documentElement.dataset.theme==="night"?["#e4532f","#3d7fe4"]:["#d6452f","#2b6fe0"];
+function epidemic(){
+  const ds=NEWS_DATES().filter(o=>o!==1000);if(ds.length<4)return null;
+  const TS=themeStats().list,series=TS.slice(0,10).map(s=>({t:s.t,c:ds.map(o=>EVENTS.filter(e=>e.o===o&&e.themes.includes(s.t)).length)}));
+  const cand=series.map(S=>{const c=S.c,rec=avg(c.slice(-2)),pa=avg(c.slice(0,-2))||0,acc=rec/Math.max(1,pa),life=themeLife(S.t);
+    const us=US_LIST.filter(u=>u.themes.includes(S.t)).map(u=>USD[u.t]?.pct).filter(v=>v!=null),usA=avg(us);
+    const ch=CHAINS.find(x=>x.theme===S.t);
+    return {...S,rec,pa,acc,life,usA,ch,score:acc*(1+Math.max(0,usA||0)/3)};})
+    .filter(x=>x.rec>=2&&x.acc>=1.4&&x.life?.k!=="peak").sort((a,b)=>b.score-a.score).slice(0,2);
+  return {ds,series,cand};}
+function epidemicHTML(){const E=epidemic();if(!E)return "";
+  const W=380,H=150,P={l:26,r:70,t:10,b:20},iw=W-P.l-P.r,ih=H-P.t-P.b,n=E.ds.length,mx=Math.max(2,...E.series.flatMap(s=>s.c));
+  const X=i=>P.l+(n===1?iw/2:i*iw/(n-1)),Y=v=>P.t+ih-v/mx*ih,hi=E.cand.map(c=>c.t),cols=EPI_COL();
+  const path=c=>c.map((v,i)=>`${i?"L":"M"}${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join("");
+  const grid=[0,Math.round(mx/2),mx].map(v=>`<path d="M${P.l} ${Y(v)}H${W-P.r}" stroke="${COL.line}" stroke-dasharray="${v?"2 3":"0"}"/><text x="${P.l-5}" y="${Y(v)+3}" text-anchor="end" class="epi-ax">${v}</text>`).join("");
+  const xl=E.ds.map((o,i)=>(i===0||i===n-1||i===Math.floor(n/2))?`<text x="${X(i)}" y="${H-5}" text-anchor="middle" class="epi-ax">${fmtDate(o)}</text>`:"").join("");
+  const bg=E.series.filter(s=>!hi.includes(s.t)).map(s=>`<path d="${path(s.c)}" fill="none" stroke="${COL.mute}" stroke-opacity=".35" stroke-width="1.2"/>`).join("");
+  const fg=E.cand.map((s,k)=>{const y=Y(s.c.at(-1));return `<path d="${path(s.c)}" fill="none" stroke="${cols[k]}" stroke-width="2" stroke-linejoin="round"/><circle cx="${X(n-1)}" cy="${y}" r="4" fill="${cols[k]}" stroke="${COL.sheet}" stroke-width="2"/><text x="${X(n-1)+8}" y="${y+4+(k&&Math.abs(Y(E.cand[0].c.at(-1))-y)<12?12:0)}" class="epi-lb">${esc(s.t)}</text>`;}).join("");
+  const hov=E.ds.map((o,i)=>`<rect x="${X(i)-iw/(2*Math.max(1,n-1))}" y="${P.t}" width="${iw/Math.max(1,n-1)}" height="${ih}" fill="transparent"><title>${fmtDate(o)}\n${E.series.slice(0,6).map(s=>`${s.t}科 ${s.c[i]} 則`).join("\n")}</title></rect>`).join("");
+  return `<section><h2>流行病預報</h2><p class="note">近 ${n} 個新聞日各科的門診量（新聞則數）。灰線是前十大科別，彩色是這兩天突然升溫、可能成為下一波流行的科別。滑過圖看每天的數字。</p>
+    <svg class="epi" viewBox="0 0 ${W} ${H}" role="img" aria-label="各科新聞則數的流行曲線">${grid}${xl}${bg}${fg}${hov}</svg>
+    ${E.cand.length?`<div class="epi-legend">${E.cand.map((c,k)=>`<span><i style="background:${cols[k]}"></i>${esc(dept(c.t))}</span>`).join("")}<span><i style="background:${COL.mute};opacity:.5"></i>其他熱門科別</span></div>
+    ${E.cand.map((c,k)=>`<div class="epi-card" style="--ec:${cols[k]}"><b>${esc(dept(c.t))}：可能是下一波流行</b>
+      <p>近兩天平均 ${c.rec.toFixed(1)} 則，是前幾天的 ${c.acc.toFixed(1)} 倍${c.life?`，病程階段「${esc(c.life.l)}」`:""}${c.usA!=null?`；美股相關股前一晚平均 ${fp(c.usA)}${c.usA>0?"，海外先行轉好":""}`:""}。</p>
+      ${c.ch?`<p class="epi-ch">傳染路徑：${c.ch.levels.map(L=>esc(L.n)).join(" → ")}</p>`:""}
+      <button class="cbtn" data-set="A|${esc(c.t)}">把 ${esc(dept(c.t))} 設為 A 棟</button></div>`).join("")}`:`<p class="note">目前沒有突然升溫的科別，各科聲量大致平穩。</p>`}
+    <p class="disc">「下一波」只是依新聞聲量加速度與美股走勢的推測，不構成投資建議。</p></section>`;}
+
+// ---------- 病例討論會（週報） ----------
+function casesHTML(){const cs=WEEKLY?.cases||[];if(!cs.length)return "";
+  const kc={nopush:"#b7791f",resist:"#71489a",clar:"#c0362c",gap:"#2b5fb4"};
+  return `<section><h2>病例討論會</h2><p class="note">本週最值得學的案例：消息和股價走反方向、或公司出面澄清。每週五收盤後更新，也會推播到 Telegram。</p>
+    ${cs.map((c,i)=>`<article class="case" style="--kc:${kc[c.k]||"#677583"}"><header><span class="case-no num">病例 ${i+1}</span><b>${esc(c.title)}</b></header>
+      <button class="mt-co" data-stock="${c.c}"><b>${esc(c.n)}</b><span class="num">${c.c}</span><span class="num ${c.ret>0?"up":"down"}">${fp(c.ret,1)}</span></button>
+      <p class="case-news">「${esc(c.news)}」</p><p>${esc(c.story)}</p></article>`).join("")}</section>`;}
+
+// ---------- 假設門診 ----------
+const WI_EX=["輝達財報優於預期，上修資料中心營收","美國宣布對半導體課徵關稅","美光調漲記憶體報價","台電加碼強韌電網計畫","貨櫃運價大跌"];
+function whatIf(q){
+  const r=matchText(q,MATCH),codes=r.codes.map(x=>x.c),themes=r.themes.filter(t=>!isG(t)),glob=r.themes.filter(isG);
+  const up=q.toUpperCase(),us=US_LIST.filter(u=>!u.index&&(q.includes(u.n)||new RegExp(`\\b${u.t}\\b`).test(up)));
+  us.forEach(u=>u.themes.forEach(t=>{if(!isG(t)&&!themes.includes(t))themes.push(t);}));
+  // 產業別：例如「半導體」「航運」對應到證交所產業分類，取成交值最大的幾檔當代表病人
+  const inds=[...new Set(Object.values(UNI).map(u=>u[3]))].filter(n=>{const b=n.replace(/業$/,"");return b.length>=2&&q.includes(b);});
+  const indCodes=inds.length?Object.entries(QUOTES).filter(([c])=>inds.includes(UNI[c]?.[3])&&!codes.includes(c)).sort((a,b)=>b[1][2]-a[1][2]).slice(0,8).map(([c])=>c):[];
+  const sv=sentimentOf(q),sg=Math.sign(sv);
+  const since=new Set(NEWS_DATES().slice(-7)),reg={};
+  EVENTS.filter(e=>since.has(e.o)&&e.themes.some(t=>themes.includes(t))).forEach(e=>e.codes.forEach(c=>{if(!codes.includes(c))reg[c]=(reg[c]||0)+e.heat;}));
+  const regulars=Object.keys(reg).sort((a,b)=>reg[b]-reg[a]).slice(0,8);
+  const usTw=[...new Set(us.flatMap(u=>u.tw))].filter(c=>!codes.includes(c)).slice(0,8);
+  const seed=[...codes,...indCodes];
+  const chains=CHAINS.map(ch=>{let s=ch.levels.findIndex(L=>L.tw.some(c=>seed.includes(c)));
+      if(s<0&&(themes.includes(ch.theme)||us.some(u=>(ch.us||[]).includes(u.t))))s=0;return s<0?null:{ch,s,S:chainState(ch)};}).filter(Boolean);
+  // 歷史預後：同科別、同方向的過去新聞，相關病人當天與隔天的表現
+  let r0=[],r1=[];if(window.HIST){const hd=HIST.dates;
+    EVENTS.filter(e=>e.sent&&(sg===0||e.sent===sg)&&(e.themes.some(t=>themes.includes(t))||e.codes.some(c=>seed.includes(c)))).forEach(e=>{const iso=e.date||isoOf(e.o);const i=hd.findIndex(d=>d>=iso);if(i<1)return;
+      e.codes.forEach(c=>{const a=HIST.close[c];if(!a||a[i]==null||a[i-1]==null)return;r0.push((a[i]/a[i-1]-1)*100);if(i+1<hd.length&&a[i+1]!=null)r1.push((a[i+1]/a[i]-1)*100);});});}
+  const L=themes.length?latency(themes[0]):null;
+  return {q,codes,themes,glob,us,sv,sg,regulars,usTw,chains,inds,indCodes,r0:avg(r0),r1:avg(r1),up0:r0.length?r0.filter(v=>v>0).length/r0.length:null,n:r0.length,L};}
+function whatIfHTML(q){const W=whatIf(q);
+  if(!W.codes.length&&!W.themes.length&&!W.us.length&&!W.indCodes.length)return `<div class="wi-none">這則消息找不到對應的科別或公司。試著加上產業或公司名稱，例如「台積電」「記憶體」「重電」。</div>`;
+  const nm=c=>`<button class="wi-pt" data-stock="${c}">${esc(stockName(c))}${(q=>q?` <em class="${q.chg>0?"up":q.chg<0?"down":"flat"}">${pct(q)}</em>`:"")(quote(c))}</button>`;
+  const dir=W.sg>0?"利多":W.sg<0?"利空":"中性";
+  const tops=[...W.codes,...W.usTw,...W.indCodes,...W.regulars].slice(0,3).map(stockName);
+  const rx=W.sg===0?"這則消息判讀為中性，先看市場怎麼解讀，不急著動作。":
+    `如果消息成真，優先觀察 ${tops.join("、")||"相關病人"}。${W.n>=8?`過去 ${W.n} 筆類似${dir}，相關病人當天平均 ${fp(W.r0)}、隔天 ${fp(W.r1)}${W.r1!=null&&W.r0!=null&&Math.sign(W.r1)!==Math.sign(W.r0)?"，隔天常反向修正，不宜追價":""}。`:"歷史樣本還不夠，先參考產業鏈傳染路徑。"}${W.L&&W.L.ok?`${dept(W.themes[0])}${latTxt(W.L)}。`:""}`;
+  setTimeout(()=>{const k="laji_wi",n=lsGet(k,0)+1;lsSet(k,n);if(xpOnce("wi"+new Date().toISOString().slice(0,10)))xpAdd(3,"假設門診");achCheck();},50);
+  return `<article class="wi-chart">
+    <header><span>假設門診病歷</span><span class="num">${new Date().toLocaleDateString("zh-TW")}</span></header>
+    <dl>
+      <div><dt>主訴</dt><dd class="wi-q">${esc(q)}</dd></div>
+      <div><dt>判讀</dt><dd><span class="wi-dir ${W.sg>0?"up":W.sg<0?"down":"flat"}">${dir}</span>${W.glob.length?`<small>　全院：${W.glob.map(esc).join("、")}</small>`:""}</dd></div>
+      <div><dt>掛號科別</dt><dd>${W.themes.length?W.themes.map(t=>`<button class="wi-dept" data-set="A|${esc(t)}">${esc(dept(t))}</button>`).join(""):W.inds.length?`<small>沒有對應的題材科別，改看產業病房</small>`:"—"}</dd></div>
+      ${W.codes.length?`<div><dt>直接點名</dt><dd>${W.codes.slice(0,10).map(nm).join("")}</dd></div>`:""}
+      ${W.indCodes.length?`<div><dt>產業病房</dt><dd><small>${W.inds.map(esc).join("、")}成交值最大的病人</small><br>${W.indCodes.map(nm).join("")}</dd></div>`:""}
+      ${W.usTw.length?`<div><dt>海外轉診</dt><dd><small>${W.us.map(u=>esc(u.n)).join("、")}的台灣供應鏈</small><br>${W.usTw.map(nm).join("")}</dd></div>`:""}
+      ${W.regulars.length?`<div><dt>科內常客</dt><dd><small>近一週這幾科最常被點名的病人</small><br>${W.regulars.map(nm).join("")}</dd></div>`:""}
+      ${W.chains.length?`<div><dt>傳染路徑</dt><dd>${W.chains.slice(0,3).map(({ch,s,S})=>`<div class="wi-chain"><b>${esc(ch.n)}</b>${S.lv.map((L,k)=>`<span class="${k<s?"pre":k===s?"src":"next"}">${esc(L.n)}${L.avg!=null?` <em class="${L.avg>0?"up":L.avg<0?"down":"flat"}">${fp(L.avg,1)}</em>`:""}</span>`).join('<i>→</i>')}</div>`).join("")}<small>從第一個亮起的環節往下游傳染；下游還沒反應的，就是潛在接觸者。</small></dd></div>`:""}
+      <div><dt>歷史預後</dt><dd>${W.n>=8?`<span class="num">當天 ${fp(W.r0)}　隔天 ${fp(W.r1)}　當天上漲比例 ${Math.round(W.up0*100)}%</span><small>（${W.n} 筆）</small>`:"樣本不足"}</dd></div>
+    </dl>
+    <div class="wi-rx"><b>醫囑</b><p>${esc(rx)}</p></div>
+    <p class="disc">依關鍵字、產業鏈與過去一個月的歷史推估，不構成投資建議。</p></article>`;}
+function openWhatIf(q){const f=$("film");f.className="film paper wi";f.hidden=false;
+  f.innerHTML=`<div class="fhd"><b>假設門診</b><span>輸入一則還沒發生的新聞，看會掛到哪幾科、牽動哪些病人</span><button data-film-x aria-label="關閉">×</button></div>
+  <div class="wi-body"><form class="wi-form" id="wiForm"><input id="wiIn" placeholder="例如：輝達財報優於預期" autocomplete="off" aria-label="假設的新聞標題"><button class="cta" type="submit">看診</button></form>
+  <div class="wi-ex"><small>試試看：</small>${WI_EX.map(x=>`<button type="button" data-wi="${esc(x)}">${esc(x)}</button>`).join("")}</div><div id="wiOut"></div></div>`;
+  const close=()=>{f.hidden=true;f.className="film";};
+  const wire=()=>{f.querySelectorAll("[data-stock]").forEach(b=>b.onclick=()=>{close();goStock(b.dataset.stock);});
+    f.querySelectorAll("[data-set]").forEach(b=>b.onclick=()=>{const t=b.dataset.set.split("|")[1];close();if(t!==state.A){if(t===state.B)[state.A,state.B]=[state.B,state.A];else state.A=t;}keep={};refresh();toast(`已把 ${dept(t)} 設為 A 棟`);});};
+  const run=v=>{v=(v||"").trim();if(!v)return;$("wiIn").value=v;$("wiOut").innerHTML=whatIfHTML(v);wire();};
+  f.querySelector("[data-film-x]").onclick=close;$("wiForm").onsubmit=e=>{e.preventDefault();run($("wiIn").value);};
+  f.querySelectorAll("[data-wi]").forEach(b=>b.onclick=()=>run(b.dataset.wi));
+  if(q)run(q);else $("wiIn").focus();}
+
+// ---------- 處方箋 ----------
+const RX_ACT={add:["加碼","up"],cut:["減碼","down"],watch:["觀察","flat"]};
+const rxList=()=>lsGet("laji_rx",[]);
+function rxEval(r){const cur=quote(r.c)?.close;let r3=null,r10=null,base=r.px;
+  if(window.HIST){const hd=HIST.dates,a=HIST.close[r.c]||[],bi=hd.indexOf(r.base);
+    if(bi>=0){if(bi+3<hd.length&&a[bi+3]!=null)r3=(a[bi+3]/base-1)*100;if(bi+10<hd.length&&a[bi+10]!=null)r10=(a[bi+10]/base-1)*100;}}
+  const now=cur!=null&&base?(cur/base-1)*100:null,judge=r3??null;
+  const good=r.act==="watch"||judge==null?null:r.act==="add"?judge>0:judge<0;
+  return {now,r3,r10,good,done:judge!=null};}
+function openRx(code){const u=UNI[code]||[code,code,"",""],d=diagnose(code),q=quote(code),f=$("film");f.className="film paper rx";f.hidden=false;
+  f.innerHTML=`<div class="fhd"><b>開立處方</b><span>記下你的決策，3 天、10 天後自動回診看療效</span><button data-film-x aria-label="關閉">×</button></div>
+  <div class="wi-body"><form class="rx-pad" id="rxForm">
+    <header><b>812拉基醫院　處方箋</b><span class="rx-sym" aria-hidden="true">℞</span></header>
+    <dl class="rx-meta"><div><dt>病人</dt><dd>${esc(u[1])} <span class="num">${code}</span></dd></div><div><dt>日期</dt><dd class="num">${esc(DATA_ASOF||"")}</dd></div>
+      <div><dt>收盤</dt><dd class="num">${q?q.close.toLocaleString():"—"}</dd></div><div><dt>診斷</dt><dd><span class="stage" style="background:${d.c}">${esc(d.l)}</span></dd></div></dl>
+    <fieldset class="rx-act"><legend>處置</legend>${Object.entries(RX_ACT).map(([k,[n]],i)=>`<label><input type="radio" name="act" value="${k}" ${i===2?"checked":""}><span>${n}</span></label>`).join("")}</fieldset>
+    <label class="rx-why"><span>理由</span><textarea id="rxWhy" rows="2" maxlength="80" placeholder="例如：法說利多、法人連三天買超"></textarea></label>
+    <div class="rx-sug">${d.why.slice(0,3).map(w=>`<button type="button" data-sug="${esc(w.split("：")[1]||w)}">${esc((w.split("：")[1]||w).slice(0,22))}</button>`).join("")}</div>
+    <footer><span>醫師簽名 <u>${esc(lvOf(xpGet().xp).name)}</u></span><button class="cta" type="submit">開立處方</button></footer></form></div>`;
+  const close=()=>{f.hidden=true;f.className="film";};f.querySelector("[data-film-x]").onclick=close;
+  f.querySelectorAll("[data-sug]").forEach(b=>b.onclick=()=>{const t=$("rxWhy");t.value=(t.value?t.value+"；":"")+b.dataset.sug;});
+  $("rxForm").onsubmit=e=>{e.preventDefault();if(!q){toast("這檔沒有今天的收盤價，無法開處方");return;}
+    const act=new FormData(e.target).get("act"),list=rxList();
+    list.unshift({id:Date.now().toString(36),c:code,act,why:$("rxWhy").value.trim(),base:DATA_ASOF,px:q.close,st:d.st,stl:d.l});lsSet("laji_rx",list.slice(0,200));
+    close();toast(`已開立處方：${RX_ACT[act][0]} ${u[1]}，3 個交易日後回診`);if(xpOnce("rx"+code+DATA_ASOF))xpAdd(3,"開立處方");achCheck();if(state.tab==="quiz")render();};}
+function rxHTML(){const L=rxList();
+  const head=`<section><h2>我的處方箋</h2><p class="note">在床頭卡按「開處方」記下加碼、減碼或觀察。3 個交易日後回診判斷療效：加碼後上漲、減碼後下跌算有效。資料只存在你的瀏覽器。</p>`;
+  if(!L.length)return head+`<p class="mt-none">還沒有處方。點任一病床，在床頭卡按「開處方」。</p></section>`;
+  const ev=L.map(r=>({r,e:rxEval(r)}));
+  const done=ev.filter(x=>x.e.done&&x.r.act!=="watch"),win=done.filter(x=>x.e.good).length;
+  const byKey={};done.forEach(({r,e})=>{const k=r.act+"|"+r.stl;const s=byKey[k]||(byKey[k]={act:r.act,stl:r.stl,n:0,w:0,sum:0});s.n++;if(e.good)s.w++;s.sum+=e.r3;});
+  const ins=Object.values(byKey).filter(s=>s.n>=2).sort((a,b)=>a.w/a.n-b.w/b.n);
+  const insight=ins.length?[ins[0],ins.at(-1)].filter((x,i,a)=>a.indexOf(x)===i).map(s=>`你在「${esc(s.stl)}」時${RX_ACT[s.act][0]} ${s.n} 次，勝率 ${Math.round(s.w/s.n*100)}%，3 天平均 ${fp(s.sum/s.n,1)}。`).join(""):"處方再多累積幾張、回診後，這裡會整理出你的用藥習慣。";
+  return head+`<div class="rx-sum"><div><small>處方</small><b class="num">${L.length}</b></div><div><small>已回診</small><b class="num">${done.length}</b></div><div><small>有效率</small><b class="num">${done.length?Math.round(win/done.length*100)+"%":"—"}</b></div></div>
+    <div class="rx-report"><b>用藥報告</b><p>${insight}</p></div>
+    <div class="rx-list">${ev.slice(0,30).map(({r,e})=>`<div class="rx-row"><span class="rx-tag ${RX_ACT[r.act][1]}">${RX_ACT[r.act][0]}</span>
+      <button class="mt-co" data-stock="${r.c}"><b>${esc(stockName(r.c))}</b><span class="num">${r.c}</span></button>
+      <span class="rx-res">${e.done?`<span class="num ${e.r3>0?"up":"down"}">3 天 ${fp(e.r3,1)}</span>${e.r10!=null?` <span class="num">10 天 ${fp(e.r10,1)}</span>`:""}`:`<span class="num">目前 ${fp(e.now,1)}</span>`}
+        ${e.good==null?(e.done?"":'<em class="rx-wait">回診中</em>'):e.good?'<em class="rx-ok">有效</em>':'<em class="rx-bad">無效</em>'}</span>
+      <small class="rx-meta2">${esc(r.base.slice(5).replace("-","/"))}　${esc(r.stl)}${r.why?`　${esc(r.why)}`:""}</small>
+      <button class="rx-del" data-rxdel="${r.id}" aria-label="刪除這張處方">×</button></div>`).join("")}</div></section>`;}
+
+// ---------- 成就章 ----------
+const ACH=[["visit","初次報到","第一次走進 812 拉基醫院"],["round1","第一次查房","完成一次晨間查房"],["round7","鐵人住院醫","連續查房 7 天"],["hit10","神準判讀","查房累計答對 10 床"],
+  ["resist","識破利空不跌","查房答對一床「利空不跌」的病人"],["rx1","第一張處方","開立第一張處方箋"],["rx5","妙手回春","5 張處方回診有效"],["wi5","沙盤推演","使用假設門診 5 次"],
+  ["clar","澄清獵人","在申報組點開公司澄清"],["tour","全院走透透","逛遍五個分頁與醫技大樓四個單位"],["night","夜班醫師","晚上 10 點後值夜班"],["chief","升任主治","職級升到主治醫師"]];
+const achGet=()=>lsGet("laji_ach",{});
+function achUnlock(k){const a=achGet();if(a[k])return;a[k]=new Date().toISOString().slice(0,10);lsSet("laji_ach",a);const d=ACH.find(x=>x[0]===k);if(d)setTimeout(()=>toast(`獲得成就章「${d[1]}」`),900);}
+function achCheck(){const r=roundsRec(),rx=rxList();
+  achUnlock("visit");if(r.date)achUnlock("round1");if((r.best||0)>=7)achUnlock("round7");if(lsGet("laji_hits",0)>=10)achUnlock("hit10");
+  if(rx.length)achUnlock("rx1");if(rx.filter(x=>rxEval(x).good).length>=5)achUnlock("rx5");if(lsGet("laji_wi",0)>=5)achUnlock("wi5");
+  const tour=new Set(lsGet("laji_tour",[]));if(["ovw","obs","chain","lab","quiz","mt:rad","mt:lab","mt:mops","mt:it"].every(k=>tour.has(k)))achUnlock("tour");
+  if(document.documentElement.dataset.theme==="night"&&new Date().getHours()>=22)achUnlock("night");if(lvOf(xpGet().xp).i>=3)achUnlock("chief");}
+function achTour(){const t=new Set(lsGet("laji_tour",[]));t.add(state.tab);if(state.tab==="lab")t.add("mt:"+state.mt);lsSet("laji_tour",[...t]);}
+function achHTML(){const a=achGet(),n=ACH.filter(x=>a[x[0]]).length;
+  return `<section><h2>成就章</h2><p class="note">已獲得 ${n}／${ACH.length} 枚，蓋在你的識別證背面。</p>
+    <div class="ach">${ACH.map(([k,t,d])=>`<div class="ach-i ${a[k]?"on":""}" title="${esc(d)}"><span class="ach-s"><b>${esc(t.slice(0,2))}</b><small>${esc(t.slice(2))}</small></span><span class="ach-d">${a[k]?esc(a[k].slice(5).replace("-","/")):esc(d)}</span></div>`).join("")}</div></section>`;}
+
 function render(){
   header();const p=$("leaf");
-  p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():state.tab==="lab"?labHTML():quizHTML();
+  p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():state.tab==="lab"?labHTML():quizHTML()+rxHTML()+achHTML();
   p.querySelectorAll("[data-id]").forEach(el=>{
     el.onmouseenter=()=>{state.hover=nodeMap[el.dataset.id]||null;};el.onmouseleave=()=>{state.hover=null;};
     el.onclick=()=>{const n=nodeMap[el.dataset.id];if(n)select(n);};});
@@ -2318,7 +2579,9 @@ function render(){
   p.querySelectorAll("[data-film]").forEach(el=>el.onclick=()=>openFilm(el.dataset.film));
   p.querySelectorAll("[data-mt]").forEach(el=>el.onclick=()=>{state.mt=el.dataset.mt;render();p.scrollTop=0;});
   p.querySelectorAll("[data-mtf]").forEach(el=>el.onclick=()=>{state[el.dataset.mtk]=el.dataset.mtf;render();});
-  p.querySelectorAll("[data-stock]").forEach(el=>el.onclick=()=>goStock(el.dataset.stock));
+  p.querySelectorAll("[data-stock]").forEach(el=>el.onclick=()=>{if(el.closest(".k-澄清")||el.classList.contains("clar"))achUnlock("clar");goStock(el.dataset.stock);});
+  p.querySelectorAll("[data-rxdel]").forEach(el=>el.onclick=()=>{lsSet("laji_rx",rxList().filter(r=>r.id!==el.dataset.rxdel));render();});
+  achTour();achCheck();
   clearInterval(window.__mtClock);if(state.tab==="lab"&&state.mt==="it")window.__mtClock=setInterval(()=>{const e=$("mtNext");if(e)e.innerHTML=nextRunHTML();else clearInterval(window.__mtClock);},30000);
   decorateH2(p);
   $("qStart")&&($("qStart").onclick=newQuiz);
@@ -2334,6 +2597,7 @@ function setTab(t){state.tab=t;document.querySelectorAll("[data-tab]").forEach(b
 function refresh(keepQuiz){state.sel=null;state.dock=null;state.chain=0;if(!keepQuiz)state.quiz=null;openCard(null);build();resetView();render();}
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 $("swap").onclick=()=>{[state.A,state.B]=[state.B,state.A];Object.values(keep).forEach(k=>{if(vert())k.y=LH-k.y;else k.x=LW-k.x;});refresh();};
+$("wiBtn").onclick=()=>openWhatIf();
 $("dice").onclick=()=>{const tc=themeCounts(),ts=Object.keys(tc).filter(t=>tc[t]>=2);let best=null;
   for(let i=0;i<60;i++){const a=ts[Math.random()*ts.length|0],b=ts[Math.random()*ts.length|0];if(a===b||(a===state.A&&b===state.B))continue;const r=analysePair(a,b);if(r.idx>=20){best=[a,b,r.idx];break;}}
   if(!best){toast("沒找到有會診關係的兩科，新增更多新聞再試");return;}

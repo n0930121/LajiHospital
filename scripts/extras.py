@@ -694,7 +694,12 @@ def weekly(data, hist, matcher):
                 moves.append((c, (arr[-1] / arr[i0] - 1) * 100, k))
     moves.sort(key=lambda x: -x[1])
     uni = {r.split(",")[0]: r.split(",")[1] for r in data["uni_raw"].split(";")}
-    return {"from": ds[0], "to": ds[-1], "themes": top,
+    cases = []
+    try:
+        cases = case_conference(data, hist, matcher, ds)
+    except Exception as e:  # noqa: BLE001
+        U.note(f"病例討論會產生失敗（{e}）")
+    return {"from": ds[0], "to": ds[-1], "themes": top, "cases": cases,
             "best": [(uni.get(c, c), c, round(p, 1)) for c, p, _ in moves[:5]],
             "worst": [(uni.get(c, c), c, round(p, 1)) for c, p, _ in moves[-5:][::-1]],
             "news": sum(1 for n in news if n.get("date") in ds)}
@@ -707,8 +712,14 @@ def weekly_text(w, site):
          f"本週掛號 {w['news']} 則新聞。",
          "【最熱科別】" + "、".join(f"{t}科 {n} 則" for t, n in w["themes"]),
          "【本週好轉】" + "、".join(f"{n} {p:+.1f}%" for n, _, p in w["best"]),
-         "【本週惡化】" + "、".join(f"{n} {p:+.1f}%" for n, _, p in w["worst"]),
-         "", "以上為新聞與行情的觀察整理，不構成投資建議。", site]
+         "【本週惡化】" + "、".join(f"{n} {p:+.1f}%" for n, _, p in w["worst"])]
+    if w.get("cases"):
+        s.append("")
+        s.append("【病例討論會】")
+        for i, c in enumerate(w["cases"], 1):
+            s.append(f"{i}. {c['title']}：{c['n']}（{c['c']}）")
+            s.append(f"   {c['story']}")
+    s += ["", "以上為新聞與行情的觀察整理，不構成投資建議。", site]
     return "\n".join(s)
 
 
@@ -781,3 +792,140 @@ def source_status(log):
         errs = [f"{k}：{e}" for k, good, e in rows if not good][:4]
         out.append({"n": name, "ok": ok, "all": len(rows), "err": errs})
     return out
+
+
+# ---------------------------------------------------------------- 病例討論會：本週最值得學的 3 個案例
+def case_conference(data, hist, matcher, ds):
+    """挑出消息與股價走勢最不一致、或公司出面澄清的案例，寫成病例報告。"""
+    if not hist or not hist.get("dates"):
+        return []
+    hd, close = hist["dates"], hist["close"]
+    uni = {r.split(",")[0]: r.split(",")[1] for r in data["uni_raw"].split(";")}
+
+    def ret_from(c, d0):
+        arr = close.get(c)
+        if not arr:
+            return None
+        i = next((k for k, d in enumerate(hd) if d >= d0), None)
+        if i is None or i < 1 or arr[i - 1] is None or arr[-1] is None:
+            return None
+        return (arr[-1] / arr[i - 1] - 1) * 100
+
+    net, first, head = {}, {}, {}
+    for n in data["news"]:
+        if n.get("date") not in ds or not n.get("sent"):
+            continue
+        codes, _ = matcher.match(n["t"])
+        for c in codes:
+            w = n["sent"] * n.get("heat", 3)
+            net[c] = net.get(c, 0) + w
+            first[c] = min(first.get(c, n["date"]), n["date"])
+            if c not in head or abs(w) > head[c][0]:
+                head[c] = (abs(w), n["t"])
+    rows = []
+    for c, v in net.items():
+        r = ret_from(c, first[c])
+        if r is not None:
+            rows.append((c, v, r))
+    cases = []
+    nopush = sorted([x for x in rows if x[1] >= 6 and x[2] <= -3], key=lambda x: x[2])
+    if nopush:
+        c, v, r = nopush[0]
+        cases.append({"k": "nopush", "title": "利多滿天飛，股價卻下跌", "c": c, "n": uni.get(c, c), "net": v, "ret": round(r, 1),
+                      "news": head[c][1][:60],
+                      "story": f"本週利多新聞情緒淨值 +{v}，但從第一則新聞到現在股價 {r:+.1f}%。好消息可能早已反映，或市場不相信；這類病人追高要特別小心。"})
+    resist = sorted([x for x in rows if x[1] <= -6 and x[2] >= 3], key=lambda x: -x[2])
+    if resist:
+        c, v, r = resist[0]
+        cases.append({"k": "resist", "title": "利空纏身，股價反而上漲", "c": c, "n": uni.get(c, c), "net": v, "ret": round(r, 1),
+                      "news": head[c][1][:60],
+                      "story": f"本週利空新聞情緒淨值 {v}，股價卻 {r:+.1f}%。壞消息可能已經出盡，常是底部訊號；可以觀察是否量縮止穩。"})
+    for m in data.get("mops") or []:
+        if len(cases) >= 3:
+            break
+        if m.get("d") in ds and re.search(r"澄清|媒體報導", m.get("t", "")) and m["c"] not in [x["c"] for x in cases]:
+            r = ret_from(m["c"], m["d"])
+            if r is None:
+                continue
+            cases.append({"k": "clar", "title": "公司出面澄清新聞", "c": m["c"], "n": uni.get(m["c"], m["c"]), "ret": round(r, 1),
+                          "news": m["t"][:60],
+                          "story": f"{m['d'][5:].replace('-', '/')} 公司申報澄清，之後股價 {r:+.1f}%。{'市場接受澄清，股價回穩。' if r > 0 else '澄清後股價仍走弱，市場可能還在疑慮。'}"})
+    if len(cases) < 3:  # 不夠三個時，補上本週消息與股價最背離的
+        left = sorted([x for x in rows if x[0] not in [y["c"] for y in cases] and x[1] * x[2] < 0], key=lambda x: -abs(x[1] * x[2]))
+        for c, v, r in left[:3 - len(cases)]:
+            cases.append({"k": "gap", "title": "消息與股價方向相反", "c": c, "n": uni.get(c, c), "net": v, "ret": round(r, 1),
+                          "news": head[c][1][:60],
+                          "story": f"本週新聞情緒淨值 {v:+}，股價卻 {r:+.1f}%。消息面與股價背離，代表市場另有看法，值得回頭檢討。"})
+    return cases[:3]
+
+
+# ---------------------------------------------------------------- 主動通報：主治病人出狀況時立刻推播
+def _rev_flags(rev, uni_ind):
+    """和網站檢驗科同一套規則：同產業中間一半的區間再往外放寬，超出標 H、低於標 L。"""
+    by = {}
+    for c, r in (rev or {}).items():
+        if r and r[2] is not None and abs(r[2]) <= 900 and c in uni_ind:
+            by.setdefault(uni_ind[c], []).append((c, r))
+    out = {}
+    for rs in by.values():
+        if len(rs) < 5:
+            continue
+        ys = sorted(x[1][2] for x in rs)
+
+        def q(p):
+            i = (len(ys) - 1) * p
+            lo, hi = int(i), min(len(ys) - 1, int(i) + 1)
+            return ys[lo] + (ys[hi] - ys[lo]) * (i - lo)
+        q1, q3, md = q(.25), q(.75), q(.5)
+        iqr = max(8, q3 - q1)
+        for c, r in rs:
+            y = r[2]
+            if y > q3 + iqr and y - md >= 15:
+                out[c] = ("H", y, r[0], md)
+            elif y < q1 - iqr and md - y >= 15:
+                out[c] = ("L", y, r[0], md)
+    return out
+
+
+def alerts(data, hist, prev_sent):
+    """回傳 (要推播的文字, 新的已通報清單)。同一件事只通報一次。"""
+    codes = watch_list()
+    if not codes:
+        return "", prev_sent or []
+    sent = list(prev_sent or [])
+    uni = {}
+    for row in data["uni_raw"].split(";"):
+        c, n, _, i = row.split(",")
+        uni[c] = (n, data["inds"][int(i)])
+    flags = _rev_flags(data.get("rev"), {c: v[1] for c, v in uni.items()})
+    recent = sorted({m["d"] for m in data.get("mops") or []})[-2:]
+    msgs, new = [], []
+    for c in codes:
+        name = uni.get(c, (c,))[0]
+        for m in data.get("mops") or []:
+            if m["c"] == c and m["d"] in recent and re.search(r"澄清|媒體報導", m["t"]):
+                k = f"clar:{c}:{m['d']}"
+                if k not in sent:
+                    new.append(k)
+                    msgs.append(f"📢 {name}（{c}）公司出面澄清：{m['t'][:50]}")
+        if c in flags:
+            f, y, ym, md = flags[c]
+            k = f"rev:{c}:{ym}"
+            if k not in sent:
+                new.append(k)
+                msgs.append(f"🧪 {name}（{c}）{ym[:-2]}/{ym[-2:]} 月營收年增 {y:+.1f}%，同業中位數 {md:+.1f}%，檢驗科標「{'H 偏高' if f == 'H' else 'L 偏低'}」")
+        arr = ((hist or {}).get("inst") or {}).get(c)
+        idates = (hist or {}).get("inst_dates") or []
+        if arr:
+            n, i = 0, len(arr) - 1
+            while i >= 0 and arr[i] is not None and arr[i] < 0:
+                n, i = n + 1, i - 1
+            if n >= 5:
+                k = f"sell:{c}:{idates[i + 1] if i + 1 < len(idates) else ''}"
+                if k not in sent:
+                    new.append(k)
+                    msgs.append(f"🚨 {name}（{c}）外資加投信已連續賣超 {n} 天，家屬撤離中")
+    if not msgs:
+        return "", sent
+    text = "🏥 812拉基醫院｜主治病人緊急通報\n\n" + "\n".join(msgs) + "\n\n以上只是觀察重點，不構成投資建議。"
+    return text, (sent + new)[-300:]
