@@ -382,12 +382,14 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 .corner{display:flex;align-items:center;gap:8px;position:relative}
 .cbtn2{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--sheet);border-radius:6px;padding:5px 10px;font-size:12.5px;color:var(--ink)}
 .cbtn2:hover{border-color:var(--ink)}
+/* 右上三張卡統一大小 */
+.corner>.badge,.corner>.cbtn2{box-sizing:border-box;width:118px;height:46px;padding:0 10px;justify-content:center;flex:none}
 .cbtn2 i{display:block;width:16px;height:16px;border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.15)}
 .badge{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--sheet);border-radius:6px;padding:4px 10px 5px;text-align:left}
-.badge .ic{color:#c89b2c;margin:0;width:18px;height:18px}
+.badge .bav{width:30px;height:30px;border-radius:50%;object-fit:cover;flex:none;background:var(--grid);box-shadow:0 0 0 1.5px #c89b2c}
 .badge span{display:flex;flex-direction:column;line-height:1.2}
 .badge small{font-size:10px;color:var(--mute)} .badge b{font-size:13px}
-.badge i{display:block;width:84px;height:3px;background:var(--grid);border-radius:2px;margin-top:3px;overflow:hidden} .badge i b{display:block;height:3px;background:#c89b2c}
+.badge i{display:block;width:64px;height:3px;background:var(--grid);border-radius:2px;margin-top:3px;overflow:hidden} .badge i b{display:block;height:3px;background:#c89b2c}
 .palpanel{position:absolute;top:calc(100% + 8px);right:0;z-index:60;width:min(470px,calc(100vw - 32px));background:#2b333c;color:#e8edf1;border-radius:10px;padding:14px 14px 16px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .palpanel p{margin:0 0 10px;font-size:13px;color:#aeb8c2;letter-spacing:.1em}
 .palgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -426,15 +428,33 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 .lobby{position:fixed;inset:0;z-index:100;background:radial-gradient(120% 90% at 30% 20%,var(--sheet),var(--wall));display:grid;place-items:center;padding:24px;transition:opacity .7s ease,transform .7s ease;overflow:auto}
 .lobby.leave{opacity:0;transform:scale(1.35);pointer-events:none}
 .intro-in{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:36px;align-items:center;max-width:1040px;width:100%}
-.facade{width:100%;height:auto}
-.facade .wall{fill:var(--sheet);stroke:var(--ink);stroke-width:1.6}
-.facade .roof{fill:var(--brand,#16212b)}
-.facade .sign{fill:#fff;font-family:var(--art);font-size:17px;font-weight:700;letter-spacing:.12em}
-.facade rect:not(.wall):not(.roof):not(.door){fill:var(--grid);stroke:var(--line)}
-.facade rect.lit{fill:#ffd98a;stroke:#e0b45a;animation:lit 3.2s ease-in-out infinite}
-@keyframes lit{50%{fill:#ffe9b8}}
-.facade .door{fill:var(--brand,#16212b)}
-:root[data-theme="night"] .facade .roof,:root[data-theme="night"] .facade .door{fill:#3a4a58} .facade .crossm{stroke:#d6452f;stroke-width:4;stroke-linecap:round}
+.facade{width:100%;height:auto;filter:drop-shadow(0 18px 30px rgba(0,0,0,.18))}
+.facade .sky0{stop-color:color-mix(in srgb,var(--sheet) 70%,var(--a))}.facade .sky1{stop-color:var(--sheet)}
+.facade .hill2{fill:color-mix(in srgb,var(--grid) 60%,var(--a) 14%)}.facade .hill1{fill:color-mix(in srgb,var(--grid) 70%,var(--ink) 10%)}
+.facade .bld{fill:color-mix(in srgb,var(--sheet) 88%,var(--ink));stroke:var(--ink);stroke-width:1.2}
+.facade .cap,.facade .crown{fill:var(--brand,#16212b)}
+.facade .gl0{stop-color:color-mix(in srgb,var(--a) 30%,var(--sheet))}.facade .gl1{stop-color:color-mix(in srgb,var(--a) 12%,var(--sheet))}
+.facade .glass{stroke:color-mix(in srgb,var(--ink) 40%,transparent);stroke-width:.6}
+.facade .mull{stroke:color-mix(in srgb,var(--ink) 35%,transparent);stroke-width:1}
+.facade .sign{fill:#fff;font-family:var(--art);font-size:15px;font-weight:700;letter-spacing:.14em}
+.facade .pad{fill:color-mix(in srgb,var(--ink) 70%,var(--sheet));}.facade .padring{fill:none;stroke:#e8b62c;stroke-width:1.2}
+.facade .padH{fill:#e8b62c;font:800 7px var(--num)}
+.facade .beacon{fill:#e23b3b;animation:beacon 1.6s steps(2) infinite}
+@keyframes beacon{50%{opacity:.15}}
+.facade .win{fill:color-mix(in srgb,var(--ink) 18%,var(--sheet));stroke:color-mix(in srgb,var(--ink) 25%,transparent);stroke-width:.5}
+.facade .win.lit{fill:#ffd98a;stroke:#e0b45a;animation:lit 3.2s ease-in-out infinite}
+.facade .crossbox{fill:#fff;stroke:var(--ink);stroke-width:1}
+.facade .crossm{stroke:#d6452f;stroke-width:4;stroke-linecap:round}
+.facade .door{fill:var(--brand,#16212b)}.facade .canopy{stroke:var(--ink);stroke-width:4;stroke-linecap:round}
+.facade .er{fill:#fff;font:700 7px var(--sans);letter-spacing:.1em}
+.facade .sea{fill:color-mix(in srgb,var(--a) 22%,var(--wall))}.facade .quay{stroke:var(--ink);stroke-width:2}
+.facade .wave{fill:none;stroke:color-mix(in srgb,var(--a) 45%,var(--sheet));stroke-width:1.2;stroke-linecap:round}
+.facade .ship{fill:color-mix(in srgb,var(--ink) 75%,var(--sheet));animation:ship 9s ease-in-out infinite alternate}
+@keyframes ship{to{transform:translateX(-26px)}}
+.facade .refl rect{fill:#ffd98a;opacity:.35}
+@keyframes lit{50%{opacity:.6}}
+.facade .rain path{stroke:color-mix(in srgb,var(--ink) 22%,transparent);stroke-width:.8;animation:rain 1.1s linear infinite}
+@keyframes rain{from{transform:translate(0,-20px);opacity:0}30%{opacity:1}to{transform:translate(-6px,30px);opacity:0}}
 .ib .ik{margin:0;color:var(--mute);font-size:13px;letter-spacing:.12em}
 .ib .ih{margin:4px 0 16px;font-family:var(--art);font-size:40px;letter-spacing:.1em}
 .ig{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--sheet)}
@@ -446,7 +466,7 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
 .it{color:var(--mute);margin:14px 0 18px}
 #enterBtn{padding:12px 34px;font-size:16px}
 @media (max-width:760px){.intro-in{grid-template-columns:minmax(0,1fr);gap:16px}.ib .ih{font-size:30px}.ig{grid-template-columns:repeat(2,minmax(0,1fr))}.ig>div{border-left:0!important;border-top:1px solid var(--line)!important}.ig>div:nth-child(-n+2){border-top:0!important}.ig>div:nth-child(2n){border-left:1px solid var(--line)!important}}
-@media (prefers-reduced-motion:reduce){.lobby{transition:none}.facade rect.lit{animation:none}}
+@media (prefers-reduced-motion:reduce){.lobby{transition:none}.facade .win.lit,.facade .rain path,.facade .ship,.facade .beacon{animation:none}}
 /* 病史（紙本） */
 .film.paper{background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1px var(--line),0 30px 80px rgba(0,0,0,.25)}
 .film.paper::before{background:none}
@@ -715,24 +735,28 @@ function resize(){
 }
 const toWorld=(sx,sy)=>[(sx-W/2)/cam.k+cam.x,(sy-H/2)/cam.k+cam.y];
 const toScreen=(wx,wy)=>[(wx-cam.x)*cam.k+W/2,(wy-cam.y)*cam.k+H/2];
-function flyTo(x,y,k){camT.x=x;camT.y=y;camT.k=Math.max(.6,Math.min(3,k));}
+function flyTo(x,y,k){camT.x=x;camT.y=y;camT.k=Math.max(.3,Math.min(3,k));}
 function resetView(){const rs=["a","b","ab"].map(roomOf).filter(Boolean);if(!rs.length){flyTo(W/2,H/2,1);return;}
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;rs.forEach(r=>{x0=Math.min(x0,r.x0);y0=Math.min(y0,r.y0-20);x1=Math.max(x1,r.x1);y1=Math.max(y1,r.y1);});
   layoutPads();if(PADS.length){y0=Math.min(y0,PADS[0].y-36);PADS.forEach(q=>{x0=Math.min(x0,q.x-60);x1=Math.max(x1,q.x+60);});}
   // 安全區：避開右上控制列、左下病程列與右下圖簽
   const top=vert()?118:78,bot=vert()?H-24:H-122,left=vert()?16:PAD.l+6,right=vert()?W-16:W-PAD.r-6;
-  const k=Math.min(1.9,(right-left)/(x1-x0),(bot-top)/(y1-y0)),scx=(left+right)/2,scy=(top+bot)/2;
+  const k=Math.min(1.9,(right-left)/(x1-x0+20),(bot-top)/(y1-y0+10)),scx=(left+right)/2,scy=(top+bot)/2;
   flyTo((x0+x1)/2-(scx-W/2)/k,(y0+y1)/2-(scy-H/2)/k,k);}
 function flyToNodes(ns){ns=ns.filter(Boolean);if(!ns.length)return;
   let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;ns.forEach(n=>{x0=Math.min(x0,n.x);y0=Math.min(y0,n.y);x1=Math.max(x1,n.x);y1=Math.max(y1,n.y);});
   flyTo((x0+x1)/2,(y0+y1)/2,Math.min(2,W/(x1-x0+300),H/(y1-y0+260)));}
 const vert=()=>W<640;
-const inner=()=>vert()?({x0:PAD.l+10,x1:W-PAD.r-10,y0:PAD.t+210,y1:H-PAD.b-30}):({x0:PAD.l+40,x1:W-PAD.r-40,y0:PAD.t+150,y1:H-PAD.b-150});
+// 院區大小依病人數決定，不跟螢幕大小走；鏡頭再把整個院區縮放進畫面，避免小螢幕或縮放 125% 時擠成一團
+let LW=1200,LH=700;
+const bandLen=c=>Math.max(140,Math.sqrt(c)*54);   // 每棟邊長依人數開根號，接近正方形
+function sizeWorld(cnt){const ls=["a","ab","b"].filter(g=>cnt[g]>0).map(g=>bandLen(cnt[g])),side=Math.max(...ls,200),along=ls.reduce((a,b)=>a+b,0)+GAP*(ls.length-1);
+  if(vert()){LW=Math.max(side,300);LH=along;}else{LW=along;LH=side;}}
+const inner=()=>({x0:0,x1:LW,y0:0,y1:LH});
 let BANDS={};
-const GAP=118;
+const GAP=120;
 function makeBands(cnt){const b=inner(),lo=vert()?b.y0:b.x0,hi=vert()?b.y1:b.x1,order=["a","ab","b"].filter(g=>cnt[g]>0);
-  const wts=order.map(g=>Math.sqrt(cnt[g])+1.2),tot=wts.reduce((s,x)=>s+x,0),avail=hi-lo-GAP*(order.length-1);let x=lo;BANDS={};
-  order.forEach((g,i)=>{const w=avail*wts[i]/tot;BANDS[g]=[x,x+w];x+=w+GAP;});}
+  let x=lo;BANDS={};order.forEach(g=>{const w=bandLen(cnt[g]);BANDS[g]=[x,x+w];x+=w+GAP;});}
 const anchor=g=>{const b=inner(),cy=(b.y0+b.y1)/2,cx=(b.x0+b.x1)/2;
   if(BANDS[g]){const m=(BANDS[g][0]+BANDS[g][1])/2;return vert()?[cx,m]:[m,cy];}
   if(vert())return g==="a"?[cx,b.y0+(b.y1-b.y0)*.16]:g==="b"?[cx,b.y0+(b.y1-b.y0)*.84]:[cx,cy];
@@ -747,7 +771,7 @@ const vcol=v=>v==="up"?COL.up:v==="down"?COL.down:COL.mute;
 function build(){
   R=analyse();
   const show=R.vis.filter(e=>e.g!=="o");nodes=[];nodeMap={};edges=[];
-  const cnt={a:0,b:0,ab:0};show.forEach(e=>cnt[e.g]++);R.stocks.forEach(s=>cnt[s.side==="both"?"ab":s.side]++);makeBands(cnt);
+  const cnt={a:0,b:0,ab:0};show.forEach(e=>cnt[e.g]++);R.stocks.forEach(s=>cnt[s.side==="both"?"ab":s.side]++);sizeWorld(cnt);makeBands(cnt);
   show.forEach(e=>{const k=keep[e.id],[ax,ay]=anchor(e.g);
     const n={id:e.id,type:"ev",e,g:e.g,r:11+e.heat*1.8,x:k?k.x:ax+gauss()*70,y:k?k.y:ay+gauss()*70,vx:0,vy:0};nodes.push(n);nodeMap[n.id]=n;});
   R.stocks.forEach(s=>{const id="s"+s.code,k=keep[id],[ax,ay]=anchor(s.side==="both"?"ab":s.side);
@@ -762,7 +786,7 @@ function tick(){
   for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
     const p=nodes[i],q=nodes[j];let dx=q.x-p.x,dy=q.y-p.y,d2=dx*dx+dy*dy||1,d=Math.sqrt(d2);
     const f=900/d2*alpha;dx/=d;dy/=d;p.vx-=dx*f;p.vy-=dy*f;q.vx+=dx*f;q.vy+=dy*f;
-    const min=p.r+q.r+(p.type==="st"||q.type==="st"?44:22);if(d<min){const k=(min-d)/2;p.x-=dx*k;p.y-=dy*k;q.x+=dx*k;q.y+=dy*k;}}
+    const min=p.r+q.r+(p.type==="st"&&q.type==="st"?62:p.type==="st"||q.type==="st"?50:30);if(d<min){const k=(min-d)/2;p.x-=dx*k;p.y-=dy*k;q.x+=dx*k;q.y+=dy*k;}}
   edges.forEach(({s,t})=>{const dx=t.x-s.x,dy=t.y-s.y,d=Math.hypot(dx,dy)||1,k=(d-84)*.015*alpha;s.vx+=dx/d*k*.2;s.vy+=dy/d*k*.2;t.vx-=dx/d*k;t.vy-=dy/d*k;});
   nodes.forEach(o=>{
     const g=o.type==="ev"?o.g:(o.s.side==="both"?"ab":o.s.side),[ax,ay]=anchor(g),kx=o.type==="ev"?.012:.006;
@@ -795,10 +819,10 @@ function drawRoom(room,col,label,sub,dr,u,a,signOnly){
   if(signOnly===false)return;
   // 院內指標牌
   ctx.font=`700 ${13*u}px ${FONT.sans}`;const tw=ctx.measureText(label).width;ctx.font=`600 ${12*u}px ${FONT.num}`;const sw=ctx.measureText(sub).width;
-  const pw=tw+sw+34*u,ph=26*u,px=room.x0+14,py=room.y0-ph/2;
+  const full=tw+sw+34*u<=w-20,pw=full?tw+sw+34*u:tw+20*u,ph=26*u,px=room.x0+14,py=room.y0-ph/2;
   ctx.fillStyle=rgba(col,a);rr(px,py,pw,ph,3*u);ctx.fill();
   ctx.fillStyle=rgba("#ffffff",a);ctx.textAlign="left";ctx.font=`700 ${13*u}px ${FONT.sans}`;ctx.fillText(label,px+10*u,py+ph*.68);
-  ctx.globalAlpha=.8*a;ctx.font=`600 ${12*u}px ${FONT.num}`;ctx.fillText(sub,px+tw+22*u,py+ph*.68);ctx.globalAlpha=1;
+  if(full){ctx.globalAlpha=.8*a;ctx.font=`600 ${12*u}px ${FONT.num}`;ctx.fillText(sub,px+tw+22*u,py+ph*.68);ctx.globalAlpha=1;}
 }
 function drawDoctor(o,col,u,isSel){
   const {x,y,r}=o,e=o.e;
@@ -950,7 +974,7 @@ function draw(ts){
   const t=(ts||0)/1000;tick();
   const sp=reduce?1:.12;cam.x+=(camT.x-cam.x)*sp;cam.y+=(camT.y-cam.y)*sp;cam.k+=(camT.k-cam.k)*sp;
   const intro=reduce?1:ease(Math.min(1,(performance.now()-born)/1600));
-  const k=cam.k,u=1/k;
+  const k=cam.k,u=Math.min(1/k,1.25);
   ctx.fillStyle=COL.sheet;ctx.fillRect(0,0,W,H);
   ctx.save();ctx.translate(W/2,H/2);ctx.scale(k,k);ctx.translate(-cam.x,-cam.y);
   blueprint();
@@ -1714,7 +1738,7 @@ function xpAdd(n,why){const r=xpGet(),before=lvOf(r.xp);r.xp+=n;try{localStorage
   const after=lvOf(r.xp);renderBadge();if(after.i>before.i)toast(`升職了！你現在是${after.name}`);else if(why)toast(`${why}，經驗值 +${n}`);}
 function lvOf(xp){let i=0;LEVELS.forEach(([t],k)=>{if(xp>=t)i=k;});const nx=LEVELS[i+1];return {i,name:LEVELS[i][1],xp,next:nx?nx[0]:null,cur:LEVELS[i][0]};}
 function renderBadge(){const b=$("badge");if(!b)return;const L=lvOf(xpGet().xp),p=L.next?(L.xp-L.cur)/(L.next-L.cur):1;
-  b.innerHTML=`${ic("trophy")}<span><small>你的職級</small><b>${L.name}</b><i><b style="width:${Math.round(p*100)}%"></b></i></span>`;
+  b.innerHTML=`<img class="bav" src="${AVATAR}" alt=""><span><small>你的職級</small><b>${L.name}</b><i><b style="width:${Math.round(p*100)}%"></b></i></span>`;
   b.title=L.next?`經驗值 ${L.xp}，再 ${L.next-L.xp} 點升為${LEVELS[L.i+1][1]}`:`經驗值 ${L.xp}，已是院長`;b.dataset.lv=L.i;}
 (function dailyVisit(){const t=new Date().toISOString().slice(0,10);let last="";try{last=localStorage.getItem("laji_visit")||"";localStorage.setItem("laji_visit",t);}catch(e){}if(last&&last!==t)setTimeout(()=>xpAdd(5,"今日到院報到"),1500);})();
 
@@ -1746,15 +1770,51 @@ function angioHTML(){
         ${L.ss.map(s=>`<button class="pc ${s.exposed?"exp":s.lag?"lag":""}" data-film-go="${s.c}" style="background:${filmCol(s.p||0)}" title="${s.exposed?`潛在接觸者：上游「${esc(s.exposed)}」生病`:s.lag?`等待好轉：上游「${esc(s.lag)}」轉好`:""}">${esc(UNI[s.c]?.[1]||s.c)} <em>${s.p!=null?(s.p>0?"+":"")+s.p.toFixed(1)+"%":"—"}</em>${s.k?`<u style="background:${s.net>0?"#d0473b":s.net<0?"#1f7a53":"#677583"}">${s.k}</u>`:""}</button>`).join("")}</div>`).join("")}</div></div>`;}).join("")}</div>`;}
 
 // ---------- 開場：醫院外觀＋今日院況 ----------
+// 醫院外觀：參考基隆港邊的醫療大樓──山坡背景、主塔樓加兩翼低樓、頂樓停機坪、港口與細雨
+function facadeSVG(lit){
+  let w="",n=0;const win=(x,y,ww,hh)=>{const on=n<lit&&((n*7)%11)<7;w+=`<rect x="${x}" y="${y}" width="${ww}" height="${hh}" rx="1.5" class="win${on?" lit":""}" style="animation-delay:${(n%13)*.17}s"/>`;n++;};
+  for(let r=0;r<9;r++)for(let c=0;c<5;c++)win(176+c*22,92+r*17,14,10);          // 主塔樓
+  for(let r=0;r<4;r++)for(let c=0;c<4;c++)win(76+c*20,186+r*15,13,8);            // 西翼
+  for(let r=0;r<3;r++)for(let c=0;c<4;c++)win(316+c*20,201+r*15,13,8);           // 東翼
+  let rain="";for(let i=0;i<34;i++){const x=(i*53)%460,y=(i*37)%220;rain+=`<path d="M${x} ${y}l-4 12" style="animation-delay:${(i%9)*.21}s"/>`;}
+  return `<svg class="facade" viewBox="0 0 460 330" aria-hidden="true">
+  <defs><linearGradient id="fSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sky0"/><stop offset="1" class="sky1"/></linearGradient>
+    <linearGradient id="fGlass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" class="gl0"/><stop offset=".55" class="gl1"/><stop offset="1" class="gl0"/></linearGradient></defs>
+  <rect width="460" height="330" fill="url(#fSky)" rx="10"/>
+  <path class="hill2" d="M0 170 Q60 120 120 145 T240 120 T360 135 T460 110 V270 H0Z"/>
+  <path class="hill1" d="M0 205 Q70 165 150 190 T300 175 T460 185 V270 H0Z"/>
+  <g class="rain">${rain}</g>
+  <!-- 西翼、東翼 -->
+  <rect x="66" y="176" width="100" height="94" class="bld"/><rect x="66" y="172" width="100" height="6" class="cap"/>
+  <rect x="306" y="190" width="94" height="80" class="bld"/><rect x="306" y="186" width="94" height="6" class="cap"/>
+  <!-- 主塔樓 -->
+  <rect x="164" y="70" width="142" height="200" class="bld tower"/>
+  <rect x="170" y="86" width="130" height="160" fill="url(#fGlass)" class="glass"/>
+  ${[192,214,236,258,280].map(x=>`<path d="M${x-3} 86V246" class="mull"/>`).join("")}
+  <rect x="160" y="44" width="150" height="30" rx="2" class="crown"/>
+  <text x="235" y="65" text-anchor="middle" class="sign">812 拉基醫院</text>
+  <!-- 頂樓停機坪 -->
+  <path d="M190 44 L198 34 H272 L280 44Z" class="pad"/><ellipse cx="235" cy="38" rx="20" ry="4" class="padring"/><text x="235" y="40.6" text-anchor="middle" class="padH">H</text>
+  <circle cx="300" cy="32" r="2" class="beacon"/><path d="M300 34V44" class="mull"/>
+  <!-- 紅十字 -->
+  <rect x="100" y="150" width="32" height="22" rx="2" class="crossbox"/><path d="M116 154v14M109 161h14" class="crossm"/>
+  ${w}
+  <!-- 大門雨庇與入口 -->
+  <rect x="200" y="246" width="70" height="24" class="door"/><path d="M188 244 H282" class="canopy"/><path d="M235 246V270" class="mull"/>
+  <text x="235" y="258" text-anchor="middle" class="er">急診 ER</text>
+  <!-- 港邊 -->
+  <rect x="0" y="270" width="460" height="60" class="sea" rx="0"/>
+  <path d="M0 270 H460" class="quay"/>
+  ${[284,296,309,321].map((y,i)=>`<path d="M${20+i*30} ${y} q12 -3 24 0 t24 0 M${250+i*24} ${y+2} q12 -3 24 0 t24 0" class="wave"/>`).join("")}
+  <g class="ship"><path d="M352 300 h74 l-8 12 h-60z"/><rect x="368" y="290" width="30" height="10"/><rect x="384" y="282" width="8" height="8"/></g>
+  <g class="refl">${n?`<rect x="176" y="276" width="110" height="3"/><rect x="190" y="284" width="80" height="2"/><rect x="204" y="291" width="52" height="2"/>`:""}</g>
+</svg>`;}
 function introHTML(){
   const lv=TTAS.find(([th])=>R.idx>=th),ms=Object.values(MACRO||{}),red=ms.filter(m=>m.light==="red").length,sox=USD["^SOX"];
   const last=NEWS_DATES().at(-1),today=EVENTS.filter(e=>e.o===last).length,TS=themeStats().list.slice(0,3);
   const crit=[...new Set(recentEvents(2).flatMap(e=>e.codes))].map(c=>({c,q:quote(c)})).filter(x=>x.q&&x.q.pct<=-5).length;
   const L=lvOf(xpGet().xp),wins=Math.min(48,Math.max(8,today));
-  const W0=360,H0=230,cols=8,rows=6;let win="";for(let i=0;i<cols*rows;i++){const x=40+(i%cols)*36,y=70+Math.floor(i/cols)*24,on=i<wins;win+=`<rect x="${x}" y="${y}" width="22" height="13" rx="2" class="${on?"lit":""}" style="animation-delay:${(i%11)*.12}s"/>`;}
-  return `<div class="intro-in">
-  <svg class="facade" viewBox="0 0 ${W0} ${H0}" aria-hidden="true"><rect x="22" y="40" width="316" height="190" rx="4" class="wall"/><rect x="110" y="8" width="140" height="36" rx="3" class="roof"/>
-    <text x="180" y="33" text-anchor="middle" class="sign">812 拉基醫院</text>${win}<rect x="155" y="200" width="50" height="30" class="door"/><path d="M172 186h16M180 178v16" class="crossm"/></svg>
+  return `<div class="intro-in">${facadeSVG(wins)}
   <div class="ib"><p class="ik">今日院況　${esc(REPORT?.date||isoOf(last)||"")}</p>
     <h2 class="ih">${esc(lv[2])}</h2>
     <div class="ig">
@@ -1797,10 +1857,14 @@ const PALETTES=[
  {k:"celadon",n:"青瓷綠",ink:"#263634",a:"#6f978b",b:"#ab8564",br:"#7c7398",wall:"#eef3f1",sw:["#263634","#a6c6bb"]}];
 let PAL="std";try{PAL=localStorage.getItem("laji_palette")||"std";}catch(e){}
 function applyPalette(k,save){const p=PALETTES.find(x=>x.k===k)||PALETTES[0];PAL=p.k;const r=document.documentElement.style,night=document.documentElement.dataset.theme==="night";
-  ["--ink","--wall","--a","--b","--br","--brand"].forEach(v=>r.removeProperty(v));
+  ["--ink","--wall","--sheet","--grid","--line","--a","--b","--br","--brand"].forEach(v=>r.removeProperty(v));
   r.setProperty("--brand",p.ink);
-  if(night){const lift=c=>`color-mix(in srgb, ${c} 70%, #ffffff)`;r.setProperty("--a",lift(p.a));r.setProperty("--b",lift(p.b));r.setProperty("--br",lift(p.br));}
-  else if(p.k!=="std"){r.setProperty("--ink",p.ink);r.setProperty("--wall",p.wall);r.setProperty("--a",p.a);r.setProperty("--b",p.b);r.setProperty("--br",p.br);}
+  // 平面圖是 canvas，只吃得懂 #rrggbb，所以夜班的配色也在這裡先算成十六進位色碼
+  const mix=(c1,c2,t)=>{const h=x=>parseInt(x.slice(1),16),A=h(c1),B=h(c2);return "#"+[16,8,0].map(k=>Math.round((A>>k&255)*(1-t)+(B>>k&255)*t).toString(16).padStart(2,"0")).join("");};
+  if(p.k!=="std"){
+    if(night){const S={"--wall":mix(p.ink,"#000000",.6),"--sheet":mix(p.ink,"#000000",.42),"--grid":mix(p.ink,"#000000",.25),"--line":mix(p.ink,"#ffffff",.12),"--ink":mix(p.wall,"#ffffff",.2),
+        "--a":mix(p.a,"#ffffff",.32),"--b":mix(p.b,"#ffffff",.32),"--br":mix(p.br,"#ffffff",.32),"--brand":mix(p.ink,"#ffffff",.15)};Object.entries(S).forEach(([k,v])=>r.setProperty(k,v));}
+    else{r.setProperty("--ink",p.ink);r.setProperty("--wall",p.wall);r.setProperty("--grid",mix(p.wall,p.ink,.06));r.setProperty("--line",mix(p.wall,p.ink,.14));r.setProperty("--a",p.a);r.setProperty("--b",p.b);r.setProperty("--br",p.br);}}
   if(save)try{localStorage.setItem("laji_palette",p.k);}catch(e){}
   refreshColors();$("palBtn").innerHTML=`<i style="background:linear-gradient(135deg,${p.sw[0]} 50%,${p.sw[1]} 50%)"></i>配色`;
   document.querySelectorAll("[data-pal]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.pal===p.k));
@@ -1840,7 +1904,7 @@ function setTab(t){state.tab=t;document.querySelectorAll("[data-tab]").forEach(b
   render();}
 function refresh(keepQuiz){state.sel=null;state.dock=null;state.chain=0;if(!keepQuiz)state.quiz=null;openCard(null);build();resetView();render();}
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
-$("swap").onclick=()=>{[state.A,state.B]=[state.B,state.A];Object.values(keep).forEach(k=>{if(vert())k.y=H-k.y;else k.x=W-k.x;});refresh();};
+$("swap").onclick=()=>{[state.A,state.B]=[state.B,state.A];Object.values(keep).forEach(k=>{if(vert())k.y=LH-k.y;else k.x=LW-k.x;});refresh();};
 $("dice").onclick=()=>{const tc=themeCounts(),ts=Object.keys(tc).filter(t=>tc[t]>=2);let best=null;
   for(let i=0;i<60;i++){const a=ts[Math.random()*ts.length|0],b=ts[Math.random()*ts.length|0];if(a===b||(a===state.A&&b===state.B))continue;const r=analysePair(a,b);if(r.idx>=20){best=[a,b,r.idx];break;}}
   if(!best){toast("沒找到有會診關係的兩科，新增更多新聞再試");return;}
