@@ -703,7 +703,7 @@ h2 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--a)}
                                      fetch("lexicon.json?v="+Date.now()).then(r=>r.json())]);
     window.HIST=await fetch("history.json?v="+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null);
     setLexicon(lex);
-    Object.assign(window,{CALENDAR:d.calendar||[],WEEKLY:d.weekly||null,LEX_CHAINS:lex.chains||[]});
+    Object.assign(window,{CALENDAR:d.calendar||[],WEEKLY:d.weekly||null,LEX_CHAINS:lex.chains||[],LEX_GLOBAL:lex.global_themes||[]});
     Object.assign(window,{INST:d.inst||{},INST_DATE:d.inst_date,REV:d.rev||{},USD:d.us||{},MACRO:d.macro||{},REPORT:d.report||null,US_LIST:lex.us||[]});
     Object.assign(window,{DATA_ASOF:d.asof,DATA_UPDATED:d.updated,DATA_NOTES:d.notes||[],TAIEX:d.taiex,INDS:d.inds,MKS:d.mks,UNI_RAW:d.uni_raw,QUOTES:d.quotes,NEWS:d.news});
     const s=document.createElement("script");s.textContent=document.getElementById("app").textContent;document.body.appendChild(s);
@@ -745,7 +745,9 @@ function ingest(list){
 }
 
 /* ================= 分析 ================= */
-function themeCounts(){const m={};EVENTS.filter(e=>e.o<=state.upto).forEach(e=>e.themes.forEach(t=>m[t]=(m[t]||0)+1));return m;}
+// 全院科室：法人、美股、總經、利率這類幾乎每則新聞都會提到的大盤消息，不放進 A／B 棟，改標在醫師身上
+const GLOBAL=new Set(window.LEX_GLOBAL||[]),isG=t=>GLOBAL.has(t);
+function themeCounts(){const m={};EVENTS.filter(e=>e.o<=state.upto).forEach(e=>e.themes.forEach(t=>{if(!isG(t))m[t]=(m[t]||0)+1;}));return m;}
 function analyse(A=state.A,B=state.B){
   const vis=EVENTS.filter(e=>e.o<=state.upto);
   vis.forEach(e=>{const a=e.themes.includes(A),b=e.themes.includes(B);e.g=a&&b?"ab":a?"a":b?"b":"o";});
@@ -1128,7 +1130,7 @@ function cardHTML(n){
     return `<div class="band" style="background:${col}"><b>${e.g==="ab"?"聯合會診中心":gName[e.g]+"　"+esc(dept(e.g==="a"?state.A:state.B))}</b><button data-x aria-label="關閉">×</button></div>
       <div class="inner"><div class="idrow"><div class="ph">${e.heat===4?`<img src="${AVATAR}" alt="" style="width:52px;height:52px;border-radius:50%;object-fit:cover">`:avatarSVG(col,e.src)}</div><div><div class="role">${e.g==="ab"?"會診":""}${RANK[e.heat]}　<span class="num">${e.cat}</span></div><div class="nm">${esc(e.src)}</div></div></div>
       <div class="dx">${esc(e.t)}</div>
-      <div class="meta">${esc(e.d)}　診斷：${sentTxt(e.sent)}　主訴：${e.themes.map(esc).join("、")}</div>
+      <div class="meta">${esc(e.d)}　診斷：${sentTxt(e.sent)}　科別：${e.themes.filter(t=>!isG(t)).map(esc).join("、")||"—"}${e.themes.some(isG)?`　全院：${e.themes.filter(isG).map(esc).join("、")}`:""}</div>
       ${e.codes.length?`<div class="meta">收治病人</div><div class="pts">${e.codes.map(c=>{const s=R.stocks.find(x=>x.code===c),q=quote(c),v=s?vital(s):"na";
         return `<button class="pt" data-go="s${c}"><span>${esc(UNI[c]?.[1]||c)}</span><span class="num ${v}">${v==="na"?"—":pct(q)}</span></button>`;}).join("")}</div>`:'<div class="meta">這位醫師沒有收治上市櫃病人</div>'}
       ${e.u?`<div class="meta"><a href="${esc(e.u)}" target="_blank" rel="noopener" style="color:inherit">閱讀原始新聞</a></div>`:""}</div>`;}
@@ -1285,7 +1287,7 @@ function showMenu(slot){
   const el=$(slot==="A"?"selA":"selB");if(openMenu&&openMenu.el===el){closeMenu();return;}closeMenu();
   const tc=themeCounts(),mx=Math.max(1,...Object.values(tc)),other=slot==="A"?state.B:state.A;
   const m=document.createElement("div");m.className="menu";m.setAttribute("role","listbox");
-  m.innerHTML=Object.keys(THEMES).map(t=>[t,tc[t]||0]).sort((p,q)=>q[1]-p[1]).map(([t,n])=>
+  m.innerHTML=Object.keys(THEMES).filter(t=>!isG(t)).map(t=>[t,tc[t]||0]).sort((p,q)=>q[1]-p[1]).map(([t,n])=>
     `<button role="option" data-t="${esc(t)}" aria-selected="${t===state[slot]}" ${t===other||!n?"disabled":""}><span>${esc(dept(t))}</span><span class="num">${n}</span><i><b style="width:${n/mx*100}%"></b></i></button>`).join("");
   el.appendChild(m);el.querySelector(".dbtn").setAttribute("aria-expanded","true");openMenu={el,slot};
   m.querySelector('[aria-selected="true"]')?.focus();
@@ -1329,7 +1331,7 @@ function themeStats(){
   EVENTS.forEach(e=>e.themes.forEach(t=>{const s=m[t]||(m[t]={t,n:0,pos:0,neg:0,days:ds.map(()=>0)});s.n++;if(e.sent>0)s.pos++;if(e.sent<0)s.neg++;
     const k=ds.indexOf(e.o);if(k>=0)s.days[k]++;}));
   Object.values(m).forEach(s=>{const k=s.days.length,last=s.days[k-1],prev=s.days.slice(0,k-1).filter((x,i)=>ds[i]!==-1),avg=prev.length?prev.reduce((a,b)=>a+b,0)/prev.length:0;s.burst=last>=4&&last>=2*Math.max(.5,avg);});
-  return {ds,list:Object.values(m).sort((a,b)=>b.n-a.n)};}
+  const all=Object.values(m).sort((a,b)=>b.n-a.n);return {ds,list:all.filter(x=>!isG(x.t)),glob:all.filter(x=>isG(x.t))};}
 function ovwHTMLold(){
   const last=DATES.filter(o=>o!==1000).at(-1),recent=DATES.filter(o=>o!==1000).slice(-2);
   const today=EVENTS.filter(e=>e.o===last);
@@ -1353,7 +1355,10 @@ function ovwHTMLold(){
     ${top.map(s=>`<div class="th-row"><span class="nm">${esc(dept(s.t))}<span class="num">${s.n}</span>${s.burst?'<span class="burst">爆量</span>':""}${(()=>{const L=themeLife(s.t);return L?`<span class="life" style="background:${L.c}" title="病程階段：${esc(L.d)}">${L.l}</span>`:"";})()}</span>
       <span title="近 7 個新聞日的則數">${bars(s.days,mxN,74,22)}</span>
       <span class="bal" title="利多 ${s.pos}、利空 ${s.neg}"><i style="width:${s.pos/s.n*100}%;background:var(--up)"></i><i style="width:${(s.n-s.pos-s.neg)/s.n*100}%;background:var(--line)"></i><i style="width:${s.neg/s.n*100}%;background:var(--down)"></i></span>
-      <span class="ab"><button class="a ${state.A===s.t?"on":""}" data-set="A|${esc(s.t)}" aria-label="設為 A 棟">A</button><button class="b ${state.B===s.t?"on":""}" data-set="B|${esc(s.t)}" aria-label="設為 B 棟">B</button></span></div>`).join("")}</section>
+      <span class="ab"><button class="a ${state.A===s.t?"on":""}" data-set="A|${esc(s.t)}" aria-label="設為 A 棟">A</button><button class="b ${state.B===s.t?"on":""}" data-set="B|${esc(s.t)}" aria-label="設為 B 棟">B</button></span></div>`).join("")}
+    ${TS.glob.length?`<p class="note" style="margin-top:12px">全院科室：幾乎每則新聞都會提到的大盤消息，不分棟，標在醫師的識別證上</p>
+    ${TS.glob.map(s=>`<div class="th-row"><span class="nm">${esc(dept(s.t))}<span class="num">${s.n}</span></span><span>${bars(s.days,Math.max(1,...s.days),74,22)}</span>
+      <span class="bal" title="利多 ${s.pos}、利空 ${s.neg}"><i style="width:${s.pos/s.n*100}%;background:var(--up)"></i><i style="width:${(s.n-s.pos-s.neg)/s.n*100}%;background:var(--line)"></i><i style="width:${s.neg/s.n*100}%;background:var(--down)"></i></span><span class="ab"><small style="color:var(--mute)">全院</small></span></div>`).join("")}`:""}</section>
   <section><h2>全院會診矩陣</h2><p class="note">熱門科別兩兩之間的會診強度，點格子直接切換到那兩科</p>
     <div class="mx" style="grid-template-columns:6.4em repeat(${M.length},minmax(0,1fr))"><span></span>${M.map((t,i)=>`<span class="h" title="${esc(t)}">${i+1}</span>`).join("")}
     ${M.map((a,i)=>`<span class="rh" title="${esc(a)}"><b class="num" style="color:var(--ink);margin-right:4px">${i+1}</b>${esc(a.length>5?a.slice(0,5):a)}</span>`+M.map((b,j)=>{if(i===j)return '<span class="dg"></span>';const v=idxOf(i,j);
@@ -1371,8 +1376,8 @@ function jumpTo(id,keepQuiz){
     const tc={};
     if(id.startsWith("e")){const e=EVENTS.find(x=>x.id===id);(e?.themes||[]).forEach(t=>tc[t]=(tc[t]||0)+2);}
     else EVENTS.filter(e=>e.codes.includes(id.slice(1))).forEach(e=>e.themes.forEach(t=>tc[t]=(tc[t]||0)+e.heat));
-    const ts=Object.keys(tc).sort((a,b)=>tc[b]-tc[a]);
-    if(!ts.length){toast("這則新聞沒有對應的科別，無法顯示在平面圖");return;}
+    const ts=Object.keys(tc).filter(t=>!isG(t)).sort((a,b)=>tc[b]-tc[a]);
+    if(!ts.length){toast("這則新聞只有大盤消息、沒有對應的產業科別，無法顯示在平面圖");return;}
     if(!ts.includes(state.A)&&!ts.includes(state.B)){state.A=ts[0];
       if(ts[1])state.B=ts[1];else if(state.B===state.A)state.B=Object.keys(themeCounts()).find(t=>t!==state.A)||state.B;}
     keep={};refresh(keepQuiz);n=nodeMap[id];
@@ -1391,7 +1396,8 @@ function renderTicker(){
 let BUILT=0,PADS=[];
 // ---------- 我的主治病人 ----------
 let WATCH=new Set();try{WATCH=new Set(JSON.parse(localStorage.getItem("laji_watch")||"[]"));}catch(e){}
-function toggleWatch(c){WATCH.has(c)?WATCH.delete(c):(WATCH.add(c),setTimeout(()=>xpAdd(2),1900));try{localStorage.setItem("laji_watch",JSON.stringify([...WATCH]));}catch(e){}
+function xpOnce(k){try{const a=JSON.parse(localStorage.getItem("laji_xp_once")||"[]");if(a.includes(k))return false;a.push(k);localStorage.setItem("laji_xp_once",JSON.stringify(a.slice(-500)));return true;}catch(e){return false;}}
+function toggleWatch(c){WATCH.has(c)?WATCH.delete(c):(WATCH.add(c),xpOnce("w"+c)&&setTimeout(()=>xpAdd(2),1900));try{localStorage.setItem("laji_watch",JSON.stringify([...WATCH]));}catch(e){}
   toast(WATCH.has(c)?`已把 ${UNI[c]?.[1]||c} 列為你的主治病人`:`已移除 ${UNI[c]?.[1]||c}`);if(state.tab==="ovw")render();}
 
 // ---------- 小工具 ----------
@@ -1824,7 +1830,7 @@ function lvOf(xp){let i=0;LEVELS.forEach(([t],k)=>{if(xp>=t)i=k;});const nx=LEVE
 function renderBadge(){const b=$("badge");if(!b)return;const L=lvOf(xpGet().xp),p=L.next?(L.xp-L.cur)/(L.next-L.cur):1;
   b.innerHTML=`<img class="bav" src="${AVATAR}" alt=""><span><small>你的職級</small><b>${L.name}</b><i><b style="width:${Math.round(p*100)}%"></b></i></span>`;
   b.title=L.next?`經驗值 ${L.xp}，再 ${L.next-L.xp} 點升為${LEVELS[L.i+1][1]}`:`經驗值 ${L.xp}，已是院長`;b.dataset.lv=L.i;}
-(function dailyVisit(){const t=new Date().toISOString().slice(0,10);let last="";try{last=localStorage.getItem("laji_visit")||"";localStorage.setItem("laji_visit",t);}catch(e){}if(last&&last!==t)setTimeout(()=>xpAdd(5,"今日到院報到"),1500);})();
+(function dailyVisit(){const t=new Date().toISOString().slice(0,10);let last="";try{last=localStorage.getItem("laji_visit")||"";localStorage.setItem("laji_visit",t);}catch(e){}if(last!==t)setTimeout(()=>xpAdd(5,"今日到院報到"),1500);})();
 
 // ---------- 病人故事：病史時間軸 ----------
 function storyHTML(code){
@@ -2127,6 +2133,7 @@ $("impAdd").onclick=()=>doImport("add");$("impReplace").onclick=()=>doImport("re
 $("taiex").innerHTML=TAIEX?`${TAIEX.close.toLocaleString()}　<span class="${TAIEX.chg>0?"up":TAIEX.chg<0?"down":"flat"}">${TAIEX.chg>0?"+":""}${(+TAIEX.chg).toFixed(2)}（${TAIEX.pct>0?"+":""}${(+TAIEX.pct).toFixed(2)}%）</span>`:"—";
 $("asof").textContent=`${ASOF_MD} 收盤，資料更新 ${DATA_UPDATED||""}`;$("asof").title=DATA_NOTES.join("\n");$("plate").setAttribute("data-note",`${NEWS.length} 則新聞比對 ${Object.keys(UNI).length} 家上市櫃公司`);
 ingest(NEWS);
+{const tc=themeCounts(),ts=Object.keys(tc).sort((p,q)=>tc[q]-tc[p]);if(isG(state.A)||!tc[state.A])state.A=ts[0]||state.A;if(isG(state.B)||!tc[state.B]||state.B===state.A)state.B=ts.find(t=>t!==state.A)||state.B;}
 // 平面圖尺寸改變（含頁面剛載入時版面尚未定型）就重新配置各棟位置並重新取景
 let lastW=0,lastH=0,rt;
 function relayout(first){resize();if(W<80||H<80)return;

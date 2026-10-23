@@ -269,6 +269,7 @@ def summarize_macro(cfg, series):
 class Matcher:
     def __init__(self, uni, lex):
         self.lex = lex
+        self.glob = set(lex.get("global_themes", []))   # 全院科室：大盤消息，不算產業科別
         amb = set(lex.get("ambiguous", []))
         names = []
         self.codes = {c for c, *_ in uni}
@@ -377,17 +378,20 @@ def handover(data, hist, lex, matcher):
                 cnt[t] = cnt.get(t, 0) + 1
             elif n.get("date") in prior:
                 base[t] = base.get(t, 0) + 1 / max(1, len(prior))
+    glob = {t: c for t, c in cnt.items() if t in matcher.glob}
+    cnt = {t: c for t, c in cnt.items() if t not in matcher.glob}
     hot = sorted(cnt.items(), key=lambda x: -x[1])[:3]
     surge = [t for t, c in cnt.items() if c >= 4 and c >= 2 * max(0.5, base.get(t, 0))]
     if hot:
-        items.append({"k": "門診量", "t": "最熱的科別是" + "、".join(f"{t}科（{c} 則）" for t, c in hot) +
-                      (f"；{'、'.join(surge)}科門診爆量，比前幾天多一倍以上。" if surge else "。")})
+        gtxt = "；全院科室：" + "、".join(f"{t} {c} 則" for t, c in sorted(glob.items(), key=lambda x: -x[1])) if glob else ""
+        items.append({"k": "門診量", "t": "最熱的產業科別是" + "、".join(f"{t}科（{c} 則）" for t, c in hot) +
+                      (f"；{'、'.join(surge)}科門診爆量，比前幾天多一倍以上" if surge else "") + gtxt + "。"})
 
     # 2. 聯合會診：今天最常一起出現的兩個題材
     pair = {}
     for n in tn:
         _, th = matcher.match(n["t"])
-        th = sorted(set(th) - {"總經風險", "法人籌碼"})
+        th = sorted(set(th) - matcher.glob)
         for i in range(len(th)):
             for j in range(i + 1, len(th)):
                 pair[(th[i], th[j])] = pair.get((th[i], th[j]), 0) + 1
@@ -675,7 +679,7 @@ def weekly(data, hist, matcher):
             continue
         codes, th = matcher.match(n["t"])
         for t in th:
-            if t not in ("總經風險", "法人籌碼"):
+            if t not in matcher.glob:
                 cnt[t] = cnt.get(t, 0) + 1
         for c in codes:
             named[c] = named.get(c, 0) + 1
