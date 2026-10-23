@@ -24,7 +24,12 @@
           "塑化股 油價",
           "金控股 殖利率",
           "機器人 概念股",
-          "低軌衛星 概念股"
+          "低軌衛星 概念股",
+          "美股 費半 台股",
+          "聯準會 降息 台股",
+          "美國 CPI 通膨",
+          "輝達 財報 供應鏈",
+          "美光 記憶體 報價"
         ]
       }
     ],
@@ -138,5 +143,84 @@
       "重摔",
       "領漲"
     ]
+  },
+  "macro": [
+    {
+      "k": "vix",
+      "organ": "全球體溫",
+      "name": "VIX 恐慌指數",
+      "yahoo": "^VIX",
+      "fred": "VIXCLS",
+      "unit": "",
+      "warn": "high",
+      "note": "高於 25 視為發燒，市場恐慌升溫"
+    },
+    {
+      "k": "us10y",
+      "organ": "血壓",
+      "name": "美國 10 年期公債殖利率",
+      "yahoo": "^TNX",
+      "yscale": 0.1,
+      "fred": "DGS10",
+      "unit": "%",
+      "warn": "high",
+      "note": "殖利率越高，資金成本越重，高本益比成長股壓力越大"
+    },
+    {
+      "k": "curve",
+      "organ": "呼吸",
+      "name": "殖利率曲線（10年減2年）",
+      "fred": "T10Y2Y",
+      "unit": "%",
+      "warn": "low",
+      "note": "小於 0 為倒掛，歷史上常是景氣放緩的警訊"
+    },
+    {
+      "k": "oil",
+      "organ": "血糖",
+      "name": "布蘭特原油",
+      "yahoo": "BZ=F",
+      "fred": "DCOILBRENTEU",
+      "unit": "美元",
+      "warn": "high",
+      "note": "油價高，通膨與運輸、塑化成本受影響"
+    },
+    {
+      "k": "dxy",
+      "organ": "心率",
+      "name": "美元指數",
+      "yahoo": "DX-Y.NYB",
+      "fred": "DTWEXBGS",
+      "unit": "",
+      "warn": "high",
+      "note": "美元走強，新興市場資金容易外流"
+    },
+    {
+      "k": "twd",
+      "organ": "體液平衡",
+      "name": "美元兌新台幣",
+      "yahoo": "TWD=X",
+      "fred": "DEXTAUS",
+      "unit": "元",
+      "warn": "none",
+      "note": "數字變小代表新台幣升值，外資匯入；出口廠有匯損壓力"
+    },
+    {
+      "k": "ffr",
+      "organ": "用藥劑量",
+      "name": "美國聯邦基金利率",
+      "fred": "DFF",
+      "unit": "%",
+      "warn": "high",
+      "note": "聯準會的政策利率，降息等於減藥"
+    }
+  ],
+  "ai": {
+    "model": "claude-haiku-5-5",
+    "max_per_run": 150,
+    "batch": 30
+  },
+  "push": {
+    "hour": 15
   }
 }

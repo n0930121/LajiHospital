@@ -290,12 +290,13 @@ def merge_news(fresh, prev_news):
             continue
         sent, heat = score(g["t"], g["cover"])
         old = next((p for p in prev_news or [] if p["t"] == g["t"]), {}) if g.get("old") else {}
-        if old.get("curated"):  # 人工整理的新聞保留原判讀；其餘每天用最新規則重算
+        if old.get("curated") or old.get("ai"):  # 人工整理或 AI 判讀過的保留；其餘每天用最新規則重算
             sent, heat = old.get("sent", sent), old.get("heat", heat)
         item = {"d": g["d"], "date": g.get("date"), "t": g["t"], "s": g["s"], "src": g["src"], "u": g["u"],
                 "sent": sent, "heat": heat, "cover": g["cover"]}
-        if old.get("curated"):
-            item["curated"] = True
+        for k in ("curated", "ai", "impact"):
+            if old.get(k):
+                item[k] = old[k]
         out.append(item)
     # 超過上限時，先淘汰熱度最低的，而不是最舊的，讓時間軸保有足夠天數；人工整理的新聞一律保留
     out.sort(key=lambda x: (bool(x.get("curated")), x["heat"], x.get("cover", 1), x.get("date") or ""), reverse=True)
@@ -366,6 +367,33 @@ def update_history(quotes, asof, keep=40, target=23):
     print(f"歷史行情：{len(dates)} 個交易日、{len(codes)} 檔")
 
 
+def save_us_history(series, lex, keep=60):
+    """美股收盤存進 history.json 的 us 區塊，並回傳最新一日的快照。"""
+    try:
+        h = json.load(open(HIST, encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        h = {"dates": [], "close": {}}
+    old = h.get("us") or {}
+    merged = {}
+    for t in set(old) | set(series):
+        d = dict(zip(h.get("us_dates", []), old.get(t, [])))
+        d.update(series.get(t, {}))
+        merged[t] = {k: v for k, v in d.items() if v is not None}
+    dates = sorted({d for s in merged.values() for d in s})[-keep:]
+    h["us_dates"] = dates
+    h["us"] = {t: [s.get(d) for d in dates] for t, s in merged.items()}
+    with open(HIST, "w", encoding="utf-8") as f:
+        json.dump(h, f, ensure_ascii=False, separators=(",", ":"))
+    names = {u["t"]: u["n"] for u in lex.get("us", [])}
+    snap = {}
+    for t, s in merged.items():
+        ds = sorted(s)
+        if len(ds) >= 2:
+            last, prev = s[ds[-1]], s[ds[-2]]
+            snap[t] = {"n": names.get(t, t), "v": round(last, 2), "pct": round((last / prev - 1) * 100, 2), "date": ds[-1]}
+    return snap
+
+
 # ---------------------------------------------------------------- 主流程
 def main():
     global OFFLINE
@@ -385,6 +413,18 @@ def main():
     except Exception as e:  # noqa: BLE001
         note(f"歷史行情更新失敗（{e}）")
 
+    import extras
+    extras.U = sys.modules[__name__]  # 讓擴充模組共用同一份設定（含離線模式）
+    prev = prev or {}
+    inst = extras.get_institutional(asof)
+    if inst is None and prev.get("inst_date") == asof:
+        inst = prev.get("inst")
+    rev = extras.get_revenue() or prev.get("rev")
+    us_series = extras.get_us(lex)
+    macro_series = extras.get_macro(CFG)
+    us_snap = save_us_history(us_series, lex) if us_series else prev.get("us")
+    macro = extras.summarize_macro(CFG, macro_series) if macro_series else prev.get("macro")
+
     words = set()
     for ws in lex["themes"].values():
         words.update(ws)
@@ -397,10 +437,10 @@ def main():
             if len(n) >= 2 and n not in amb:
                 words.add(n)
     fresh = get_news(words)
-    news = merge_news(fresh, (prev or {}).get("news"))
+    news = merge_news(fresh, prev.get("news"))
     if not news:
         note("沒有任何新聞，沿用上一版")
-        news = (prev or {}).get("news", [])
+        news = prev.get("news", [])
 
     inds = sorted({r[3] for r in uni})
     mks = ["上市", "上櫃", "創新板"]
@@ -413,8 +453,22 @@ def main():
         "uni_raw": ";".join(f"{c},{n},{mks.index(m)},{inds.index(i)}" for c, n, m, i in uni),
         "quotes": quotes,
         "news": news,
+        "inst": inst, "inst_date": asof if inst else prev.get("inst_date"),
+        "rev": rev,
+        "us": us_snap,
+        "macro": macro,
         "notes": NOTES,
     }
+    matcher = extras.Matcher(uni, lex)
+    extras.ai_judge(news, {c: n for c, n, _, _ in uni}, matcher, CFG)
+    try:
+        data["report"] = extras.handover(data, None, lex, matcher)
+    except Exception as e:  # noqa: BLE001
+        note(f"交班報告產生失敗（{e}）")
+        data["report"] = prev.get("report")
+    data["notes"] = NOTES
+    if os.environ.get("FORCE_PUSH") == "1" or (not OFFLINE and NOW.hour == CFG.get("push", {}).get("hour", 15)):
+        extras.broadcast(extras.handover_text(data.get("report"), "https://n0930121.github.io/LajiHospital/"))
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     with open(a.out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))

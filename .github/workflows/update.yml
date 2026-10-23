@@ -7,6 +7,11 @@ on:
     - cron: "23 7 * * 1-5"    # 15:23 收盤後，更新行情與新聞
     - cron: "23 10 * * 1-5"   # 18:23 再補一次，確保證交所當日資料已上架
   workflow_dispatch:          # 可在 Actions 頁面手動執行
+    inputs:
+      push:
+        description: "這次也送出院內廣播（Discord / Telegram）"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -31,6 +36,12 @@ jobs:
 
       - name: 抓取並產生 data.json
         run: python scripts/update.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          FORCE_PUSH: ${{ inputs.push && '1' || '0' }}
 
       - name: 提交更新
         run: |
