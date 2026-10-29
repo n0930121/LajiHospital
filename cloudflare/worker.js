@@ -12,7 +12,7 @@
 //
 // 準時更新（選用）：GitHub 自己的排程常延遲好幾小時，改由這裡的 Cron 觸發器準時叫 GitHub 更新。
 //   GH_TOKEN  GitHub 的 Fine-grained token（只開 LajiHospital 的 Actions 讀寫權限，Secret）
-//   觸發器 → Cron 觸發器加三個（UTC 時間）：17 0 * * 1-5、23 7 * * 1-5、23 10 * * 1-5
+//   觸發器 → Cron 觸發器加三個（UTC 時間，星期要用英文，Cloudflare 的 1 是週日）：17 0 * * MON-FRI、23 7 * * MON-FRI、23 10 * * MON-FRI
 
 const SITE = "https://n0930121.github.io/LajiHospital/";
 

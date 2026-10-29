@@ -81,6 +81,10 @@
 
 GitHub 需要的 Secrets：`WORKER_URL`（Worker 網址）、`WORKER_KEY`（和 Worker 的 SETUP_KEY 相同）。
 
+**準時更新**：GitHub 自己的排程常延遲 4～6 小時，所以改由 Cloudflare 的 Cron 觸發器準時呼叫 GitHub 執行「每日更新資料」。Worker 需要 `GH_TOKEN`（只開 LajiHospital 的 Actions 讀寫權限的 Fine-grained token，2027/1/27 到期需更新），Cron 觸發器設 `17 0 * * MON-FRI`、`23 7 * * MON-FRI`、`23 10 * * MON-FRI`（UTC）。手動觸發：打開 `Worker網址/run?key=SETUP_KEY`。
+
+**行情來源**：上市行情與加權指數用證交所盤後 MI_INDEX（收盤當天下午就有），開放資料 API 要到隔天才更新，只當備援。
+
 
 可以傳給機器人的指令：
 
