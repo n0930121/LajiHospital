@@ -9,6 +9,10 @@
 //   TELEGRAM_CHAT_ID    你的聊天室 ID（只回覆這個聊天室）
 //   SETUP_KEY           自己取的密碼，只能用英文字母、數字、底線或減號
 // 以及 KV 綁定：變數名稱 WATCH
+//
+// 準時更新（選用）：GitHub 自己的排程常延遲好幾小時，改由這裡的 Cron 觸發器準時叫 GitHub 更新。
+//   GH_TOKEN  GitHub 的 Fine-grained token（只開 LajiHospital 的 Actions 讀寫權限，Secret）
+//   觸發器 → Cron 觸發器加三個（UTC 時間）：17 0 * * 1-5、23 7 * * 1-5、23 10 * * 1-5
 
 const SITE = "https://n0930121.github.io/LajiHospital/";
 
@@ -23,6 +27,11 @@ const HELP = `🏥 812拉基醫院 掛號櫃台
 診斷只是觀察重點，不構成投資建議。`;
 
 export default {
+  // Cron 觸發器：準時請 GitHub 執行「每日更新資料」
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(runUpdate(env).then(r => console.log("觸發每日更新：", r)));
+  },
+
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
 
@@ -32,6 +41,12 @@ export default {
       const r = await tg(env, "setWebhook", { url: `${url.origin}/hook`, secret_token: env.SETUP_KEY, allowed_updates: ["message"] });
       const j = await r.json();
       return text(j.ok ? "✅ 設定完成！現在傳訊息給機器人，幾秒內就會回覆。" : `❌ 設定失敗：${j.description || JSON.stringify(j)}`);
+    }
+
+    // 手動測試準時更新：開 /run?key=密碼
+    if (url.pathname === "/run") {
+      if (url.searchParams.get("key") !== env.SETUP_KEY) return text("密碼不對", 403);
+      return text(await runUpdate(env));
     }
 
     // GitHub 每次更新時來拿主治病人清單
@@ -51,6 +66,16 @@ export default {
     return text("812拉基醫院 掛號櫃台運作中");
   },
 };
+
+async function runUpdate(env) {
+  if (!env.GH_TOKEN) return "❌ 還沒設定 GH_TOKEN";
+  const r = await fetch("https://api.github.com/repos/n0930121/LajiHospital/actions/workflows/update.yml/dispatches", {
+    method: "POST",
+    headers: { authorization: `Bearer ${env.GH_TOKEN}`, accept: "application/vnd.github+json", "user-agent": "laji-bot", "content-type": "application/json" },
+    body: JSON.stringify({ ref: "main" }),
+  });
+  return r.status === 204 ? "✅ 已請 GitHub 開始更新，約 2 分鐘後網站就是最新資料。" : `❌ GitHub 回應 ${r.status}：${(await r.text()).slice(0, 200)}`;
+}
 
 function text(s, status = 200) {
   return new Response(s, { status, headers: { "content-type": "text/plain; charset=utf-8" } });
