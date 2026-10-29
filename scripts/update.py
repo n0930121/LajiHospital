@@ -161,13 +161,20 @@ def parse_isin(page, market):
 
 
 def get_universe(prev):
+    # 公司清單一天抓一次就夠（證交所這個網頁很慢），今天已經抓過就直接沿用
+    if prev and prev.get("uni_date") == NOW.date().isoformat() and not OFFLINE:
+        print("公司清單：今天已更新過，沿用")
+        mks, inds = prev["mks"], prev["inds"]
+        UNI_DATE[0] = prev["uni_date"]
+        return [[c, n, mks[int(m)], inds[int(i)]] for c, n, m, i in (r.split(",") for r in prev["uni_raw"].split(";"))]
     try:
-        twse = parse_isin(fetch(ISIN_TWSE, "isin_twse.html", binary=True).decode("cp950", "ignore"), "上市")
-        tpex = parse_isin(fetch(ISIN_TPEX, "isin_tpex.html", binary=True).decode("cp950", "ignore"), "上櫃")
+        twse = parse_isin(fetch(ISIN_TWSE, "isin_twse.html", binary=True, tries=1, timeout=60).decode("cp950", "ignore"), "上市")
+        tpex = parse_isin(fetch(ISIN_TPEX, "isin_tpex.html", binary=True, tries=1, timeout=60).decode("cp950", "ignore"), "上櫃")
         uni = twse + tpex
         if len(uni) < 500:
             raise ValueError(f"公司數只有 {len(uni)} 家，疑似格式改變")
         print(f"公司清單：上市 {len(twse)}、上櫃 {len(tpex)}")
+        UNI_DATE[0] = NOW.date().isoformat()
         return uni
     except Exception as e:  # noqa: BLE001
         note(f"公司清單抓取失敗，沿用上一版（{e}）")
@@ -179,6 +186,7 @@ def get_universe(prev):
 
 # ---------------------------------------------------------------- 行情
 MI_CACHE = {}
+UNI_DATE = [None]
 
 
 def twse_mi_latest():
@@ -517,7 +525,7 @@ def main():
     T0 = time.time()
     prev_uni = ([[c, n, prev["mks"][int(m)], prev["inds"][int(i)]] for c, n, m, i in (r.split(",") for r in prev["uni_raw"].split(";"))]
                 if prev else [])
-    uni = guard("公司清單", 90, get_universe, prev, default=prev_uni)
+    uni = guard("公司清單", 200, get_universe, prev, default=prev_uni)
     quotes, asof = guard("行情", 90, get_quotes, prev, default=((prev or {}).get("quotes", {}), (prev or {}).get("asof")))
     taiex = guard("加權指數", 40, get_taiex, prev, default=(prev or {}).get("taiex"))
     guard("歷史行情", 90, update_history, quotes, asof)
@@ -570,6 +578,7 @@ def main():
         "us": us_snap,
         "macro": macro,
         "mops": mops,
+        "uni_date": UNI_DATE[0] or (prev or {}).get("uni_date"),
         "notes": NOTES,
     }
     matcher = extras.Matcher(uni, lex)
