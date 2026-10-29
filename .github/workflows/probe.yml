@@ -1,0 +1,25 @@
+name: 行情來源檢查（診斷用）
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests==2.32.3
+      - run: python scripts/probe.py
+      - name: 存到 probe 分支
+        run: |
+          git config user.name "812-hospital-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan probe
+          git rm -rfq --cached .
+          git add -f probe.json
+          git commit -qm "行情來源檢查 $(date -u +%FT%TZ)"
+          git push -f origin probe
