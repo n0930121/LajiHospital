@@ -43,6 +43,32 @@ NOTES = []
 FETCH_LOG = []   # 每次抓取的結果：(檔名, 成功與否, 錯誤訊息)，給資訊室的機房燈號用
 
 
+TIMING = {}
+
+
+def guard(name, limit, fn, *args, default=None):
+    """在背景執行一個抓資料階段；超過 limit 秒就放棄、回傳 default，整次更新不會被卡死。"""
+    import threading
+    box, t0 = {}, time.time()
+
+    def run():
+        try:
+            box["v"] = fn(*args)
+        except Exception as e:  # noqa: BLE001
+            box["e"] = e
+    th = threading.Thread(target=run, daemon=True)
+    th.start()
+    th.join(limit)
+    TIMING[name] = round(time.time() - t0, 1)
+    if th.is_alive():
+        note(f"{name}超過 {limit} 秒，這次略過並沿用上一版")
+        return default
+    if "e" in box:
+        note(f"{name}失敗（{str(box['e'])[:80]}）")
+        return default
+    return box.get("v", default)
+
+
 def note(msg):
     print("•", msg)
     NOTES.append(msg)
@@ -63,7 +89,22 @@ def fetch(url, key, binary=False, tries=2, timeout=20):
     last = None
     for i in range(tries):
         try:
-            r = requests.get(url, timeout=timeout, headers={"User-Agent": "Mozilla/5.0 (812-laji-hospital updater)"})
+            import threading
+            box = {}
+
+            def get():
+                try:
+                    box["r"] = requests.get(url, timeout=(8, timeout), headers={"User-Agent": "Mozilla/5.0 (812-laji-hospital updater)"})
+                except Exception as e:  # noqa: BLE001
+                    box["e"] = e
+            th = threading.Thread(target=get, daemon=True)   # 整個下載有硬性時限，伺服器慢慢滴資料也不會卡住
+            th.start()
+            th.join(timeout * 1.5 + 8)
+            if th.is_alive():
+                raise TimeoutError(f"下載超過 {int(timeout * 1.5 + 8)} 秒")
+            if "e" in box:
+                raise box["e"]
+            r = box["r"]
             r.raise_for_status()
             FETCH_LOG.append((key, True, ""))
             return r.content if binary else r.text
@@ -411,29 +452,26 @@ def main():
     prev = json.load(open(a.out, encoding="utf-8")) if os.path.exists(a.out) else None
     lex = json.load(open(LEX, encoding="utf-8"))
 
-    uni = get_universe(prev)
-    quotes, asof = get_quotes(prev)
-    taiex = get_taiex(prev)
-    try:
-        update_history(quotes, asof)
-    except Exception as e:  # noqa: BLE001
-        note(f"歷史行情更新失敗（{e}）")
+    T0 = time.time()
+    prev_uni = ([[c, n, prev["mks"][int(m)], prev["inds"][int(i)]] for c, n, m, i in (r.split(",") for r in prev["uni_raw"].split(";"))]
+                if prev else [])
+    uni = guard("公司清單", 90, get_universe, prev, default=prev_uni)
+    quotes, asof = guard("行情", 90, get_quotes, prev, default=((prev or {}).get("quotes", {}), (prev or {}).get("asof")))
+    taiex = guard("加權指數", 40, get_taiex, prev, default=(prev or {}).get("taiex"))
+    guard("歷史行情", 90, update_history, quotes, asof)
 
     import extras
     extras.U = sys.modules[__name__]  # 讓擴充模組共用同一份設定（含離線模式）
-    extras.sync_watch_from_worker()
+    guard("主治病人同步", 30, extras.sync_watch_from_worker)
     prev = prev or {}
-    inst = extras.get_institutional(asof)
+    inst = guard("三大法人", 60, extras.get_institutional, asof)
     if inst is None and prev.get("inst_date") == asof:
         inst = prev.get("inst")
-    try:
-        extras.update_inst_history(inst, asof)
-    except Exception as e:  # noqa: BLE001
-        note(f"法人歷史更新失敗（{e}）")
-    rev = extras.get_revenue() or prev.get("rev")
-    mops = extras.get_mops(prev.get("mops"))
-    us_series = extras.get_us(lex)
-    macro_series = extras.get_macro(CFG)
+    guard("法人歷史", 90, extras.update_inst_history, inst, asof)
+    rev = guard("月營收", 90, extras.get_revenue) or prev.get("rev")
+    mops = guard("重大訊息", 60, extras.get_mops, prev.get("mops"), default=prev.get("mops"))
+    us_series = guard("美股", 60, extras.get_us, lex)
+    macro_series = guard("總經", 60, extras.get_macro, CFG)
     us_snap = save_us_history(us_series, lex) if us_series else prev.get("us")
     macro = extras.summarize_macro(CFG, macro_series) if macro_series else prev.get("macro")
 
@@ -448,7 +486,7 @@ def main():
         for n in (name, base):
             if len(n) >= 2 and n not in amb:
                 words.add(n)
-    fresh = get_news(words)
+    fresh = guard("新聞", 150, get_news, words, default=[])
     news = merge_news(fresh, prev.get("news"))
     if not news:
         note("沒有任何新聞，沿用上一版")
@@ -493,6 +531,9 @@ def main():
         note(f"院長週報產生失敗（{e}）")
     data["notes"] = NOTES
     data["sources"] = extras.source_status(FETCH_LOG)
+    TIMING["總計"] = round(time.time() - T0, 1)
+    data["timing"] = TIMING
+    print("各階段秒數：", TIMING)
     try:
         msg, data["alerts_sent"] = extras.alerts(data, hist, prev.get("alerts_sent"))
         if msg and not OFFLINE:
