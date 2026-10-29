@@ -162,11 +162,12 @@ def parse_isin(page, market):
 
 def get_universe(prev):
     # 公司清單一天抓一次就夠（證交所這個網頁很慢），今天已經抓過就直接沿用
-    if prev and prev.get("uni_date") == NOW.date().isoformat() and not OFFLINE:
-        print("公司清單：今天已更新過，沿用")
+    if prev and NOW.date().isoformat() in (prev.get("uni_date"), prev.get("uni_try")) and not OFFLINE:
+        print("公司清單：今天已經抓過（或試過），沿用")
         mks, inds = prev["mks"], prev["inds"]
         UNI_DATE[0] = prev["uni_date"]
         return [[c, n, mks[int(m)], inds[int(i)]] for c, n, m, i in (r.split(",") for r in prev["uni_raw"].split(";"))]
+    UNI_TRY[0] = NOW.date().isoformat()
     try:
         twse = parse_isin(fetch(ISIN_TWSE, "isin_twse.html", binary=True, tries=1, timeout=60).decode("cp950", "ignore"), "上市")
         tpex = parse_isin(fetch(ISIN_TPEX, "isin_tpex.html", binary=True, tries=1, timeout=60).decode("cp950", "ignore"), "上櫃")
@@ -187,6 +188,7 @@ def get_universe(prev):
 # ---------------------------------------------------------------- 行情
 MI_CACHE = {}
 UNI_DATE = [None]
+UNI_TRY = [None]
 
 
 def twse_mi_latest():
@@ -579,6 +581,7 @@ def main():
         "macro": macro,
         "mops": mops,
         "uni_date": UNI_DATE[0] or (prev or {}).get("uni_date"),
+        "uni_try": UNI_TRY[0] or (prev or {}).get("uni_try"),
         "notes": NOTES,
     }
     matcher = extras.Matcher(uni, lex)
