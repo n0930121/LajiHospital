@@ -178,20 +178,69 @@ def get_universe(prev):
 
 
 # ---------------------------------------------------------------- 行情
+MI_CACHE = {}
+
+
+def twse_mi_latest():
+    """證交所盤後行情 MI_INDEX：收盤後當天下午就上架（開放資料 API 要到隔天才更新）。
+    從今天往回找最近一個有資料的交易日，最多找 5 天。"""
+    if "js" in MI_CACHE:
+        return MI_CACHE["js"]
+    MI_CACHE["js"] = None
+    day = NOW.date()
+    for back in range(6):
+        d = day - dt.timedelta(days=back)
+        if d.weekday() >= 5:
+            continue
+        try:
+            js = json.loads(fetch(TWSE_DAY.format(d=d.strftime("%Y%m%d")), f"mi_latest_{d:%Y%m%d}.json", tries=1, timeout=20))
+        except Exception:  # noqa: BLE001
+            continue
+        if js.get("stat") == "OK" and js.get("tables"):
+            MI_CACHE["js"] = js
+            break
+    return MI_CACHE["js"]
+
+
+def mi_quotes(js):
+    """MI_INDEX 每日收盤行情表 → {代號: [收盤, 漲跌, 成交值(億)]}"""
+    for t in js.get("tables") or []:
+        f = [str(x).strip() for x in (t.get("fields") or [])]
+        if "證券代號" in f and "收盤價" in f and "漲跌價差" in f:
+            ci, pi, si, di, vi = (f.index(x) for x in ("證券代號", "收盤價", "漲跌(+/-)", "漲跌價差", "成交金額"))
+            out = {}
+            for row in t.get("data") or []:
+                code, close = str(row[ci]).strip(), num(row[pi])
+                if len(code) != 4 or close is None:
+                    continue
+                chg = num(row[di]) or 0.0
+                if re.sub(r"<[^>]+>", "", str(row[si])).strip() == "-":
+                    chg = -abs(chg)
+                out[code] = [close, chg, round((num(row[vi]) or 0) / 1e8, 2)]
+            return out
+    return {}
+
+
 def get_quotes(prev):
     quotes, asof = {}, None
-    try:
-        rows = json.loads(fetch(TWSE_QUOTES, "twse_quotes.json"))
-        for r in rows:
-            code = pick(r, "Code", "證券代號")
-            close, chg = num(pick(r, "ClosingPrice", "收盤價")), num(pick(r, "Change", "漲跌價差"))
-            val = num(pick(r, "TradeValue", "成交金額"))
-            if code and len(code) == 4 and close is not None:
-                quotes[code] = [close, chg or 0.0, round((val or 0) / 1e8, 2)]
-            asof = asof or roc_to_iso(pick(r, "Date", "日期"))
-        print(f"上市行情 {len(quotes)} 檔，日期 {asof}")
-    except Exception as e:  # noqa: BLE001
-        note(f"上市行情抓取失敗（{e}）")
+    js = twse_mi_latest()
+    if js:
+        quotes = mi_quotes(js)
+        asof = roc_to_iso(js.get("date"))
+        print(f"上市行情（盤後 MI_INDEX）{len(quotes)} 檔，日期 {asof}")
+    if not quotes:
+      try:
+          rows = json.loads(fetch(TWSE_QUOTES, "twse_quotes.json"))
+          for r in rows:
+              code = pick(r, "Code", "證券代號")
+              close, chg = num(pick(r, "ClosingPrice", "收盤價")), num(pick(r, "Change", "漲跌價差"))
+              val = num(pick(r, "TradeValue", "成交金額"))
+              if code and len(code) == 4 and close is not None:
+                  quotes[code] = [close, chg or 0.0, round((val or 0) / 1e8, 2)]
+              asof = asof or roc_to_iso(pick(r, "Date", "日期"))
+          print(f"上市行情 {len(quotes)} 檔，日期 {asof}")
+      except Exception as e:  # noqa: BLE001
+          note(f"上市行情抓取失敗（{e}）")
     n0 = len(quotes)
     try:
         rows = json.loads(fetch(TPEX_QUOTES, "tpex_quotes.json"))
@@ -213,6 +262,19 @@ def get_quotes(prev):
 
 
 def get_taiex(prev):
+    js = twse_mi_latest()   # 優先用盤後資料，當天下午就有
+    for t in (js or {}).get("tables") or []:
+        f = [str(x).strip() for x in (t.get("fields") or [])]
+        if "收盤指數" not in f:
+            continue
+        for row in t.get("data") or []:
+            if str(row[0]).strip() == "發行量加權股價指數":
+                close, pts = num(row[f.index("收盤指數")]), num(row[f.index("漲跌點數")]) or 0.0
+                if re.sub(r"<[^>]+>", "", str(row[f.index("漲跌(+/-)")])).strip() == "-":
+                    pts = -abs(pts)
+                pct = num(row[f.index("漲跌百分比(%)")]) if "漲跌百分比(%)" in f else None
+                if close:
+                    return {"close": close, "chg": pts, "pct": pct if pct is not None else round(pts / (close - pts) * 100, 2)}
     try:
         rows = json.loads(fetch(TWSE_INDEX, "twse_index.json"))
         for r in rows:
