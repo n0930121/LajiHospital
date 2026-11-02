@@ -8,7 +8,6 @@ import html
 import json
 import os
 import re
-import time
 
 BASE = "https://ic.tpex.org.tw/"
 
@@ -51,19 +50,23 @@ def parse_chain(page):
 
 def build(fetch, note=print):
     """抓全部產業鏈。fetch(url, key) 由 update.py 提供（含逾時保護與離線模式）。"""
-    home = fetch(BASE, "ic_home.html")
+    def get(url, key):  # 網頁是 UTF-8，但沒在標頭寫明，要自己指定，否則中文會變亂碼
+        return fetch(url, key, binary=True, tries=2, timeout=40).decode("utf-8", "ignore")
+    home = get(BASE, "ic_home.html")
     ics = sorted(set(re.findall(r"introduce\.php\?ic=([0-9A-Z]{4})\b", home)))
-    chains = []
-    for ic in ics:
+    from concurrent.futures import ThreadPoolExecutor
+
+    def one(ic):
         try:
-            name, segs = parse_chain(fetch(f"{BASE}introduce.php?ic={ic}", f"ic_{ic}.html"))
+            name, segs = parse_chain(get(f"{BASE}introduce.php?ic={ic}", f"ic_{ic}.html"))
         except Exception as e:  # noqa: BLE001
             note(f"產業鏈 {ic} 抓取失敗（{str(e)[:60]}）")
-            continue
+            return None
         segs = [s for s in segs if s["codes"]]
-        if name and segs:
-            chains.append({"ic": ic, "n": name, "segs": segs})
-        time.sleep(0.3)
+        return {"ic": ic, "n": name, "segs": segs} if name and segs else None
+    with ThreadPoolExecutor(4) as ex:   # 一次抓 4 頁，約 45 頁
+        chains = [c for c in ex.map(one, ics) if c]
+    print(f"官方產業鏈：首頁列出 {len(ics)} 條，解析成功 {len(chains)} 條")
     return chains
 
 
