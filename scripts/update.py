@@ -531,6 +531,8 @@ def main():
     quotes, asof = guard("行情", 90, get_quotes, prev, default=((prev or {}).get("quotes", {}), (prev or {}).get("asof")))
     taiex = guard("加權指數", 40, get_taiex, prev, default=(prev or {}).get("taiex"))
     guard("歷史行情", 90, update_history, quotes, asof)
+    import industry_chain  # 櫃買中心官方產業鏈，一週更新一次
+    guard("官方產業鏈", 240, industry_chain.update, fetch, os.path.join(ROOT, "docs", "ic.json"), note, 7, NOW.date().isoformat())
 
     import extras
     extras.U = sys.modules[__name__]  # 讓擴充模組共用同一份設定（含離線模式）
