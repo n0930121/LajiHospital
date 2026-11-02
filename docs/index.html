@@ -789,6 +789,19 @@ tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weigh
 .menu-rel button{grid-template-columns:minmax(0,1fr) 26px 50px}
 .menu-rel button small{display:block;font-size:10.5px;color:var(--mute);font-weight:400;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .menu-top{font-style:normal;font-size:10px;font-weight:700;color:#fff;background:var(--br);border-radius:3px;padding:0 5px;margin-left:6px}
+/* ---------- 官方產業鏈 ---------- */
+.icb{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px}
+.icb .meta{display:flex;align-items:center;gap:4px;flex-wrap:wrap}.icb .meta small{font-weight:400;color:var(--mute);font-size:10.5px;margin-left:4px}
+.icb-ch{margin-top:8px}
+.icb-path{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:12.5px}
+.icb-path b{font-size:13.5px}.icb-path span{background:var(--wall);border-radius:3px;padding:1px 7px;font-size:12px}
+.icb-set{margin-left:auto;font-size:11px;color:var(--a);border:1px solid currentColor;border-radius:4px;padding:1px 7px}
+.icb-l,.icb-seg{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.icb-l small,.icb-seg small{flex-basis:100%;font-size:11px;color:var(--mute)}
+.ic-pt{font-size:12px;border:1px solid var(--line);border-radius:4px;padding:1px 7px;background:var(--sheet)}.ic-pt em{font-style:normal;font-family:var(--num)}
+.ic-pt:hover{border-color:var(--ink)}
+.icb-more{margin-top:6px}.icb-more summary{cursor:pointer;font-size:12px;color:var(--a)}
+.menu-ic{font-style:normal;font-size:10px;font-weight:700;color:var(--a);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-left:6px}
 .legend[hidden],.card[hidden],#tip[hidden],.toast[hidden]{display:none}
 </style>
 
@@ -894,6 +907,7 @@ tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weigh
     const [d,lex]=await Promise.all([fetch("data.json?v="+Date.now()).then(r=>{if(!r.ok)throw new Error("data.json "+r.status);return r.json();}),
                                      fetch("lexicon.json?v="+Date.now()).then(r=>r.json())]);
     window.HIST=await fetch("history.json?v="+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null);
+    window.IC_DATA=await fetch("ic.json?v="+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null);
     setLexicon(lex);
     Object.assign(window,{CALENDAR:d.calendar||[],WEEKLY:d.weekly||null,LEX_CHAINS:lex.chains||[],LEX_GLOBAL:lex.global_themes||[],MOPS:d.mops||[],SOURCES:d.sources||null});
     Object.assign(window,{INST:d.inst||{},INST_DATE:d.inst_date,REV:d.rev||{},USD:d.us||{},MACRO:d.macro||{},REPORT:d.report||null,US_LIST:lex.us||[]});
@@ -923,8 +937,12 @@ const AV_IMG=new Image();AV_IMG.src=AVATAR;
 const ASOF_MD=DATA_ASOF?`${+DATA_ASOF.slice(5,7)}/${+DATA_ASOF.slice(8,10)}`:"最新";
 const RANK=["實習醫師","實習醫師","住院醫師","總醫師","主治醫師","科主任"];
 const RANKS=["實習","實習","住院","總醫","主治","主任"];
-const dept=t=>t+"科";
+const dept=t=>t.startsWith("鏈·")?t.slice(2)+"產業鏈":t+"科";
+const isC=t=>t.startsWith("鏈·");
 
+// 官方產業鏈（櫃買中心產業價值鏈資訊平台）：公司代號 → 所在的鏈與環節
+const ICD=window.IC_DATA||null;window.CO_IC={};
+(ICD?.chains||[]).forEach(ch=>ch.segs.forEach(sg=>sg.codes.forEach(c=>(CO_IC[c]=CO_IC[c]||[]).push({ch,sg}))));
 let EVENTS=[],DATES=[];
 const state={A:"AI伺服器",B:"電力電網",upto:0,tab:"ovw",sel:null,hover:null,chain:0,quiz:null};
 function ingest(list){
@@ -932,6 +950,7 @@ function ingest(list){
   EVENTS=list.map((n,i)=>{const r=matchText(n.t+" "+(n.s||""),MATCH),o=dateOrd(n.d);seq[o]=(seq[o]||0)+1;
     return {...n,id:"e"+i,o,cat:"D"+(o===1000?"10":String(o%100).padStart(2,"0"))+"-"+String(seq[o]).padStart(2,"0"),
       codes:r.codes.map(x=>x.c),how:Object.fromEntries(r.codes.map(x=>[x.c,x.how])),themes:r.themes,heat:n.heat||3,sent:n.sent||0};});
+  EVENTS.forEach(e=>{const cs=[...new Set(e.codes.flatMap(c=>(window.CO_IC||{})[c]||[]).map(x=>"鏈·"+x.ch.n))];e.themes=[...e.themes.filter(t=>!isC(t)),...cs];});
   DATES=[...new Set(EVENTS.map(e=>e.o))].sort((a,b)=>a-b);
   $("range").max=DATES.length-1;$("range").value=DATES.length-1;state.upto=DATES.at(-1);
   try{LAT={};}catch(e){}
@@ -1323,7 +1342,7 @@ function cardHTML(n){
     return `<div class="band" style="background:${col}"><b>${e.g==="ab"?"聯合會診中心":gName[e.g]+"　"+esc(dept(e.g==="a"?state.A:state.B))}</b><button data-x aria-label="關閉">×</button></div>
       <div class="inner"><div class="idrow"><div class="ph">${e.heat===4?`<img src="${AVATAR}" alt="" style="width:52px;height:52px;border-radius:50%;object-fit:cover">`:avatarSVG(col,e.src)}</div><div><div class="role">${e.g==="ab"?"會診":""}${RANK[e.heat]}　<span class="num">${e.cat}</span></div><div class="nm">${esc(e.src)}</div></div></div>
       <div class="dx">${esc(e.t)}</div>
-      <div class="meta">${esc(e.d)}　診斷：${sentTxt(e.sent)}　科別：${e.themes.filter(t=>!isG(t)).map(esc).join("、")||"—"}${e.themes.some(isG)?`　全院：${e.themes.filter(isG).map(esc).join("、")}`:""}</div>
+      <div class="meta">${esc(e.d)}　診斷：${sentTxt(e.sent)}　科別：${e.themes.filter(t=>!isG(t)&&!isC(t)).map(esc).join("、")||"—"}${e.themes.some(isG)?`　全院：${e.themes.filter(isG).map(esc).join("、")}`:""}</div>
       ${e.codes.length?`<div class="meta">收治病人</div><div class="pts">${e.codes.map(c=>{const s=R.stocks.find(x=>x.code===c),q=quote(c),v=s?vital(s):"na";
         return `<button class="pt" data-go="s${c}"><span>${esc(UNI[c]?.[1]||c)}</span><span class="num ${v}">${v==="na"?"—":pct(q)}</span></button>`;}).join("")}</div>`:'<div class="meta">這位醫師沒有收治上市櫃病人</div>'}
       ${e.u?`<div class="meta"><a href="${esc(e.u)}" target="_blank" rel="noopener" style="color:inherit">閱讀原始新聞</a></div>`:""}</div>`;}
@@ -1335,7 +1354,7 @@ function cardHTML(n){
     ${vitalCurve(s.code,s.evs)}
     ${labsBlock(s.code)}
     ${usBlock(s.code)}
-    ${contactBlock(s.code)}
+    ${contactBlock(s.code)}${icBlock(s.code)}
     <div class="meta">A 棟醫師 ${s.a} 位，B 棟醫師 ${s.b} 位，醫囑傾向 ${s.net>0?"+":""}${s.net}　${dxTag(s)}</div>
     <div class="meta">主治團隊</div><div class="docs">${s.evs.slice(0,4).map(e=>`<button data-go="${e.id}"><span class="chip" style="background:${gc(e.g)}">${RANKS[e.heat]}</span><span>${esc(e.t)}</span></button>`).join("")}</div>
     <div class="cbtns"><button class="cbtn" data-story="${s.code}">${ic("clip")}查看病史</button><button class="cbtn" data-rx="${s.code}">開處方</button><button class="cbtn" data-cert="${s.code}">開立診斷證明書</button></div>
@@ -1350,6 +1369,9 @@ function wireCard(c){
   c.querySelectorAll("[data-watch]").forEach(b=>b.onclick=()=>{toggleWatch(b.dataset.watch);b.classList.toggle("on",WATCH.has(b.dataset.watch));});
   c.querySelectorAll("[data-cert]").forEach(b=>b.onclick=()=>{certificate(b.dataset.cert);if(xpOnce("cert"+b.dataset.cert+DATA_ASOF))xpAdd(3,"開立診斷證明書");});
   c.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>openRx(b.dataset.rx));
+  c.querySelectorAll("[data-stock]").forEach(b=>b.onclick=()=>goStock(b.dataset.stock));
+  c.querySelectorAll("[data-icset]").forEach(b=>b.onclick=()=>{const t=b.dataset.icset,code=state.sel?.s?.code||state.dock?.code;if(t===state.B)[state.A,state.B]=[state.B,state.A];else state.A=t;
+    const rel=relatedTo(t),best=Object.values(rel).sort((p,q)=>q.score-p.score)[0];if(best&&!rel[state.B])state.B=best.a===t?best.b:best.a;keep={};refresh();toast(`A 棟：${dept(t)}`);if(code)setTimeout(()=>goStock(code),400);});
   c.querySelectorAll("[data-story]").forEach(b=>b.onclick=()=>openStory(b.dataset.story));
   c.querySelectorAll("[data-us]").forEach(b=>b.onclick=()=>openUS(b.dataset.us));
   c.querySelectorAll("[data-out]").forEach(b=>b.onclick=()=>openOutpatient(b.dataset.out));}
@@ -1482,14 +1504,16 @@ function showMenu(slot){
   const tc=themeCounts(),mx=Math.max(1,...Object.values(tc)),other=slot==="A"?state.B:state.A;
   const m=document.createElement("div");m.className="menu";m.setAttribute("role","listbox");
   if(slot==="B"){ // 先選 A，B 依「和 A 一起被新聞提到」的次數排序，並寫出理由
-    const rel=relatedTo(state.A),ts=Object.keys(THEMES).filter(t=>!isG(t)&&t!==state.A),rmx=Math.max(1,...Object.values(rel).map(x=>x.n));
-    const lst=ts.map(t=>({t,n:tc[t]||0,r:rel[t]})).sort((p,q)=>(q.r?.score||0)-(p.r?.score||0)||q.n-p.n);
+    const rel=relatedTo(state.A),ts=[...Object.keys(THEMES).filter(t=>!isG(t)&&t!==state.A),...(ICD?.chains||[]).map(ch=>"鏈·"+ch.n).filter(t=>t!==state.A)],rmx=Math.max(1,...Object.values(rel).map(x=>x.n));
+    const lst=ts.map(t=>({t,n:tc[t]||0,r:rel[t]})).filter(x=>x.n>0||!isC(x.t)).sort((p,q)=>(q.r?.score||0)-(p.r?.score||0)||q.n-p.n);
     m.classList.add("menu-rel");
     m.innerHTML=`<div class="menu-hd">依和 ${esc(dept(state.A))} 的關聯排序</div>`+lst.map(({t,n,r},i)=>
-      `<button role="option" data-t="${esc(t)}" aria-selected="${t===state.B}" ${!n?"disabled":""}><span>${esc(dept(t))}${i===0&&r?'<em class="menu-top">推薦</em>':""}<small>${r?`${r.n} 則新聞一起提到${r.shared.length?`・共同病人 ${r.shared.slice(0,2).map(c=>esc(stockName(c))).join("、")}`:""}`:n?"近兩週沒有和 A 棟一起出現":"近兩週沒有新聞"}</small></span><span class="num">${r?r.n:"—"}</span><i><b style="width:${r?r.n/rmx*100:0}%"></b></i></button>`).join("");
-  }else
-  m.innerHTML=Object.keys(THEMES).filter(t=>!isG(t)).map(t=>[t,tc[t]||0]).sort((p,q)=>q[1]-p[1]).map(([t,n])=>
-    `<button role="option" data-t="${esc(t)}" aria-selected="${t===state[slot]}" ${t===other||!n?"disabled":""}><span>${esc(dept(t))}</span><span class="num">${n}</span><i><b style="width:${n/mx*100}%"></b></i></button>`).join("");
+      `<button role="option" data-t="${esc(t)}" aria-selected="${t===state.B}" ${!n?"disabled":""}><span>${esc(dept(t))}${isC(t)?'<em class="menu-ic">官方</em>':""}${i===0&&r?'<em class="menu-top">推薦</em>':""}<small>${r?`${r.n} 則新聞一起提到${r.shared.length?`・共同病人 ${r.shared.slice(0,2).map(c=>esc(stockName(c))).join("、")}`:""}`:n?"近兩週沒有和 A 棟一起出現":"近兩週沒有新聞"}</small></span><span class="num">${r?r.n:"—"}</span><i><b style="width:${r?r.n/rmx*100:0}%"></b></i></button>`).join("");
+  }else{
+  const row=([t,n])=>`<button role="option" data-t="${esc(t)}" aria-selected="${t===state[slot]}" ${t===other||!n?"disabled":""}><span>${esc(dept(t))}</span><span class="num">${n}</span><i><b style="width:${n/mx*100}%"></b></i></button>`;
+  const chs=(ICD?.chains||[]).map(ch=>["鏈·"+ch.n,tc["鏈·"+ch.n]||0]).filter(x=>x[1]>0).sort((p,q)=>q[1]-p[1]);
+  m.innerHTML=`<div class="menu-hd">新聞題材</div>`+Object.keys(THEMES).filter(t=>!isG(t)).map(t=>[t,tc[t]||0]).sort((p,q)=>q[1]-p[1]).map(row).join("")+
+    (chs.length?`<div class="menu-hd">官方產業鏈（櫃買中心）</div>`+chs.map(row).join(""):"");}
   el.appendChild(m);el.querySelector(".dbtn").setAttribute("aria-expanded","true");openMenu={el,slot};
   m.querySelector('[aria-selected="true"]')?.focus();
   m.onclick=e=>{const b=e.target.closest("[data-t]");if(!b||b.disabled)return;const t=b.dataset.t;
@@ -1535,7 +1559,7 @@ function themeStats(){
   EVENTS.forEach(e=>e.themes.forEach(t=>{const s=m[t]||(m[t]={t,n:0,pos:0,neg:0,days:ds.map(()=>0)});s.n++;if(e.sent>0)s.pos++;if(e.sent<0)s.neg++;
     const k=ds.indexOf(e.o);if(k>=0)s.days[k]++;}));
   Object.values(m).forEach(s=>{const k=s.days.length,last=s.days[k-1],prev=s.days.slice(0,k-1).filter((x,i)=>ds[i]!==-1),avg=prev.length?prev.reduce((a,b)=>a+b,0)/prev.length:0;s.burst=last>=4&&last>=2*Math.max(.5,avg);});
-  const all=Object.values(m).sort((a,b)=>b.n-a.n);return {ds,list:all.filter(x=>!isG(x.t)),glob:all.filter(x=>isG(x.t))};}
+  const all=Object.values(m).filter(x=>!isC(x.t)).sort((a,b)=>b.n-a.n);return {ds,list:all.filter(x=>!isG(x.t)),glob:all.filter(x=>isG(x.t))};}
 function ovwHTMLold(){
   const last=DATES.filter(o=>o!==1000).at(-1),recent=DATES.filter(o=>o!==1000).slice(-2);
   const today=EVENTS.filter(e=>e.o===last);
@@ -1730,7 +1754,7 @@ function outCardHTML(code){
   return `<div class="band" style="background:${COL.mute}"><b>門診　${evs.length?`${evs.length} 則病歷`:"近期沒有新聞"}</b><span><button class="star ${WATCH.has(code)?"on":""}" data-watch="${code}" aria-label="加入我的主治病人">★</button>　<button data-x aria-label="關閉">×</button></span></div>
   <div class="inner"><div class="bed"><span class="no">${code}</span><span><div class="role">${esc(s.mk)}　${esc(s.ind)}</div><div class="nm">${esc(s.name)}</div></span></div>
   <div class="vit"><div><small>${ASOF_MD} 收盤</small><span class="num">${q&&!hidePx(s)?q.close.toLocaleString():"—"}</span></div><div><small>生命徵象</small><span class="num ${vital(s)}">${vital(s)==="na"?(q?"待揭曉":"未量測"):pct(q)}</span></div></div>
-  ${diagBlock(s)}${vitalCurve(code,evs)}${labsBlock(code)}${usBlock(code)}${contactBlock(code)}
+  ${diagBlock(s)}${vitalCurve(code,evs)}${labsBlock(code)}${usBlock(code)}${contactBlock(code)}${icBlock(code)}
   ${evs.length?`<div class="meta">病歷</div><div class="docs">${evs.slice(0,5).map(e=>`<button data-go="${e.id}"><span class="chip" style="background:${COL.mute}">${RANKS[e.heat]}</span><span>${esc(e.t)}</span></button>`).join("")}</div>`:""}
   <div class="cbtns"><button class="cbtn" data-story="${code}">${ic("clip")}查看病史</button><button class="cbtn" data-rx="${code}">開處方</button><button class="cbtn" data-cert="${code}">開立診斷證明書</button></div>
   <div class="disc">診斷與醫囑由新聞、股價、法人與營收自動歸納，只是觀察重點，不構成投資建議。</div></div>`;}
@@ -2418,7 +2442,7 @@ function latency(t){if(t in LAT)return LAT[t];
   return LAT[t]={k:best,prof,n:cnt[0],ok:prof[best]>0.05};}
 const latTxt=L=>!L?"":!L.ok?"消息與股價的關係不明顯":L.k===0?"消息當天就反應最大":`消息後第 ${L.k} 個交易日反應最大`;
 function tradingDaysSince(iso){if(!window.HIST||!iso)return null;const hd=HIST.dates,i=hd.findIndex(d=>d>=iso);return i<0?0:hd.length-1-i;}
-function mainTheme(code){const m={};EVENTS.filter(e=>e.codes.includes(code)).forEach(e=>e.themes.forEach(t=>{if(!isG(t))m[t]=(m[t]||0)+e.heat;}));return Object.keys(m).sort((a,b)=>m[b]-m[a])[0]||null;}
+function mainTheme(code){const m={};EVENTS.filter(e=>e.codes.includes(code)).forEach(e=>e.themes.forEach(t=>{if(!isG(t)&&!isC(t))m[t]=(m[t]||0)+e.heat;}));return Object.keys(m).sort((a,b)=>m[b]-m[a])[0]||null;}
 function latencyWhy(code){const t=mainTheme(code),L=t&&latency(t);if(!L||!L.ok)return null;
   const evs=EVENTS.filter(e=>e.codes.includes(code)&&e.sent),last=evs.map(e=>e.date||isoOf(e.o)).filter(Boolean).sort().at(-1),d=tradingDaysSince(last);
   return `潛伏期：${dept(t)}${latTxt(L)}${d!=null?`；這檔最近一則消息至今 ${d} 個交易日${d<L.k?"，反應可能還沒走完":d===L.k?"，正在反應高峰":"，主要反應應已過去"}`:""}`;}
@@ -2588,9 +2612,9 @@ function achHTML(){const a=achGet(),n=ACH.filter(x=>a[x[0]]).length;
 
 /* ================= 今日推薦會診：依新聞同框與共同病人，找出最值得看的兩科 ================= */
 // 只用實際新聞：同一則新聞同時提到兩個產業科別才算關聯，不做推測
-function pairLinks(days){
+function pairLinks(days,withChains){
   const ds=days?new Set(NEWS_DATES().slice(-days)):null,P={};
-  EVENTS.forEach(e=>{if(ds&&!ds.has(e.o))return;const ts=[...new Set(e.themes.filter(t=>!isG(t)))].sort();
+  EVENTS.forEach(e=>{if(ds&&!ds.has(e.o))return;const ts=[...new Set(e.themes.filter(t=>!isG(t)&&(withChains||!isC(t))))].sort();
     for(let i=0;i<ts.length;i++)for(let j=i+1;j<ts.length;j++){const k=ts[i]+"|"+ts[j],x=P[k]||(P[k]={a:ts[i],b:ts[j],n:0,heat:0,codes:{},evs:[]});
       x.n++;x.heat+=e.heat;x.evs.push(e);e.codes.forEach(c=>x.codes[c]=(x.codes[c]||0)+1);}});
   return Object.values(P).map(x=>{const shared=Object.keys(x.codes).sort((a,b)=>x.codes[b]-x.codes[a]);
@@ -2603,8 +2627,20 @@ function recommendPairHTML(){const L=todayPairs();if(!L.length)return "";
     <div class="rec">${L.map((x,i)=>`<button class="rec-i ${cur(x)?"on":""}" data-pair="${esc(x.a)}|${esc(x.b)}"><span class="rec-no num">${i+1}</span>
       <span class="rec-b"><b>${esc(dept(x.a))} × ${esc(dept(x.b))}</b><small>${pairReason(x,2)}</small></span><span class="rec-go">${cur(x)?"看診中":"切換"}</span></button>`).join("")}</div></section>`;}
 // B 棟選單：依和 A 棟的關聯排序，並寫理由
-function relatedTo(A){const out={};pairLinks(0).forEach(x=>{if(x.a!==A&&x.b!==A)return;const t=x.a===A?x.b:x.a;out[t]=x;});
+function relatedTo(A){const out={};pairLinks(0,true).forEach(x=>{if(x.a!==A&&x.b!==A)return;const t=x.a===A?x.b:x.a;out[t]=x;});
   return out;}
+
+// ---------- 床頭卡：官方產業鏈（櫃買中心產業價值鏈資訊平台） ----------
+function icBlock(code){const mem=CO_IC[code];if(!mem||!mem.length)return "";
+  const chip=c=>{const q=quote(c);return `<button class="ic-pt" data-stock="${c}">${esc(stockName(c))}${q?` <em class="${q.chg>0?"up":q.chg<0?"down":"flat"}">${pct(q)}</em>`:""}</button>`;};
+  const byCh={};mem.forEach(({ch,sg})=>(byCh[ch.ic]=byCh[ch.ic]||{ch,mine:[]}).mine.push(sg));
+  return `<div class="icb"><div class="meta">${ic("chain")}官方產業鏈<small>資料來源：櫃買中心產業價值鏈資訊平台${ICD?.updated?`（${esc(ICD.updated)}）`:""}</small></div>
+  ${Object.values(byCh).map(({ch,mine})=>{const mineIds=new Set(mine.map(s=>s.id)),peers=[...new Set(mine.flatMap(s=>s.codes))].filter(c=>c!==code&&UNI[c]);
+    const others=ch.segs.filter(s=>!mineIds.has(s.id)&&s.codes.some(c=>UNI[c]));
+    return `<div class="icb-ch"><div class="icb-path"><b>${esc(ch.n)}</b>${mine.map(s=>`<span>${esc(s.pos)} › ${esc(s.n)}</span>`).join("")}<button class="icb-set" data-icset="鏈·${esc(ch.n)}">設為 A 棟</button></div>
+      ${peers.length?`<div class="icb-l"><small>同環節（${peers.length} 家）</small>${peers.slice(0,12).map(chip).join("")}${peers.length>12?`<small>…等 ${peers.length} 家</small>`:""}</div>`:""}
+      ${others.length?`<details class="icb-more"><summary>同一條鏈的其他環節（${others.length} 段）</summary>${others.map(s=>{const cs=s.codes.filter(c=>UNI[c]&&c!==code);
+        return `<div class="icb-seg"><small>${esc(s.pos)} › ${esc(s.n)}（${cs.length} 家）</small>${cs.slice(0,15).map(chip).join("")}${cs.length>15?"<small>…</small>":""}</div>`;}).join("")}</details>`:""}</div>`;}).join("")}</div>`;}
 
 function render(){
   header();const p=$("leaf");
