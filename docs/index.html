@@ -775,6 +775,20 @@ tr.H .mt-res{color:#c8322f;font-weight:700}tr.L .mt-res{color:#1f6fb2;font-weigh
 .ach-s b{font-size:16px}.ach-s small{font-size:10px}
 .ach-i.on .ach-s{border:2.5px solid #c0362c;color:#c0362c;box-shadow:inset 0 0 0 3px var(--sheet),inset 0 0 0 4px #c0362c;transform:rotate(-8deg)}
 .ach-d{font-size:10.5px;color:var(--mute);line-height:1.35}.ach-i.on .ach-d{color:var(--ink)}
+/* ---------- 今日推薦會診 ---------- */
+.rec{display:grid;gap:6px}
+.rec-i{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:var(--sheet)}
+.rec-i:hover{border-color:var(--ink)}
+.rec-i.on{border-color:var(--br);box-shadow:inset 3px 0 0 var(--br)}
+.rec-no{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--wall);font-weight:700;font-size:14px}
+.rec-i:first-child .rec-no{background:var(--br);color:#fff}
+.rec-b b{display:block;font-size:14px}.rec-b small{display:block;font-size:11.5px;color:var(--mute);line-height:1.5}
+.rec-go{font-size:12px;color:var(--mute);white-space:nowrap}.rec-i.on .rec-go{color:var(--br);font-weight:700}
+.menu-rel{width:320px}
+.menu-hd{font-size:11px;color:var(--mute);padding:4px 14px 6px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.menu-rel button{grid-template-columns:minmax(0,1fr) 26px 50px}
+.menu-rel button small{display:block;font-size:10.5px;color:var(--mute);font-weight:400;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu-top{font-style:normal;font-size:10px;font-weight:700;color:#fff;background:var(--br);border-radius:3px;padding:0 5px;margin-left:6px}
 .legend[hidden],.card[hidden],#tip[hidden],.toast[hidden]{display:none}
 </style>
 
@@ -1467,11 +1481,21 @@ function showMenu(slot){
   const el=$(slot==="A"?"selA":"selB");if(openMenu&&openMenu.el===el){closeMenu();return;}closeMenu();
   const tc=themeCounts(),mx=Math.max(1,...Object.values(tc)),other=slot==="A"?state.B:state.A;
   const m=document.createElement("div");m.className="menu";m.setAttribute("role","listbox");
+  if(slot==="B"){ // 先選 A，B 依「和 A 一起被新聞提到」的次數排序，並寫出理由
+    const rel=relatedTo(state.A),ts=Object.keys(THEMES).filter(t=>!isG(t)&&t!==state.A),rmx=Math.max(1,...Object.values(rel).map(x=>x.n));
+    const lst=ts.map(t=>({t,n:tc[t]||0,r:rel[t]})).sort((p,q)=>(q.r?.score||0)-(p.r?.score||0)||q.n-p.n);
+    m.classList.add("menu-rel");
+    m.innerHTML=`<div class="menu-hd">依和 ${esc(dept(state.A))} 的關聯排序</div>`+lst.map(({t,n,r},i)=>
+      `<button role="option" data-t="${esc(t)}" aria-selected="${t===state.B}" ${!n?"disabled":""}><span>${esc(dept(t))}${i===0&&r?'<em class="menu-top">推薦</em>':""}<small>${r?`${r.n} 則新聞一起提到${r.shared.length?`・共同病人 ${r.shared.slice(0,2).map(c=>esc(stockName(c))).join("、")}`:""}`:n?"近兩週沒有和 A 棟一起出現":"近兩週沒有新聞"}</small></span><span class="num">${r?r.n:"—"}</span><i><b style="width:${r?r.n/rmx*100:0}%"></b></i></button>`).join("");
+  }else
   m.innerHTML=Object.keys(THEMES).filter(t=>!isG(t)).map(t=>[t,tc[t]||0]).sort((p,q)=>q[1]-p[1]).map(([t,n])=>
     `<button role="option" data-t="${esc(t)}" aria-selected="${t===state[slot]}" ${t===other||!n?"disabled":""}><span>${esc(dept(t))}</span><span class="num">${n}</span><i><b style="width:${n/mx*100}%"></b></i></button>`).join("");
   el.appendChild(m);el.querySelector(".dbtn").setAttribute("aria-expanded","true");openMenu={el,slot};
   m.querySelector('[aria-selected="true"]')?.focus();
-  m.onclick=e=>{const b=e.target.closest("[data-t]");if(!b||b.disabled)return;state[slot]=b.dataset.t;closeMenu();refresh();};
+  m.onclick=e=>{const b=e.target.closest("[data-t]");if(!b||b.disabled)return;const t=b.dataset.t;
+    if(slot==="A"){if(t===state.B)[state.A,state.B]=[state.B,state.A];else{state.A=t;const rel=relatedTo(t),best=Object.values(rel).sort((p,q)=>q.score-p.score)[0];
+      if(best&&!rel[state.B]){const nb=best.a===t?best.b:best.a;toast(`B 棟自動換成和 ${dept(t)} 最相關的 ${dept(nb)}`);state.B=nb;}}}
+    else state.B=t;closeMenu();refresh();};
 }
 $("selA").querySelector(".dbtn").onclick=e=>{e.stopPropagation();showMenu("A");};
 $("selB").querySelector(".dbtn").onclick=e=>{e.stopPropagation();showMenu("B");};
@@ -1781,7 +1805,7 @@ function flowHTML(){const keys=Object.keys(INST||{});if(!keys.length)return "";
   const row=([n,v])=>`<span class="l">${v<0?`<span class="num">${fmtK(v)}</span><i style="width:${Math.abs(v)/mx*100}%;background:${COL.down}"></i>`:""}</span><span class="nm">${esc(n.replace(/業$/,""))}</span><span class="r">${v>0?`<i style="width:${v/mx*100}%;background:${COL.up}"></i><span class="num">+${fmtK(v)}</span>`:""}</span>`;
   return `<section><h2>家屬探病動線</h2><p class="note">${INST_DATE?esc(INST_DATE.slice(5).replace("-","/"))+" ":""}外資加投信在各產業病房的買賣超（張），看資金往哪幾棟走</p>
   <div class="flow">${buy.map(row).join("")}<span></span><span class="nm" style="color:var(--mute)">⋯</span><span></span>${sell.map(row).join("")}</div></section>`;}
-function ovwHTML(){return handoverHTML()+watchHTML()+ovwHTMLold()+epidemicHTML()+latencyHTML()+contactHTML()+calHTML()+followHTML()+streakHTML()+weeklyHTML()+casesHTML()+cdcHTML()+intlHTML()+quadHTML()+flowHTML();}
+function ovwHTML(){return recommendPairHTML()+handoverHTML()+watchHTML()+ovwHTMLold()+epidemicHTML()+latencyHTML()+contactHTML()+calHTML()+followHTML()+streakHTML()+weeklyHTML()+casesHTML()+cdcHTML()+intlHTML()+quadHTML()+flowHTML();}
 
 // ---------- 放射科 ----------
 function radHTML(){
@@ -1911,7 +1935,7 @@ const ic=(n,cls="")=>`<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${
 // 分頁加圖示
 [["ovw","lobby"],["obs","clip"],["chain","chain"],["lab","lab"],["quiz","bed"]].forEach(([t,n])=>{const b=document.querySelector(`[data-tab="${t}"]`);if(b&&!b.querySelector(".ic"))b.insertAdjacentHTML("afterbegin",ic(n));});
 // 區塊標題自動加圖示
-const H2IC={"月營收申報進度":"cal","新聞與申報對照":"chain","重大訊息收件匣":"stamp","資料庫存":"server","排程表":"cal","系統日誌":"doc","各科體檢中位數":"lab","早晨交班報告":"clip","我的主治病人":"bed","今日院務看板":"pulse","科別聲量":"doc","全院會診矩陣":"chain","病危通知與好轉出院":"amb","疾管署監測站":"shield","國際醫療中心":"globe","分診區":"track","家屬探病動線":"family","出院追蹤門診":"track","接觸者追蹤":"chain","門診預約表":"cal","院長週報":"trophy","連續探病榜":"family","放射科":"film","晨間查房":"bed","今日影像摘要":"film"};
+const H2IC={"今日推薦會診":"chain","月營收申報進度":"cal","新聞與申報對照":"chain","重大訊息收件匣":"stamp","資料庫存":"server","排程表":"cal","系統日誌":"doc","各科體檢中位數":"lab","早晨交班報告":"clip","我的主治病人":"bed","今日院務看板":"pulse","科別聲量":"doc","全院會診矩陣":"chain","病危通知與好轉出院":"amb","疾管署監測站":"shield","國際醫療中心":"globe","分診區":"track","家屬探病動線":"family","出院追蹤門診":"track","接觸者追蹤":"chain","門診預約表":"cal","院長週報":"trophy","連續探病榜":"family","放射科":"film","晨間查房":"bed","今日影像摘要":"film"};
 function decorateH2(root){root.querySelectorAll("h2").forEach(h=>{if(h.querySelector(".ic"))return;const k=Object.keys(H2IC).find(x=>h.textContent.trim().startsWith(x));if(k)h.insertAdjacentHTML("afterbegin",ic(H2IC[k]));});}
 
 // ---------- 讀取外部資料：Telegram 主治病人、行事曆、週報 ----------
@@ -2176,7 +2200,8 @@ function introHTML(){
     ["國際疫情（費半）",sox?`<span class="${sg(sox.pct)}">${pc(sox.pct)}</span> <small>${esc(sox.date.slice(5).replace("-","/"))} 美股收盤</small>`:"—"],
     ["疾管署紅燈",`${red} <small>項總經指標</small>`],
     ["病危病人",`${crit} <small>檔，近兩天點名且跌逾 5%</small>`],
-    ["最熱門診",TS.map(x=>esc(dept(x.t))).join("、")||"—"]];
+    ["最熱門診",TS.map(x=>esc(dept(x.t))).join("、")||"—"],
+    ["今日推薦會診",(r=>r?`${esc(dept(r.a))} × ${esc(dept(r.b))}`:"—")(todayPairs()[0])]];
   const nx=L.next?`再 ${L.next-L.xp} 點升為${LEVELS[L.i+1][1]}`:"已是院長";
   return `<div class="lb-desk">
   <figure class="lb-sheet">
@@ -2561,6 +2586,26 @@ function achHTML(){const a=achGet(),n=ACH.filter(x=>a[x[0]]).length;
   return `<section><h2>成就章</h2><p class="note">已獲得 ${n}／${ACH.length} 枚，蓋在你的識別證背面。</p>
     <div class="ach">${ACH.map(([k,t,d])=>`<div class="ach-i ${a[k]?"on":""}" title="${esc(d)}"><span class="ach-s"><b>${esc(t.slice(0,2))}</b><small>${esc(t.slice(2))}</small></span><span class="ach-d">${a[k]?esc(a[k].slice(5).replace("-","/")):esc(d)}</span></div>`).join("")}</div></section>`;}
 
+/* ================= 今日推薦會診：依新聞同框與共同病人，找出最值得看的兩科 ================= */
+// 只用實際新聞：同一則新聞同時提到兩個產業科別才算關聯，不做推測
+function pairLinks(days){
+  const ds=days?new Set(NEWS_DATES().slice(-days)):null,P={};
+  EVENTS.forEach(e=>{if(ds&&!ds.has(e.o))return;const ts=[...new Set(e.themes.filter(t=>!isG(t)))].sort();
+    for(let i=0;i<ts.length;i++)for(let j=i+1;j<ts.length;j++){const k=ts[i]+"|"+ts[j],x=P[k]||(P[k]={a:ts[i],b:ts[j],n:0,heat:0,codes:{},evs:[]});
+      x.n++;x.heat+=e.heat;x.evs.push(e);e.codes.forEach(c=>x.codes[c]=(x.codes[c]||0)+1);}});
+  return Object.values(P).map(x=>{const shared=Object.keys(x.codes).sort((a,b)=>x.codes[b]-x.codes[a]);
+    return {...x,shared,score:x.n*2+shared.length+x.heat*.2};}).sort((a,b)=>b.score-a.score);}
+function pairReason(x,days){return `${days?`近 ${days} 個新聞日`:"近兩週"} ${x.n} 則新聞同時提到兩科${x.shared.length?`，共同病人：${x.shared.slice(0,3).map(c=>esc(stockName(c))).join("、")}`:""}`;}
+function todayPairs(){let L=pairLinks(2);if(L.length<3)L=pairLinks(5);return L.filter(x=>x.n>=2).slice(0,5);}
+function recommendPairHTML(){const L=todayPairs();if(!L.length)return "";
+  const cur=x=>(x.a===state.A&&x.b===state.B)||(x.a===state.B&&x.b===state.A);
+  return `<section><h2>今日推薦會診</h2><p class="note">不知道 A、B 棟選什麼時，從這裡挑。依實際新聞計算：同一則新聞同時提到兩個產業的次數越多、共同病人越多，排名越前面。點一下就切換。</p>
+    <div class="rec">${L.map((x,i)=>`<button class="rec-i ${cur(x)?"on":""}" data-pair="${esc(x.a)}|${esc(x.b)}"><span class="rec-no num">${i+1}</span>
+      <span class="rec-b"><b>${esc(dept(x.a))} × ${esc(dept(x.b))}</b><small>${pairReason(x,2)}</small></span><span class="rec-go">${cur(x)?"看診中":"切換"}</span></button>`).join("")}</div></section>`;}
+// B 棟選單：依和 A 棟的關聯排序，並寫理由
+function relatedTo(A){const out={};pairLinks(0).forEach(x=>{if(x.a!==A&&x.b!==A)return;const t=x.a===A?x.b:x.a;out[t]=x;});
+  return out;}
+
 function render(){
   header();const p=$("leaf");
   p.innerHTML=state.tab==="ovw"?ovwHTML():state.tab==="obs"?obsHTML():state.tab==="chain"?chainHTML():state.tab==="lab"?labHTML():quizHTML()+rxHTML()+achHTML();
@@ -2624,6 +2669,7 @@ $("impAdd").onclick=()=>doImport("add");$("impReplace").onclick=()=>doImport("re
 $("taiex").innerHTML=TAIEX?`${TAIEX.close.toLocaleString()}　<span class="${TAIEX.chg>0?"up":TAIEX.chg<0?"down":"flat"}">${TAIEX.chg>0?"+":""}${(+TAIEX.chg).toFixed(2)}（${TAIEX.pct>0?"+":""}${(+TAIEX.pct).toFixed(2)}%）</span>`:"—";
 $("asof").textContent=`${ASOF_MD} 收盤，資料更新 ${DATA_UPDATED||""}`;$("asof").title=DATA_NOTES.join("\n");$("plate").setAttribute("data-note",`${NEWS.length} 則新聞比對 ${Object.keys(UNI).length} 家上市櫃公司`);
 ingest(NEWS);
+{const r=todayPairs()[0];if(r){state.A=r.a;state.B=r.b;}}
 {const tc=themeCounts(),ts=Object.keys(tc).sort((p,q)=>tc[q]-tc[p]);if(isG(state.A)||!tc[state.A])state.A=ts[0]||state.A;if(isG(state.B)||!tc[state.B]||state.B===state.A)state.B=ts.find(t=>t!==state.A)||state.B;}
 // 平面圖尺寸改變（含頁面剛載入時版面尚未定型）就重新配置各棟位置並重新取景
 let lastW=0,lastH=0,rt;
